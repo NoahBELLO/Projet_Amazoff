@@ -15,7 +15,7 @@ class UserModel {
 
 	async getByLogin(login) {
 		console.log(login);
-		const user = await this.collection.findOne({ login });
+		const user = await this.collection.findOne({ login: login });
 		return user;
 	}
 
