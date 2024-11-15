@@ -18,7 +18,7 @@ try {
 exports.getUser = async(req,res) => { 
 try {
 	console.log(req)
-  const login = req.query.login; 
+  const login = req.params.login; 
 	const user = await userModel.getByLogin(login);
 	if (user) {
       res.json(user);
