@@ -1,10 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const userController = require('../controllers/userController');
+const userController = require('../users/userController');
 const authMiddleware = require('../../middleware/authMiddleware');
-
+// il faut le préfixe /users
 
 router.get('/', userController.getAllUsers);
+router.get('/:id', userController.getUser);
 router.get('/:login', userController.getUser);
 router.post('/createUser', userController.createUser);
 router.put('/updateUser/:id', userController.updateUser);

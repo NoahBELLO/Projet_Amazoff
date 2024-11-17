@@ -18,8 +18,9 @@ exports.getAllUsers = async (req, res) => {
 exports.getUser = async (req, res) => {
     try {
         console.log(req)
-        const login = req.params.login;
-        const user = await userModel.getByLogin(login);
+        const id = req.params.id;
+        console.log(id);
+        const user = await userModel.getById(id);
         if (user) {
             res.json(user);
         } else {
@@ -45,7 +46,6 @@ exports.createUser = async (req, res) => {
         };
         const createdUtilisateur = await userModel.create(newUtilisateur);
         res.status(201).json(createdUtilisateur);
-
     } catch (err) {
         res.status(500).json({ message: 'Erreur lors de la création de la Utilisateur' });
     }

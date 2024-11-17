@@ -6,8 +6,8 @@ const port = 5000;
 const uri = process.env.MONGO_URI;
 
 const { MongoClient, ServerApiVersion } = require('mongodb');
-const userRoutes = require('./routes/userRoutes');
-const userController = require('./controllers/userController');
+const userRoutes = require('./modules/users/userRoutes');
+const userController = require('./modules/users/userController');
 //Connexion bdd 
 // connectDB();
 
