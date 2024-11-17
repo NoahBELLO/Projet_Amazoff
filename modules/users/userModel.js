@@ -130,6 +130,40 @@ class UserModel {
 			return true
 		}
 	}
-}
+
+	checkDatas(datas, res) {
+		const nouveauCompte = (datas.id === 0);
+		const lignes = ['fname', 'name', 'login', 'password'];
+	
+		console.log(datas)
+		// Vérification des champs obligatoires
+		for (const ligne of lignes) {
+			if (!datas[ligne] || datas[ligne].trim().length === 0) {
+				if (ligne === 'fname') {
+					return res.status(400).json({ message: "Veuillez définir un Prénom." });
+				}
+				if (ligne === 'name') {
+					return res.status(400).json({ message: "Veuillez définir un Nom." });
+				}
+				if (ligne === 'login' && nouveauCompte) {
+					return res.status(400).json({ message: "Veuillez définir un Login." });
+				}
+				if (ligne === 'password' && nouveauCompte) {
+					return res.status(400).json({ message: "Veuillez définir un mot de passe." });
+				}
+			}
+		}
+	
+		// Vérification de l'adresse email
+		const regexEmail = /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,7}\b/;
+		if (!('email' in datas) || !regexEmail.test(datas.email)) {
+			return res.status(400).json({ message: "Veuillez définir une adresse email valide." });
+		}
+		delete datas.id;
+		return true;
+	}
+
+	
+}	
 
 module.exports = UserModel;

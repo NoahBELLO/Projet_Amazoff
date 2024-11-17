@@ -1,5 +1,6 @@
 const UserModel = require('./userModel');
 
+
 let userModel;
 
 exports.init = (collection) => {
@@ -37,15 +38,20 @@ exports.createUser = async (req, res) => {
         let nombreCaractererAleatoire = Math.floor(Math.random() * 20) + 1;
         let salt = userModel.strRandom(nombreCaractererAleatoire);
         const newUtilisateur = {
+            id: 0,
             name: req.body.name,
             fname: req.body.fname,
             email: req.body.email,
             login: req.body.login,
-            password: crypto.createHash('md5').update(req.body.password + salt).digest('hex'), // hasher le mot de passe
+            password: req.body.password,
             salt: salt,
         };
-        const createdUtilisateur = await userModel.create(newUtilisateur);
-        res.status(201).json(createdUtilisateur);
+        //inspection des données
+        if (userModel.checkDatas(newUtilisateur) === true) { 
+            newUtilisateur.password = crypto.createHash('md5').update(req.body.password + salt).digest('hex') // hasher le mot de passe
+            const createdUtilisateur = await userModel.create(newUtilisateur);
+            res.status(201).json(createdUtilisateur);
+        }
     } catch (err) {
         res.status(500).json({ message: 'Erreur lors de la création de la Utilisateur' });
     }
