@@ -47,7 +47,7 @@ exports.createUser = async (req, res) => {
             salt: salt,
         };
         //inspection des données
-        if (userModel.checkDatas(newUtilisateur) === true) { 
+        if (userModel.checkDatas(newUtilisateur) === true) {
             newUtilisateur.password = crypto.createHash('md5').update(req.body.password + salt).digest('hex') // hasher le mot de passe
             const createdUtilisateur = await userModel.create(newUtilisateur);
             res.status(201).json(createdUtilisateur);
@@ -71,6 +71,28 @@ exports.updateUser = async (req, res) => {
         }
     } catch (err) {
         res.status(500).json({ message: 'Erreur lors de la mise à jour de l\'utilisateur' });
+    }
+};
+
+exports.editPassword = async (req, res) => {
+    try {
+        const id = req.params.id;
+        const old_password = req.body.old_password;
+        const new_password = req.body.new_password;
+        const matching_password = req.body.matching_password;
+
+        old_password = crypto.createHash('md5').update(old_password + salt).digest('hex');
+        new_password = crypto.createHash('md5').update(new_password + salt).digest('hex');
+        matching_password = crypto.createHash('md5').update(matching_password + salt).digest('hex');
+
+        const result = await userModel.validatePassword(id, old_password, new_password, matching_password);
+
+        if (result === true) {
+            user.Model.savePassword(id, new_password);
+        };
+    }
+    catch (err) {
+        res.status(500).json({ message: 'Erreur lors de la modification du mot de passe' });
     }
 };
 
@@ -127,7 +149,5 @@ exports.login = async (req, res) => {
     } catch (err) {
         res.status(500).json({ message: 'Erreur lors de la connexion' });
     }
-    // exports.test =async (req, res) =>{
-    //   if(req.query == "coucou")
-    // }
+
 }

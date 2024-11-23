@@ -163,6 +163,25 @@ class UserModel {
 		return true;
 	}
 
+	async validatePassword(id, old_password, new_password, matching_password, res) {
+		const user = await this.collection.findOne({ id: id });
+		if(!user.password === old_password){
+			return res.status(401).json({ message: "Mot de passe incorrect." });
+		}
+		if(new_password === null || matching_password === null)
+			return res.status(400).json({ message: "Veuillez renseigner tous les champs." });
+
+        if(new_password.length <= 4){
+			return res.status(400).json({ message: "Le nouveau mot de passe est trop court"});
+		}
+		if(new_password != matching_password){
+			return res.status(400).json({ message: "les nouveaux mot de passe ne correspondent pas"})
+		}
+		return true;
+	}
+	
+	async savePassword(id, new_password) {
+
 	
 }	
 
