@@ -5,11 +5,12 @@ const app = express();
 const port = 5000;
 const uri = process.env.MONGO_URI;
 
-const { MongoClient, ServerApiVersion } = require("mongodb");
-const userRoutes = require("./routes/userRoutes");
-const userController = require("./controllers/userController");
-//Connexion bdd 
-// connectDB();
+const { MongoClient, ServerApiVersion } = require('mongodb');
+const userRoutes = require('./src/modules/users/userRoutes');
+const userController = require('./src/modules/users/userController');
+const articleRoutes = require('./src/modules/articles/articleRoutes');
+const articleController = require('./src/modules/articles/articleController');
+
 
 const client = new MongoClient(uri, {
     serverApi: {
@@ -27,13 +28,16 @@ async function run() {
     try {
         // Connexion à la base de données
         await client.connect();
-        const database = client.db("Utilisateurs");
-        const collection = database.collection("Users");
-        const collection2 = database.collection("Token");
-        userController.init(collection, collection2);
+        const db_articles = client.db("Articles");
+        const collection_articles = db_articles.collection("article");
+        articleController.init(collection_articles);
 
-        app.set("tokensCollection", collection2);
-        app.use("/users", userRoutes);
+        const db_users = client.db("Utilisateurs");
+        const collection_users = db_users.collection("Users");
+        userController.init(collection_users);
+
+        app.use('/articles', articleRoutes);
+        app.use('/users', userRoutes);
 
         // Middleware pour gérer les erreurs 500 (erreurs serveur)
         app.use((err, req, res, next) => {
