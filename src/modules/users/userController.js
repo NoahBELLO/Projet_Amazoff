@@ -41,6 +41,7 @@ exports.createUser = async (req, res) => {
             email: req.body.email,
             login: req.body.login,
             password: req.body.password,
+            role: req.body.role,
             salt: salt,
         };
         //inspection des données
