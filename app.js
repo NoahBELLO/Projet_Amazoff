@@ -5,9 +5,9 @@ const app = express();
 const port = 5000;
 const uri = process.env.MONGO_URI;
 
-const { MongoClient, ServerApiVersion } = require('mongodb');
-const userRoutes = require('./modules/users/userRoutes');
-const userController = require('./modules/users/userController');
+const { MongoClient, ServerApiVersion } = require("mongodb");
+const userRoutes = require("./routes/userRoutes");
+const userController = require("./controllers/userController");
 //Connexion bdd 
 // connectDB();
 
@@ -29,14 +29,16 @@ async function run() {
         await client.connect();
         const database = client.db("Utilisateurs");
         const collection = database.collection("Users");
-        userController.init(collection);
+        const collection2 = database.collection("Token");
+        userController.init(collection, collection2);
 
-        app.use('/users', userRoutes);
+        app.set("tokensCollection", collection2);
+        app.use("/users", userRoutes);
 
         // Middleware pour gérer les erreurs 500 (erreurs serveur)
         app.use((err, req, res, next) => {
             console.error(err.stack);
-            res.status(500).json({ message: 'Erreur interne du serveur' });
+            res.status(500).json({ message: "Erreur interne du serveur" });
         });
 
         // Démarrer le serveur
