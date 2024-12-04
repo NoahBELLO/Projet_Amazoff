@@ -1,5 +1,4 @@
 const { ObjectId } = require('mongodb');
-
 class UserModel {
 	constructor(collection) {
 		this.collection = collection;
@@ -14,9 +13,18 @@ class UserModel {
 	}
 
 	async getByLogin(login) {
-		console.log(login);
 		const user = await this.collection.findOne({ login: login });
 		return user;
+	}
+
+	async getByLoginReturnID(login) {
+		const user = await this.collection.findOne({ login: login });
+		if (user) {
+			return user._id;
+		}
+		else {
+			return null;
+		}
 	}
 
 	async create(newUser) {
@@ -82,15 +90,15 @@ class UserModel {
 		}
 	}
 
-	async createToken(login, req) {
-		let form = await this.createForm(login, req)
-		let result = this.createNonce(form);
-		form.nonce = result.nonce
-		form.proofOfWork = result.proofOfWork
-		await this.create(form);
-		const token = Buffer.from(JSON.stringify(form)).toString('base64');
-		return token
-	}
+	// async createToken(login, req) {
+	// 	let form = await this.createForm(login, req)
+	// 	let result = this.createNonce(form);
+	// 	form.nonce = result.nonce
+	// 	form.proofOfWork = result.proofOfWork
+	// 	await this.create(form);
+	// 	const token = Buffer.from(JSON.stringify(form)).toString('base64');
+	// 	return token
+	// }
 
 	async verifToken(token, res) {
 		if (token) {
@@ -124,10 +132,73 @@ class UserModel {
 			throw new Error('Erreur lors de la récupération du salt');
 		}
 	}
+
 	async getLoginAndPassword(identifiant, hashedPassword) {
 		const bdd_user = await this.collection.findOne({ login: identifiant });
 		if (bdd_user.password === hashedPassword) {
-			return true
+			return { id: bdd_user._id, role: bdd_user.role };
+		}
+		else {
+			return null;
+		}
+	}
+	//fonction Noah 
+	// async getByIdentifiantEtRecuperationGrain(email) {
+	//     let utilisateur = await this.collection.findOne({ adresseMail: email });
+	//     if (utilisateur) {
+	//         return utilisateur.grainDeSel;
+	//     }
+	//     else {
+	//         return null;
+	//     }
+	// }
+
+	// async getByIdentifiant(email) {
+	//     let utilisateur = await this.collection.findOne({ adresseMail: email });
+	//     if (utilisateur) {
+	//         return utilisateur._id;
+	//     }
+	//     else {
+	//         return null;
+	//     }
+	// }
+
+	// async getByIdentifiantAndPassword(email, password) {
+	//     let utilisateur = await this.collection.findOne({ adresseMail: email })
+	//     if (password === utilisateur.motDePasse) {
+	//         return { id: utilisateur._id, role: utilisateur.role };
+	//     }
+	//     else {
+	//         return null;
+	//     }
+	// }
+	// Creation token Noah
+	async createToken(req, res, datas) {
+		// console.log(datas);
+		if (datas.grainDeSel) {
+			console.log(datas.grainDeSel);
+			let hash = datas.crypto.createHash('sha256').update(req.body.password + datas.grainDeSel).digest('hex');
+			console.log(hash);
+			const utilisateur = await this.getLoginAndPassword(datas.login, hash);
+			console.log(utilisateur);
+			if (utilisateur) {
+				let donnee = datas.function.createData(req);
+				let data = utilisateur.id + utilisateur.role + donnee.debutToken + donnee.finToken + donnee.empreinteOrdi;
+				let donnees = datas.function.createNonce(data);
+				const newToken = {
+					userId: utilisateur.id, role: utilisateur.role,
+					issuedAt: donnee.debutToken, expiresIn: donnee.finToken,
+					nonce: donnees.nonce, proofOfWork: donnees.proofOfWork,
+					scope: ["write", "read"], issuer: "authServer",
+					deviceFingerprint: donnee.empreinteOrdi
+				};
+				const createdToken = await datas.token.create(newToken);
+				res.status(201).json({ token: Buffer.from(JSON.stringify(createdToken)).toString('base64') });
+			} else {
+				res.status(401).json({ message: "Mot de passe incorrect" });
+			}
+		} else {
+			res.status(404).json({ message: "Utilisateur non inscrit" });
 		}
 	}
 }
