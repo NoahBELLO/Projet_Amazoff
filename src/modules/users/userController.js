@@ -1,5 +1,5 @@
 const UserModel = require('./userModel');
-
+const crypto = require('crypto');
 
 let userModel;
 
@@ -32,7 +32,6 @@ exports.getUser = async (req, res) => {
 
 exports.createUser = async (req, res) => {
     try {
-        let crypto = require('crypto');
         let nombreCaractererAleatoire = Math.floor(Math.random() * 20) + 1;
         let salt = userModel.strRandom(nombreCaractererAleatoire);
         const newUtilisateur = {
@@ -51,7 +50,7 @@ exports.createUser = async (req, res) => {
             res.status(201).json(createdUtilisateur);
         }
     } catch (err) {
-        res.status(500).json({ message: 'Erreur lors de la création de la Utilisateur' });
+        res.status(500).json({ error: err });
     }
 };
 
@@ -85,7 +84,7 @@ exports.editPassword = async (req, res) => {
                 res.status(200).json({ message: 'Mot de passe modifié avec succès' });
             }
             catch(err) {
-                res.status(500).json({ message: 'Erreur lors de la sauvegarde du mot de passe' });
+                res.status(500).json({ error: err });
             }
         };
     }
