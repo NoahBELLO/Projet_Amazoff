@@ -1,7 +1,7 @@
-const UserModel = require('../models/userModel');
-const TokenModel = require("../models/tokenModel");
+const UserModel = require('../users/userModel');
+const TokenModel = require("./models/tokenModel");
 const crypto = require("crypto");
-const fonctions = require("../functions");
+const fonctions = require("../../../functions");
 
 let userModel; let tokenModel;
 

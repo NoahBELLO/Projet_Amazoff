@@ -1,5 +1,5 @@
-const TokenModel = require("../models/tokenModel");
-const fonctions = require("../functions");
+const TokenModel = require("../modules/users/models/tokenModel");
+const fonctions = require("../../functions");
 exports.authMiddleware = async (req, res, next) => {
     const token = req.headers.authorization?.split(' ')[1];
     if (!token) {

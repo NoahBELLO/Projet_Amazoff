@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const userController = require('../controllers/userController');
-const authMiddleware = require('../middleware/authMiddleware');
+const userController = require('../users/userController');
+const authMiddleware = require('../../middleware/authMiddleware');
 
 router.get("/bonjour", authMiddleware.authMiddleware, (req, res) => {
     res.send("Bonjour");
