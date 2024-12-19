@@ -1,0 +1,25 @@
+<button (click)="openModal()">Ouvrir la Modale</button>
+
+<div class="modal" *ngIf="isModalOpen">
+  <div class="modal-content">
+    <form #form="ngForm" (ngSubmit)="onSubmit(form)" >
+      <label>Nom</label>
+      <input name="name" required type="text" placeholder="Veuillez entrer votre Nom" ngModel required>
+
+      <label>Prénom</label>
+      <input name="fname" type="text" placeholder="Veuillez entrer votre Prénom" ngModel required>
+
+      <label>Login</label>
+      <input name="login" type="text" placeholder="Veuillez entrer un Login" >
+
+      <label>Mot de passe</label>
+      <input name="password" type="text" placeholder="Veuillez entrer un mot de passe" ngModel required>
+
+      <label>Confirmation du mot de passe</label>
+      <input name="confirmPassword" type="text" placeholder="Veuillez saisir à nouveau le mot de passe" ngModel required>
+
+      <button type="submit" [disabled]="!form.valid">S'inscrire</button>
+      <button (click)="closeModal()">Fermer</button>
+    </form>
+  </div>
+</div>
