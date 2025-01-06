@@ -5,6 +5,8 @@ const app = express();
 const port = 5000;
 const uri = process.env.MONGO_URI;
 
+const cors = require('cors');
+app.use(cors());// Permettre le CORS pour toutes les requêtes
 const { MongoClient, ServerApiVersion } = require('mongodb');
 const userRoutes = require('./src/modules/users/userRoutes');
 const userController = require('./src/modules/users/userController');
@@ -34,8 +36,12 @@ async function run() {
 
         const db_users = client.db("Utilisateurs");
         const collection_users = db_users.collection("Users");
-        userController.init(collection_users);
+        // userController.init(collection_users);
 
+        const collection_tokens = db_users.collection("Token");
+        userController.init(collection_users, collection_tokens);
+
+        app.set("tokensCollection", collection_tokens);
         app.use('/articles', articleRoutes);
         app.use('/users', userRoutes);
 

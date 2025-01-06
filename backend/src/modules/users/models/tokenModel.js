@@ -26,7 +26,8 @@ class TokenModel {
     }
 
     async getToken(id) {
-        return await this.collection.findOne({ userId: id });
+        console.log("dans la fonction");
+        return await this.collection.findOne({ userId: new ObjectId(id) });
     }
 
     // async verifToken(tokenExiste, res, req) {
