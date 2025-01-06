@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Connexion</title>
+    <link rel="stylesheet" href="./login.component.css">
+</head>
+
+<body>
+    <header>
+        <div class="brand">
+            <h1>AmazOff</h1>
+            <p>Moins de clics, plus de rires !</p>
+        </div>
+    </header>
+
+    <div class="logo-container">
+        <img src="logo.png" alt="Logo" class="logo-bag">
+    </div>
+<div class="login-container">
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
+        <div class="form-group pill">
+            <span class="icon">
+                <i class="fas fa-user"></i>
+            </span>
+            <input
+                type="text"
+                formControlName="login"
+                placeholder="Identifiant"
+                required
+            />
+        </div>
+        <div class="form-group pill">
+            <span class="icon">
+                <i class="fas fa-lock"></i>
+            </span>
+            <input
+                type="password"
+                formControlName="password"
+                placeholder="Mot de passe"
+                required
+            />
+        </div>
+        <button type="submit" [disabled]="loginForm.invalid">Connexion</button>
+
+        <div class="footer-links">
+            <a routerLink="/register">Créer un compte</a>
+            <a href="#">Besoin d'aide ?</a>
+        </div>
+    </form>
+</div>
+
+</body>
+
+</html>
