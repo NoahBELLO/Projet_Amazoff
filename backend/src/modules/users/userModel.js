@@ -1,6 +1,7 @@
 const { ObjectId } = require('mongodb');
 // const TokenModel = require('./users/token_model');
 const crypto = require('crypto');
+const fonction = require("../../../functions");
 
 class UserModel {
 	constructor(collection) {
@@ -20,6 +21,26 @@ class UserModel {
 		return user;
 	}
 
+	async getSalt(login) {
+        let utilisateur = await this.collection.findOne({ login: login });
+        if (utilisateur) {
+            return utilisateur.salt;
+        }
+        else {
+            return null;
+        }
+    }
+
+	async getByLoginReturnID(login){
+		let utilisateur = await this.collection.findOne({ login: login });
+        if (utilisateur) {
+            return utilisateur._id;
+        }
+        else {
+            return null;
+        }
+	}
+
 	async create(newUser) {
 		const result = await this.collection.insertOne(newUser);
 		return { _id: result.insertedId, ...newUser };
@@ -37,6 +58,44 @@ class UserModel {
 		const result = await this.collection.deleteOne({ _id: new ObjectId(id) });
 		return result.deletedCount > 0;
 	}
+
+	async getByIdentifiantAndPassword(login, password) {
+        let utilisateur = await this.collection.findOne({ login: login })
+        if (password === utilisateur.password) {
+            return { id: utilisateur._id, role: utilisateur.role };
+        }
+        else {
+            return null;
+        }
+    }
+
+	async createToken(req, res, datas) {
+		console.log("dans la fonction token");
+		console.log(datas.grainDeSel);
+        if (datas.grainDeSel) {
+            let hash = crypto.createHash('sha256').update(req.body.password + datas.grainDeSel).digest('hex');
+            const utilisateur = await this.getByIdentifiantAndPassword(datas.login, hash);
+            if (utilisateur) {
+                let donnee = fonction.createData(req);
+                let data = utilisateur.id + utilisateur.role + donnee.debutToken + donnee.finToken + donnee.empreinteOrdi;
+                let donnees = fonction.createNonce(data);
+                const newToken = {
+                    userId: utilisateur.id, role: utilisateur.role,
+                    issuedAt: donnee.debutToken, expiresIn: donnee.finToken,
+                    nonce: donnees.nonce, proofOfWork: donnees.proofOfWork,
+                    scope: ["write", "read"], issuer: "authServer",
+                    deviceFingerprint: donnee.empreinteOrdi
+                };
+                const createdToken = await datas.token.create(newToken);
+                //Hasher Token
+                res.status(201).json({ token: Buffer.from(JSON.stringify(createdToken)).toString('base64') });
+            } else {
+                res.status(401).json({ message: "Mot de passe incorrect" });
+            }
+        } else {
+            res.status(404).json({ message: "Utilisateur non inscrit" });
+        }
+    }
 
 	checkDatas(datas) {
 		const nouveauCompte = (datas.id === 0);

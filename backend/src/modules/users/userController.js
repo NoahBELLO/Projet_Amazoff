@@ -124,7 +124,10 @@ exports.getSalt = async (req, res) => {
 exports.login = async (req, res) => {
     try {
         login = req.body.login;
+        password = req.body.password;
         console.log(login);
+        console.log('Login reçu :', login);
+        console.log('Password reçu :', password);
         // password = req.body.password;
         const salt = await userModel.getSalt(login);
         console.log(salt);
@@ -150,7 +153,7 @@ exports.login = async (req, res) => {
         }
         else {
             console.log("Va créer un token");
-            let datas = { grainDeSel: salt, login: login, crypto: crypto, token: tokenModel, function: fonctions };
+            let datas = { grainDeSel: salt, login: login, token: tokenModel };
             const creationToken = await userModel.createToken(req, res, datas);
         }
         // if (salt) {
