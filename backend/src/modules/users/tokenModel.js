@@ -1,5 +1,5 @@
 const { ObjectId } = require("mongodb");
-const fonction = require("../functions");
+const fonction = require("../../../../functions");
 
 class TokenModel {
     constructor(collection2) {
