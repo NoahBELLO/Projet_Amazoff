@@ -10,8 +10,8 @@ app.use(cors());// Permettre le CORS pour toutes les requêtes
 const { MongoClient, ServerApiVersion } = require('mongodb');
 const userRoutes = require('./src/modules/users/userRoutes');
 const userController = require('./src/modules/users/userController');
-const articleRoutes = require('./src/modules/articles/articleRoutes');
-const articleController = require('./src/modules/articles/articleController');
+const articleRoutes = require('./src/modules/articles_python/articleRoutes');
+const articleController = require('./src/modules/articles_python/articleController');
 
 
 const client = new MongoClient(uri, {
