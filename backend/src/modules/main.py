@@ -3,11 +3,9 @@ from mongoengine import connect
 import sys
 import os
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-from flask_cors import CORS
-from modules.articles_python.articles_routes import bp
-
+from articles_python.articles_routes import bp
 app = Flask(__name__)
-CORS(app)
+
 
 # utilisation du blueprint
 app.register_blueprint(bp)
