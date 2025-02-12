@@ -4,12 +4,18 @@ WORKDIR /src
 
 COPY . /src
 
-# Ajoutez cette ligne pour définir le PYTHONPATH
 ENV PYTHONPATH=/src
 
-RUN pip install -r requirements.txt
+RUN python -m venv venv
+RUN . venv/bin/activate
 
-CMD ["python", "src/modules/main.py"]
+# installer les dépendances dans l'environnement virtuel
+RUN . venv/bin/activate && pip install --upgrade pip && pip install -r requirements.txt
+
+# Vérifiez que mongoengine est bien installé
+RUN . venv/bin/activate && pip list | grep mongoengine
+
+CMD ["venv/bin/python", "src/modules/main.py"]
 
 #commande de rebuild + launch
 #docker build -t articles-python . && docker run --rm -p 6001:6001 --name articles articles-python
@@ -29,3 +35,5 @@ CMD ["python", "src/modules/main.py"]
 #rentrer dans le container 
 # docker exec -it <container_id ou nom> sh
 # docker exec -it articles sh
+
+#py -m pip install (pour les librairies)
