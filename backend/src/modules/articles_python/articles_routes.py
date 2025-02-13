@@ -1,12 +1,11 @@
 from flask import Blueprint, jsonify, request
 from loguru import logger
 from articles_python.articles_model import Article
+from tools.customeException import ErrorExc
 
 bp = Blueprint("articles", __name__, url_prefix="/articles")
 
-# .objects(champs=valeur)       itère sur les pages qui on valeur comme champs
-# .save()                       perform an insert or update si ça existe
-# .delete()                     supprime 
+
 #https://docs.mongoengine.org/guide/querying.html
 # ne – not equal to
 # lt – less than
@@ -42,8 +41,19 @@ def get_articles():
     return jsonify({"articles": [article.to_dict() for article in articles]})
 
 @bp.route("/<article_id>", methods=["GET"])
-def get_article(article_id):
+def get_single_article(article_id):
     article = Article.objects(id=article_id).first() #.first pour récup le premier de la liste
     if not article:
         return jsonify({"error": "Article not found"}), 404
     return jsonify(article.to_dict())
+
+
+@bp.route("/create", methods=["POST"])
+def create_article():
+    try:
+        datas = request.form.to_dict() #request.form avec urlencoded, sinon request.json quand il y aura le front
+        db = Article()
+        error, rs = db.save_data(datas)
+        return jsonify({"error": not error, "rs": {"id": rs}})
+    except ErrorExc as e:
+        return jsonify({"error": True, "rs": str(e)})

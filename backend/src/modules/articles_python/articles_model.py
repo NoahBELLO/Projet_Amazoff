@@ -1,5 +1,7 @@
 from mongoengine import Document, StringField, IntField, DateTimeField, FloatField
 from datetime import datetime
+from tools.customeException import ErrorExc
+from loguru import logger
 
 #liste des fields utiles:
 # URLField      pour les URL
@@ -9,8 +11,12 @@ from datetime import datetime
 #nouvel_objet = Class(champs1 = "valeur", champ2= "valeur2")
 #nouvel_objet.champs1 == "valeur"
 
+# .objects(champs=valeur)       itère sur les pages qui on valeur comme champs
+# .save()                       perform an insert or update si ça existe
+# .delete()                     supprime 
 
 class Article(Document): 
+    id = 0
     name = StringField(required=True, max_length=200)
     prix = FloatField(required=True)
     reduction = IntField(required=False)
@@ -28,3 +34,11 @@ class Article(Document):
             "reduction": self.reduction,
             "description": self.description
         }
+    
+    def save_data(self, datas):
+        try:
+            article = Article(**datas)
+            article.save()
+            return False, self.id
+        except Exception as e: 
+            raise ErrorExc(f"ça n'a pas marché : {str(e)}")
