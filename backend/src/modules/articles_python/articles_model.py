@@ -1,5 +1,5 @@
 from mongoengine import Document, StringField, IntField, DateTimeField, FloatField
-from datetime import datetime
+from bson import ObjectId
 from tools.customeException import ErrorExc
 from loguru import logger
 
@@ -40,5 +40,14 @@ class Article(Document):
             article = Article(**datas)
             article.save()
             return False, self.id
+        except Exception as e: 
+            raise ErrorExc(f"ça n'a pas marché : {str(e)}")
+    
+    def update_data(self, datas, id_article):
+        try:
+            #la collection (l'id de l'objet).a update(**= clé valeur /datas = ses données à update)
+            result = Article.objects(id=ObjectId(id_article)).update_one(**datas)
+            if result:
+                return False, self.id
         except Exception as e: 
             raise ErrorExc(f"ça n'a pas marché : {str(e)}")

@@ -57,3 +57,14 @@ def create_article():
         return jsonify({"error": not error, "rs": {"id": rs}})
     except ErrorExc as e:
         return jsonify({"error": True, "rs": str(e)})
+
+@bp.route("/patch/<string:id_article>", methods=["PATCH"])
+def patch_article(id_article):
+    try:
+        datas = request.form.to_dict(id_article) 
+        logger.critical(datas)
+        db = Article()
+        error, rs = db.update_data(datas, id_article)
+        return jsonify({"error": not error, "rs": {"id": rs}})
+    except ErrorExc as e:
+        return jsonify({"error": True, "rs": str(e)})
