@@ -17,9 +17,5 @@ except Exception as e:
     print(f"Erreur de connexion MongoDB : {e}")
 
 
-@app.route('/')
-def home():
-    return {"message": "Hello from Flask!"}
-
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=6001, debug=True) #debug pour reset à chaque modification de code

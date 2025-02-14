@@ -34,8 +34,25 @@ class Article(Document):
             "description": self.description
         }
     
+    def check_fields(self, datas):
+        if "name" not in datas or len(datas['name'].strip()) == 0:
+            raise ErrorExc(f"Veuillez définir un nom d'article.")
+        
+        if "prix" not in datas or float(datas['prix']) == 0 :
+            raise ErrorExc(f"Veuillez définir un prix.")
+        
+        if "description" not in datas or len(datas['description'].strip()) == 0:
+            raise ErrorExc(f"Veuillez définir une description.")
+        
+        if "reduction" in datas:
+            if float(datas['reduction']):
+                raise ErrorExc(f"Veuillez définir une réduction valide (doit être un nombre).")
+
+
+
     def save_data(self, datas):
         try:
+            self.check_fields(datas)
             article = Article(**datas)
             article.save()
             return False, str(article.id) #renvoie false et l'id en string (et non json)
@@ -44,6 +61,7 @@ class Article(Document):
     
     def update_data(self, datas, id_article):
         try:
+            self.check_fields(datas)
             #la collection (l'id de l'objet).a update(**= clé valeur /datas = ses données à update)
             result = Article.objects(id=ObjectId(id_article)).update_one(**datas)
             if result:
