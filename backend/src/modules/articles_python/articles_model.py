@@ -16,7 +16,6 @@ from loguru import logger
 # .delete()                     supprime 
 
 class Article(Document): 
-    id = 0
     name = StringField(required=True, max_length=200)
     prix = FloatField(required=True)
     reduction = IntField(required=False)
@@ -39,7 +38,7 @@ class Article(Document):
         try:
             article = Article(**datas)
             article.save()
-            return False, self.id
+            return False, str(article.id) #renvoie false et l'id en string (et non json)
         except Exception as e: 
             raise ErrorExc(f"ça n'a pas marché : {str(e)}")
     
@@ -48,6 +47,17 @@ class Article(Document):
             #la collection (l'id de l'objet).a update(**= clé valeur /datas = ses données à update)
             result = Article.objects(id=ObjectId(id_article)).update_one(**datas)
             if result:
-                return False, self.id
+                return False, str(result.id)
+        except Exception as e: 
+            raise ErrorExc(f"ça n'a pas marché : {str(e)}")
+    
+    def delete_data(self, id_article):
+        try:
+            logger.critical(id_article)
+            if not ObjectId.is_valid(id_article):
+                raise ErrorExc("ID invalide")
+            result = Article.objects(id=ObjectId(id_article)).delete()
+            if result:
+                return False
         except Exception as e: 
             raise ErrorExc(f"ça n'a pas marché : {str(e)}")

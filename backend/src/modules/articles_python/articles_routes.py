@@ -34,12 +34,13 @@ bp = Blueprint("articles", __name__, url_prefix="/articles")
 # match – performs an $elemMatch so you can match an entire document within an array
 
 
-
+#route get all articles
 @bp.route("/", methods=["GET"])
 def get_articles():
     articles = Article.objects()  # Récupérer tous les articles avec .objects
     return jsonify({"articles": [article.to_dict() for article in articles]})
 
+#route get single article
 @bp.route("/<article_id>", methods=["GET"])
 def get_single_article(article_id):
     article = Article.objects(id=article_id).first() #.first pour récup le premier de la liste
@@ -47,7 +48,7 @@ def get_single_article(article_id):
         return jsonify({"error": "Article not found"}), 404
     return jsonify(article.to_dict())
 
-
+#route create
 @bp.route("/create", methods=["POST"])
 def create_article():
     try:
@@ -58,13 +59,23 @@ def create_article():
     except ErrorExc as e:
         return jsonify({"error": True, "rs": str(e)})
 
+#route patch
 @bp.route("/patch/<string:id_article>", methods=["PATCH"])
 def patch_article(id_article):
     try:
         datas = request.form.to_dict(id_article) 
-        logger.critical(datas)
         db = Article()
         error, rs = db.update_data(datas, id_article)
         return jsonify({"error": not error, "rs": {"id": rs}})
+    except ErrorExc as e:
+        return jsonify({"error": True, "rs": str(e)})
+    
+#route delete
+@bp.route("/delete/<string:id_article>", methods=["DELETE"])
+def delete_article(id_article):
+    try:
+        db = Article()
+        rs = db.delete_data(id_article)
+        return jsonify(rs)
     except ErrorExc as e:
         return jsonify({"error": True, "rs": str(e)})
