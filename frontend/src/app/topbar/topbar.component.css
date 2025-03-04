@@ -6,18 +6,25 @@ dans angular.json, rajouter à Styles:
 
 #banniere {
     background-color: #c08f69;
-    width: calc(100% - 250px); /* Largeur réduite pour tenir compte de la sidebar */
-    position: fixed;
-    top: 0;
     left: 250px; /* Commence après la sidebar */
     display: flex;
     justify-content: space-between;
-    z-index: 1000; /* Assurez-vous que la top bar est au-dessus d'autres éléments */
 }
 
 #accueil {
+    display: flex;
+    flex-direction: row;
     text-align: center;
     margin-left: 20px;
+}
+
+#logo{
+    width: 75px;
+}
+
+.welcome{
+    padding-left: 20px;
+    padding-right: 20px;
 }
 
 .menu {
@@ -25,6 +32,8 @@ dans angular.json, rajouter à Styles:
     flex-direction: row-reverse;
     align-items: center;
     margin: 10px;
+    width: 700px;
+    
 }
 
 .large-icon {
@@ -37,7 +46,8 @@ dans angular.json, rajouter à Styles:
     align-items: center;
     color: #FFD700;
     background-color: black;
-    margin-left: 10px;
+    margin-left: 5px;
+    margin-right: 5px;  
 }
 
 .user-info {
@@ -45,9 +55,43 @@ dans angular.json, rajouter à Styles:
     align-items: center;
     background-color: black;
     border-radius: 30px;
+    margin-left: 5px;
+    margin-right: 5px;
 }
 
 .user-info label {
     padding-right: 15px;
+
     color: #FFD700;
+}
+
+#recherche {
+    height: 50px;
+    width: 300px;
+    min-width: 200px;
+    border-radius: 25px; /* Bordures arrondies */
+    border: 2px solid #FFD700; /* Bordure dorée */
+    padding-left: 40px; /* Espace pour l'icône */
+    font-size: 16px;
+    background-color: #fff; /* Fond blanc */
+    color: #333; /* Couleur du texte */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Ombre subtile */
+    transition: border-color 0.3s ease, box-shadow 0.3s ease; /* Transition pour les effets */
+}
+
+#recherche:focus {
+    border-color: #c08f69; /* Changement de couleur de bordure au focus */
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2); /* Ombre plus prononcée au focus */
+    outline: none; /* Supprimer le contour par défaut */
+}
+
+.menu {
+    position: relative;
+}
+
+.fa-search {
+    position: absolute;
+    left: 350px; /* Ajustez cette valeur selon la position souhaitée */
+    top: 3px;
+    pointer-events: none; /* Empêche l'icône de capturer les clics */
 }

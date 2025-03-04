@@ -1,0 +1,10 @@
+.div_bars{
+    display: flex;
+    flex-direction: row ;
+}
+.liste_articles{
+display:flex;
+flex-direction: row;
+justify-content: flex-start;
+align-items: flex-start;
+}
