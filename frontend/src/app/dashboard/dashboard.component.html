@@ -1,8 +1,11 @@
 <app-topbar></app-topbar>
 <div class="dashboard-content">
-    <!-- Contenu principal de la page dashboard -->
     <p>Bienvenue sur votre tableau de bord !</p>
 </div>
 <div class="liste_articles">
-    <app-article-page-component></app-article-page-component>
+    <app-article-page-component
+        *ngFor="let article of articles"
+        [article]="article">
+    </app-article-page-component>
 </div>
+

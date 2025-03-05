@@ -64,6 +64,11 @@ dans angular.json, rajouter à Styles:
 
     color: #FFD700;
 }
+.nav-search {
+    display: flex;
+    align-items: center;
+    position: relative; /* Positionnement relatif pour le conteneur */
+}
 
 #recherche {
     height: 50px;
@@ -71,7 +76,8 @@ dans angular.json, rajouter à Styles:
     min-width: 200px;
     border-radius: 25px; /* Bordures arrondies */
     border: 2px solid #FFD700; /* Bordure dorée */
-    padding-left: 40px; /* Espace pour l'icône */
+    padding-left: 10px; /* Espace à gauche pour le texte */
+    padding-right: 50px; /* Espace pour l'icône à droite */
     font-size: 16px;
     background-color: #fff; /* Fond blanc */
     color: #333; /* Couleur du texte */
@@ -85,13 +91,22 @@ dans angular.json, rajouter à Styles:
     outline: none; /* Supprimer le contour par défaut */
 }
 
+.fa-search {
+    font-size: 20px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%; /* Icône ronde */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #FFD700;
+    background-color: black;
+    position: absolute; /* Positionnement absolu */
+    right: 10px; /* Position à droite de la barre de recherche */
+    top: 50%;
+    transform: translateY(-50%); /* Centrage vertical */
+    z-index: 1; /* Assure que l'icône est au-dessus de la barre de recherche */
+}
 .menu {
     position: relative;
-}
-
-.fa-search {
-    position: absolute;
-    left: 350px; /* Ajustez cette valeur selon la position souhaitée */
-    top: 3px;
-    pointer-events: none; /* Empêche l'icône de capturer les clics */
 }
