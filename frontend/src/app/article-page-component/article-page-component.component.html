@@ -6,12 +6,12 @@
         </button>
     </div>
     <div class="picture">
-        <img class="img" src="./assets/{{ article.image }}.png" alt="Un teeshirt orange">
+        <img class="img" src="./assets/{{ article.image }}.png" alt="">
     </div>
     <div class="footer_article_component">
         <label class="title">{{ article.name }}</label>
         <div class="stars">
-        <i *ngFor="let star of starsArray(article.stars)" [ngClass]="star"></i>
+        <i *ngFor="let star of stars" [ngClass]="star"></i>
         </div>
     </div>
 </div>

@@ -9,6 +9,7 @@ dans angular.json, rajouter à Styles:
     display: flex;
     justify-content: space-between;
     min-width: 1135px;
+    max-height: 86px;
 }
 
 #accueil {
@@ -16,15 +17,17 @@ dans angular.json, rajouter à Styles:
     flex-direction: row;
     text-align: center;
     margin-left: 20px;
+    max-height: 86px;
 }
 
 #logo{
     width: 75px;
+    max-height: 86px;
 }
 
 .welcome{
-    padding-left: 20px;
-    padding-right: 20px;
+    max-height: 86px;
+    min-width: 292px;
 }
 
 .menu {
@@ -32,8 +35,8 @@ dans angular.json, rajouter à Styles:
     flex-direction: row-reverse;
     align-items: center;
     margin: 10px;
-    width: 700px;
-    
+    width: 729px;
+    max-height: 86px;   
 }
 
 .large-icon {
@@ -61,7 +64,8 @@ dans angular.json, rajouter à Styles:
 
 .user-info label {
     padding-right: 15px;
-
+    min-width: 63px;
+    max-height: 50px;
     color: #FFD700;
 }
 .nav-search {

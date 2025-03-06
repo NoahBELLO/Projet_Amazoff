@@ -35,7 +35,7 @@
 img {
     width: 125px;
     height: 125px;
-    object-fit: cover; /* Assure que l'image couvre l'espace disponible */
+    object-fit:contain; /* Assure que l'image couvre l'espace disponible */
     border-radius: 5px;
 }
 
@@ -49,12 +49,6 @@ img {
     font-size: 16px;
     font-weight: bold;
     margin-bottom: 5px;
-}
-
-.stars {
-    display: flex;
-    justify-content: center;
-    color: #f39c12; /* Couleur des étoiles */
 }
 
 button {

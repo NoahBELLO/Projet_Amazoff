@@ -6,3 +6,10 @@
     justify-content: flex-start; 
     align-items: flex-start;
 }
+
+/* Couleur des étoiles */
+.stars {
+    display: flex;
+    justify-content: center;
+    color: #f39c12; 
+}
