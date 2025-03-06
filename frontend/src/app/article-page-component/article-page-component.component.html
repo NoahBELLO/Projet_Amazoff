@@ -1,4 +1,4 @@
-<div class="article_component">
+<div class="article_component" [routerLink]="['/article', article.id]">
     <div class="header_article_component">
         <label class="prix">{{ article.prix }}€</label>
         <button class="options-button">
@@ -14,4 +14,4 @@
         <i *ngFor="let star of starsArray(article.stars)" [ngClass]="star"></i>
         </div>
     </div>
-    </div>
+</div>

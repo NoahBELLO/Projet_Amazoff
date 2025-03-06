@@ -8,6 +8,7 @@ import { ModaleInscriptionComponent } from './modale-inscription/modale-inscript
 import { TopbarComponent } from './topbar/topbar.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 
+
 @NgModule({
   declarations: [],
   imports: [
@@ -18,7 +19,7 @@ import { DashboardComponent } from './dashboard/dashboard.component';
     DashboardComponent,
     BrowserModule,
     ReactiveFormsModule,
-    HttpClientModule
+    HttpClientModule,
   ],
   providers: [],
   bootstrap: []

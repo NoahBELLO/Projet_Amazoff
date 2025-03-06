@@ -10,6 +10,7 @@
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Ombre pour plus de profondeur */
     padding: 10px;
     box-sizing: border-box;
+    cursor: pointer;
 }
 
 .header_article_component {

@@ -1,15 +1,16 @@
 import { NgClass, NgFor } from '@angular/common';
 import { Component, Input } from '@angular/core';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-article-page-component',
-  imports: [NgFor, NgClass],
+  imports: [NgFor, NgClass, RouterLink],
   templateUrl: './article-page-component.component.html',
   styleUrl: './article-page-component.component.css'
 })
 export class ArticlePageComponentComponent {
   //le ! indique que la variable sera initialisée avant d'être utilisée
-    @Input() article!: { name: string; image:string, prix: number; stars: number };
+    @Input() article!: { id: string, name: string; image:string, prix: number; stars: number };
 
     //fonction pour préparer le score de l'article
     starsArray(etoiles: number): string[] {
@@ -18,15 +19,12 @@ export class ArticlePageComponentComponent {
       const etoiles_vides: number = 5 - etoiles_pleines - (demi_etoile ? 1 : 0); //vérifie si demi étoile
     
       let rating: string[] = [];
-      // ajoute les étoiles pleines
       for (let i = 0; i < etoiles_pleines; i++) {
         rating.push("fas fa-star");
       }
-      // ajoute une demi-étoile si nécessaire
       if (demi_etoile) {
         rating.push("fas fa-star-half-alt");
       }
-      // ajoute les étoiles vides
       for (let i = 0; i < etoiles_vides; i++) {
         rating.push("far fa-star");
       }
