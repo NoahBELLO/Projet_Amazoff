@@ -12,11 +12,25 @@ export class ArticlePageComponentComponent {
     @Input() article!: { name: string; image:string, prix: number; stars: number };
 
     //fonction pour préparer le score de l'article
-    starsArray(etoiles_pleines: number): string[]{
-      let etoiles_vides = 5 - etoiles_pleines
-      const pleines = Array(etoiles_pleines).fill("fas fa-star")
-      const vides =  Array(etoiles_vides).fill("far fa-star")
-      //concatène les 2 tableaux
-      return pleines.concat(vides)
+    starsArray(etoiles: number): string[] {
+      const etoiles_pleines: number = Math.floor(etoiles); //arrondi à l'entier inférieur
+      const demi_etoile: boolean = (etoiles % 1) >= 0.5; //vérifie si supérieur à .5
+      const etoiles_vides: number = 5 - etoiles_pleines - (demi_etoile ? 1 : 0); //vérifie si demi étoile
+    
+      let rating: string[] = [];
+      // ajoute les étoiles pleines
+      for (let i = 0; i < etoiles_pleines; i++) {
+        rating.push("fas fa-star");
+      }
+      // ajoute une demi-étoile si nécessaire
+      if (demi_etoile) {
+        rating.push("fas fa-star-half-alt");
+      }
+      // ajoute les étoiles vides
+      for (let i = 0; i < etoiles_vides; i++) {
+        rating.push("far fa-star");
+      }
+    
+      return rating;
     }
 }

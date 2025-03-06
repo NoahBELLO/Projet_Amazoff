@@ -6,9 +6,9 @@ dans angular.json, rajouter à Styles:
 
 #banniere {
     background-color: #c08f69;
-    left: 250px; /* Commence après la sidebar */
     display: flex;
     justify-content: space-between;
+    min-width: 1135px;
 }
 
 #accueil {
