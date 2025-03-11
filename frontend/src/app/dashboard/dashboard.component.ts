@@ -14,7 +14,7 @@ import { ArticleService } from '../service/article.service';
 })
 export class DashboardComponent implements OnInit{
   constructor(private articleService: ArticleService){}
-  articles: { id: string, name: string; image: string, prix: number; stars: number }[] = [];
+  articles: { id: string, name: string; image: string, prix: number; stars: number, reduction: number, description: string }[] = [];
 
   ngOnInit(){
     this.articles = this.articleService.getArticles()
