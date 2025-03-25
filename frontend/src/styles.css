@@ -1,10 +1,12 @@
-/* You can add global styles to this file, and also import other style files */
+/* à rajouter dans angular.json à styles"node_modules/@fortawesome/fontawesome-free/css/all.css" */
+
 .liste_articles {
     display: flex;
     flex-wrap: wrap; 
     gap: 10px; 
     justify-content: flex-start; 
     align-items: flex-start;
+    padding: 10px;
 }
 
 /* Couleur des étoiles */

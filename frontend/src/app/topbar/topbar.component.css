@@ -61,6 +61,12 @@ dans angular.json, rajouter à Styles:
     margin-left: 5px;
     margin-right: 5px;
 }
+.user-info:hover,
+label,
+.large-icon,
+#logo{
+    cursor: pointer;
+}
 
 .user-info label {
     padding-right: 15px;
