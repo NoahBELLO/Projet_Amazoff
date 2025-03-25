@@ -35,11 +35,18 @@ class Article(Document):
         }
     
     def check_fields(self, datas):
+        logger.critical("route check_fields")
         if "name" not in datas or len(datas['name'].strip()) == 0:
             raise ErrorExc(f"Veuillez définir un nom d'article.")
         
+        if "image" not in datas or len(datas['image'].strip()) == 0:
+            raise ErrorExc(f"Veuillez choisir une image.")
+        
         if "prix" not in datas or float(datas['prix']) == 0 :
             raise ErrorExc(f"Veuillez définir un prix.")
+        
+        if "stock" not in datas or int(datas['stock']) == 0 :
+            raise ErrorExc(f"Veuillez définir le stock.")
         
         if "description" not in datas or len(datas['description'].strip()) == 0:
             raise ErrorExc(f"Veuillez définir une description.")

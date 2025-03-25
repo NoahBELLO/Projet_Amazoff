@@ -1,0 +1,28 @@
+.sections{
+    display:flex;
+    flex-direction: row;
+    border-width: 5px;
+    border-color: black;
+    flex-wrap: wrap;
+    padding: 10px;
+}
+
+.section{
+    background-color: rgb(209, 235, 236);
+    border: solid;
+    border-width: 2px;
+    border-color: black;
+    border-radius: 15px;
+    width: 275px;
+    height: 125px;
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 10px;
+}
+.section:hover{
+    cursor:pointer;
+}
+
+
