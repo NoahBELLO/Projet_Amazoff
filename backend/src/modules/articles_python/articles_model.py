@@ -18,10 +18,12 @@ from loguru import logger
 class Article(Document): 
     name = StringField(required=True, max_length=200)
     prix = FloatField(required=True)
+    image = StringField(required=False)
     reduction = IntField(required=False)
     description = StringField(required=True, max_length=200)
     prix_kg = FloatField(required=False)
     quantite = FloatField(required=True)
+    stars = IntField(required=False)
 
     meta = {'collection': 'article'}  # Nom exact de la collection
 
