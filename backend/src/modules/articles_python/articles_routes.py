@@ -37,7 +37,9 @@ bp = Blueprint("articles", __name__, url_prefix="/articles")
 #route get all articles
 @bp.route("/", methods=["GET"])
 def get_articles():
+    logger.critical("get all articles")
     articles = Article.objects()  # Récupérer tous les articles avec .objects
+    logger.critical({"articles": [article.to_dict() for article in articles]})
     return jsonify({"articles": [article.to_dict() for article in articles]})
 
 #route get single article
@@ -52,7 +54,7 @@ def get_single_article(article_id):
 @bp.route("/create", methods=["POST"])
 def create_article():
     try:
-        datas = request.form.to_dict() #request.form avec urlencoded, sinon request.json quand il y aura le front
+        datas = request.json #request.form avec urlencoded, sinon request.json quand il y aura le front
         db = Article()
         error, rs = db.save_data(datas)
         return jsonify({"error": not error, "rs": {"id": rs}})

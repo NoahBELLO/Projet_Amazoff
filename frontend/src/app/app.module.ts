@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { LoginComponent } from './login/login.component';
 import { AppComponent } from './app.component';
@@ -16,10 +16,11 @@ import { ArticleCreatePageComponent } from './article-create-page/article-create
   imports: [
     AppComponent,
     LoginComponent,
+    BrowserModule,
+    FormsModule,
     ModaleInscriptionComponent,
     TopbarComponent,
     DashboardComponent,
-    BrowserModule,
     ReactiveFormsModule,
     UserAccountPageComponent,
     ArticleCreatePageComponent,

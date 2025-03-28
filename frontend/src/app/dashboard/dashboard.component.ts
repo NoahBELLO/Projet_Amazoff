@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { TopbarComponent} from "../topbar/topbar.component";
 import { ArticlePageComponentComponent } from "../article-page-component/article-page-component.component";
 import { NgFor } from '@angular/common';
@@ -13,11 +13,14 @@ import { ArticleService } from '../service/article.service';
     NgFor]
 })
 export class DashboardComponent implements OnInit{
+  @Input() articles: any;
+  @Input() stars: any;
+
   constructor(private articleService: ArticleService){}
-  articles: { id: string, name: string; image: string, prix: number; stars: number, reduction: number, description: string }[] = [];
 
   ngOnInit(){
-    this.articles = this.articleService.getArticles()
+    this.articleService.fetchAndStoreArticles();
+    this.articles = this.articleService.getStoredArticles();    
   }
 
 

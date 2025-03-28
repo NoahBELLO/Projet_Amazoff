@@ -25,9 +25,9 @@ export class ArticleVueComponent implements OnInit {
     this.route.paramMap.subscribe(params => {
       const id = params.get('id');
       if (id) {
-        this.article = this.articleService.getArticleByObjectId(id);
-        this.stars = this.articleService.starsArray(this.article.stars);
-        this.quantitees = this.articleService.getStock(this.article.stock);
+        // this.article = this.articleService.getArticleByObjectId(id);
+        // this.stars = this.articleService.starsArray(this.article.stars);
+        // this.quantitees = this.articleService.getStock(this.article.stock);
       }
     });
   }

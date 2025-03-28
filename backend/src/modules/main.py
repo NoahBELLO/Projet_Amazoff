@@ -5,10 +5,13 @@ import sys
 import os
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 from articles_python.articles_routes import bp
+from flask_cors import CORS
 app = Flask(__name__)
 
 #  cd backend\src\modules => python main.py
 app.register_blueprint(bp)
+#Pour accepter les requêtes de pré-vol sinon pas de connexion entre front et back
+CORS(app, resources={r"/articles/*": {"origins": "*"}}) 
 
 # Connexion MongoDB
 try:

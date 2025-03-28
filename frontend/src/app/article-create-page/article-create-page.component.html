@@ -1,46 +1,42 @@
 <app-topbar></app-topbar>
-<form>
-    <fieldset>
-        <legend>Ajouter un Article au Magasin</legend>
-
-        <div class="nameEtImage">
-            <div class="form-group">
-                <label for="article-name">Nom de l'article:</label>
-                <input type="text" id="article-name" class="form-control">
+<form (ngSubmit)="onClickSave()">
+        <div class="formulaire">
+            <div class="nameDescriptionPrix">
+                <div class="form-left">
+                    <label for="article-name">Nom de l'article:</label>
+                    <input type="text" id="article-name" class="input" [(ngModel)]="articleDatas.name" name="name">
+                </div>
+                <div class="form-left">
+                    <label for="article-description input">Description de l'article:</label>
+                    <input type="text" id="article-description" class="input" [(ngModel)]="articleDatas.description" name="description">
+                </div>
+                <div class="form-left">
+                    <label for="article-price">Prix:</label>
+                    <input type="number" id="article-price" class="input" [(ngModel)]="articleDatas.prix" name="prix">
+                </div>
+                <div class="form-left">
+                    <label for="article-reduction">Réduction:</label>
+                    <input type="number" id="article-reduction" class="input" [(ngModel)]="articleDatas.reduction" name="reduction">
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Ajouter l'Article</button>
+                    <button type="reset" class="btn btn-secondary">Annuler</button>
+                </div>
             </div>
-            <div class="form-group">
-                <label for="article-image">Ajouter une image:</label>
-                <input type="file" id="article-image" class="form-control" (change)="onFileChange($event)">
-                <img id="image-preview" src="" alt="Image Preview" style="display:none; max-width: 100px; margin-top: 10px;">
+
+            <div class="imgDescriptionEtQuantite">
+                <div class="form-right">
+                    <label for="article-image">Ajouter une image:</label>
+                    <input type="file" id="article-image" class="input" (change)="onFileChange($event)" [(ngModel)]="articleDatas.image" name="image">
+                    <img id="image-preview" src="" alt="Image Preview"
+                        style="display:none; max-width: 100px; margin-top: 10px;">
+                </div>
+
+                <div class="form-right">
+                    <label for="article-quantity">Quantité:</label>
+                    <input type="number" id="article-quantity" class="input" [(ngModel)]="articleDatas.quantite" name="quantite">
+                </div>
             </div>
         </div>
-
-        <div class="form-alone">
-            <label for="article-description">Description de l'article:</label>
-            <input type="text" id="article-description" class="form-control">
-
-        </div>
-
-        <div class="form-alone">
-            <label for="article-quantity">Quantité:</label>
-            <input type="number" id="article-quantity" class="form-control">
-        </div>
-
-        <div class="reductionEtDescription">
-            <div class="form-group">
-                <label for="article-price">Prix:</label>
-                <input type="number" id="article-price" class="form-control">
-
-            </div>
-            <div class="form-group">
-                <label for="article-reduction">Réduction:</label>
-                <input type="number" id="article-reduction" class="form-control">
-            </div>
-        </div>
-
-        <div class="form-actions">
-            <button type="submit" class="btn btn-primary">Ajouter l'Article</button>
-            <button type="reset" class="btn btn-secondary">Annuler</button>
-        </div>
-    </fieldset>
+        
 </form>

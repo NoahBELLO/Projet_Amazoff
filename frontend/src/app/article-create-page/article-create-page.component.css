@@ -1,49 +1,43 @@
-fieldset{
+.formulaire {
     display: flex;
     flex-direction: row;
-    flex-wrap: wrap;
+    flex-wrap: wrap; /* Permet aux éléments de passer à la ligne suivante si nécessaire */
+    height: 100vh;
+    margin: 20px;
+    padding: 20px;
+    justify-content: space-between; /* Espacement entre les éléments enfants */
 }
 
-.nameEtImage{
+.nameDescriptionPrix,
+.imgDescriptionEtQuantite {
     display: flex;
-    flex-direction: row;
-    width: 100%;
+    flex-direction: column;
+    width: 48%; /* Utilisez une largeur relative */
+    margin: 1%; /* Ajoutez une marge pour éviter le chevauchement */
 }
 
-.reductionEtDescription{
-    display: flex;
-    flex-direction: row;
-    width: 100%;
-}
-
-
-.form-group {
+.form-left,
+.form-right {
     display: flex;
     flex-direction: column;
     margin-bottom: 15px;
-    width: 50%;
 }
 
-.form-alone{
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-}
-
-.form-control {
-    width: 20%;
+.input {
     padding: 8px;
     margin-top: 5px;
     margin-bottom: 10px;
     border: 1px solid #ccc;
     border-radius: 4px;
+    width: 100%; /* Largeur relative pour s'adapter à la taille du conteneur */
+    box-sizing: border-box; /* Inclut le padding et la bordure dans la largeur totale */
 }
 
 .form-actions {
     display: flex;
     justify-content: space-between;
+    width: 100%; /* Largeur relative pour s'adapter à la taille du conteneur */
 }
-
 
 .btn {
     padding: 10px 20px;

@@ -21,6 +21,7 @@ class Article(Document):
     reduction = IntField(required=False)
     description = StringField(required=True, max_length=200)
     prix_kg = FloatField(required=False)
+    quantite = FloatField(required=True)
 
     meta = {'collection': 'article'}  # Nom exact de la collection
 
@@ -35,26 +36,25 @@ class Article(Document):
         }
     
     def check_fields(self, datas):
-        logger.critical("route check_fields")
+        logger.critical(datas)
         if "name" not in datas or len(datas['name'].strip()) == 0:
             raise ErrorExc(f"Veuillez définir un nom d'article.")
         
-        if "image" not in datas or len(datas['image'].strip()) == 0:
-            raise ErrorExc(f"Veuillez choisir une image.")
+        # if "image" not in datas or len(datas['image'].strip()) == 0:
+        #     raise ErrorExc(f"Veuillez choisir une image.")
         
         if "prix" not in datas or float(datas['prix']) == 0 :
             raise ErrorExc(f"Veuillez définir un prix.")
         
-        if "stock" not in datas or int(datas['stock']) == 0 :
+        if "quantite" not in datas or int(datas['quantite']) == 0 :
             raise ErrorExc(f"Veuillez définir le stock.")
         
         if "description" not in datas or len(datas['description'].strip()) == 0:
             raise ErrorExc(f"Veuillez définir une description.")
         
-        if "reduction" in datas:
-            if float(datas['reduction']):
-                raise ErrorExc(f"Veuillez définir une réduction valide (doit être un nombre).")
-
+        # if "reduction" in datas:
+        #     if float(datas['reduction']):
+        #         raise ErrorExc(f"Veuillez définir une réduction valide (doit être un nombre).")
 
 
     def save_data(self, datas):
@@ -64,7 +64,7 @@ class Article(Document):
             article.save()
             return False, str(article.id) #renvoie false et l'id en string (et non json)
         except Exception as e: 
-            raise ErrorExc(f"ça n'a pas marché : {str(e)}")
+            raise ErrorExc(f"{str(e)}")
     
     def update_data(self, datas, id_article):
         try:
