@@ -33,12 +33,15 @@ class Article(Document):
             "id": str(self.id),  # Convertir l'ObjectId en string
             "name": self.name,
             "prix": self.prix,
+            "image": self.image,
             "reduction": self.reduction,
-            "description": self.description
+            "description": self.description,
+            "prix_kg": self.prix_kg,
+            "quantite": self.quantite,
+            "stars": self.stars,
         }
     
     def check_fields(self, datas):
-        logger.critical(datas)
         if "name" not in datas or len(datas['name'].strip()) == 0:
             raise ErrorExc(f"Veuillez définir un nom d'article.")
         
