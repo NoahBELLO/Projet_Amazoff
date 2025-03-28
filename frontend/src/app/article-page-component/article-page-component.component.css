@@ -12,6 +12,10 @@
     box-sizing: border-box;
     cursor: pointer;
 }
+.liste_articles{
+    display: flex;
+    flex-direction: row ;
+}
 
 .header_article_component {
     display: flex;

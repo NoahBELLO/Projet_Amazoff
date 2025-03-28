@@ -2,6 +2,7 @@ import { NgClass, NgFor } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
 import { ArticleService } from '../service/article.service';
 import { RouterLink } from '@angular/router';
+import { Article } from '../service/article.model';
 
 @Component({
   selector: 'app-article-page-component',
@@ -10,32 +11,27 @@ import { RouterLink } from '@angular/router';
   styleUrl: './article-page-component.component.css'
 })
 export class ArticlePageComponentComponent implements OnInit {
+  @Input() article?: Article;
   stars: string[] = [];
-  //le ! indique que la variable sera initialisée avant d'être utilisée
-  // définir les champs optionnels avec '?'
-  @Input() article!: {
-    id: string;
-    name: string;
-    image?: string; // Champ optionnel
-    prix: number;
-    stars: number;
-    reduction?: number; // Champ optionnel
-    description?: string; // Champ optionnel
-  };
-  @Input() articles: any;
+  articles: Article[] = [];
 
   constructor(
     private articleService: ArticleService) {}
 
-  ngOnInit() {
-    if (this.article) {
-      this.stars = this.articleService.starsArray(this.article.stars);
-      this.articles = this.articleService.getStoredArticles();    
-
+    ngOnInit() {
+      this.articleService.getArticles().subscribe(
+        (data: Article[]) => {
+          this.articles = data; //enregistrement des articles dans le  tableau articles
+          console.log("articles = ", this.articles)
+          if (this.article) {
+            this.stars = this.articleService.starsArray(this.article.stars);
+          }
+        },
+        (error) => {
+          console.error('Erreur lors de la récupération des articles', error);
+        }
+      );
     }
-
   }
-}
-
 
 

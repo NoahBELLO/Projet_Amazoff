@@ -39,8 +39,8 @@ bp = Blueprint("articles", __name__, url_prefix="/articles")
 def get_articles():
     logger.critical("get all articles")
     articles = Article.objects()  # Récupérer tous les articles avec .objects
-    logger.critical({"articles": [article.to_dict() for article in articles]})
-    return jsonify({"articles": [article.to_dict() for article in articles]})
+    logger.critical([article.to_dict() for article in articles])
+    return jsonify([article.to_dict() for article in articles])
 
 #route get single article
 @bp.route("/<article_id>", methods=["GET"])

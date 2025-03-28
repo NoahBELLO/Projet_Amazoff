@@ -3,6 +3,7 @@ import { TopbarComponent} from "../topbar/topbar.component";
 import { ArticlePageComponentComponent } from "../article-page-component/article-page-component.component";
 import { NgFor } from '@angular/common';
 import { ArticleService } from '../service/article.service';
+import { Article } from '../service/article.model';
 
 @Component({
   selector: 'app-dashboard',
@@ -10,18 +11,22 @@ import { ArticleService } from '../service/article.service';
   styleUrls: [],
   imports: [TopbarComponent,
      ArticlePageComponentComponent,
-    NgFor]
+    ]
 })
 export class DashboardComponent implements OnInit{
-  @Input() articles: any;
-  @Input() stars: any;
+  articles: Article[] = []; // Initialisez comme un tableau vide
 
-  constructor(private articleService: ArticleService){}
+  constructor(private articleService: ArticleService) {}
 
-  ngOnInit(){
-    this.articleService.fetchAndStoreArticles();
-    this.articles = this.articleService.getStoredArticles();    
+  ngOnInit() {
+    this.articleService.getArticles().subscribe(
+      (data: Article[]) => {
+        this.articles = data; // Assurez-vous que data est un tableau
+        console.log('Articles dans le composant:', this.articles);
+      },
+      (error) => {
+        console.error('Erreur lors de la récupération des articles', error);
+      }
+    );
   }
-
-
 }
