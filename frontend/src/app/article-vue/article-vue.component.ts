@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ArticleService } from '../service/article.service';
 import { TopbarComponent } from '../topbar/topbar.component';
+import { Article } from '../service/article.interface';
 import { NgClass, NgFor, NgIf } from '@angular/common';
 
 @Component({
@@ -21,14 +22,17 @@ export class ArticleVueComponent implements OnInit {
     private articleService: ArticleService) {} //pour utiliser ses fonctions
 
     //éxecute à l'init
-  ngOnInit() {
-    this.route.paramMap.subscribe(params => {
-      const id = params.get('id');
+    ngOnInit() {
+      const id = this.route.snapshot.paramMap.get('id'); // Récupérez l'ID de l'URL
       if (id) {
-        // this.article = this.articleService.getArticleByObjectId(id);
-        // this.stars = this.articleService.starsArray(this.article.stars);
-        // this.quantitees = this.articleService.getStock(this.article.stock);
+        this.articleService.getArticleByObjectId(id).subscribe(
+          (data: Article) => {
+            this.article = data;
+          },
+          (error) => {
+            console.error('Erreur lors de la récupération de l\'article', error);
+          }
+        );
       }
-    });
-  }
+}
 }

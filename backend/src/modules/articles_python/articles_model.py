@@ -67,7 +67,7 @@ class Article(Document):
             self.check_fields(datas)
             article = Article(**datas)
             article.save()
-            return False, str(article.id) #renvoie false et l'id en string (et non json)
+            return True, str(article.id) #renvoie false et l'id en string (et non json)
         except Exception as e: 
             raise ErrorExc(f"{str(e)}")
     
@@ -77,7 +77,7 @@ class Article(Document):
             #la collection (l'id de l'objet).a update(**= clé valeur /datas = ses données à update)
             result = Article.objects(id=ObjectId(id_article)).update_one(**datas)
             if result:
-                return False, str(result.id)
+                return True, str(result.id)
         except Exception as e: 
             raise ErrorExc(f"ça n'a pas marché : {str(e)}")
     

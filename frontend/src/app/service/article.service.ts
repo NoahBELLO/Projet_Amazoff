@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http'; //l'import pour les requêtes http
 import { Observable } from 'rxjs';
-import { Article } from './article.model';
+import { Article } from './article.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -15,18 +15,22 @@ export class ArticleService {
   constructor(private http: HttpClient) {}
   
   //observable gère les réponses asychrones
-  createArticle(article: Article): Observable<Article>{
-    console.log("l'article:", article);
+  createArticle(articleData: FormData): Observable<any>{
     const url = `${this.baseUrl}/create`;
     //post suivi de l'objet article
-    return this.http.post<Article>(url, article);
+    return this.http.post<Article>(url, articleData);
   }
 
   getArticles(): Observable<Article[]> {
     const url = `${this.baseUrl}/`;
     return this.http.get<Article[]>(url);
   }
-  
+
+  getArticleByObjectId(id: string): Observable<Article>{
+    const url = `${this.baseUrl}/${id}`;
+    return this.http.get<Article>(url);
+
+  }
 
    starsArray(etoiles: number): string[] {
     const etoiles_pleines: number = Math.floor(etoiles); //arrondi à l'entier inférieur

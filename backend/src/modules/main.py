@@ -8,7 +8,8 @@ from articles_python.articles_routes import bp
 from flask_cors import CORS
 app = Flask(__name__)
 
-#  cd backend\src\modules => python main.py
+# venv/scripts/activate 
+# cd src\modules => python main.py
 app.register_blueprint(bp)
 #Pour accepter les requêtes de pré-vol sinon pas de connexion entre front et back
 CORS(app, resources={r"/articles/*": {"origins": "*"}}) 

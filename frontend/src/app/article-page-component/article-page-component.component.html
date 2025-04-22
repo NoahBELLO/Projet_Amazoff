@@ -12,8 +12,8 @@
     <div class="footer_article_component">
         <label class="title">{{ article.name }}</label>
         <div class="stars">
-        <i *ngFor="let star of stars" [ngClass]="star"></i>
-        </div>
+            <i *ngFor="let star of articleService.starsArray(article.stars)" [ngClass]="star"></i>
+          </div>
     </div>
 </div>
 </div>
