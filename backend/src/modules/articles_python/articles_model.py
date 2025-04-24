@@ -15,7 +15,7 @@ from loguru import logger
 # .save()                       perform an insert or update si ça existe
 # .delete()                     supprime 
 
-class Article(Document): 
+class ArticleModel(Document): 
     name = StringField(required=True, max_length=200)
     prix = FloatField(required=True)
     image = StringField(required=False)
@@ -25,12 +25,12 @@ class Article(Document):
     quantite = FloatField(required=True)
     stars = IntField(required=False)
 
-    meta = {'collection': 'article'}  # Nom exact de la collection
+    meta = {'collection': 'article' , 'db_alias': 'articles-db'}
 
     def to_dict(self):
         """Convertir un document en dictionnaire"""
         return {
-            "id": str(self.id),  # Convertir l'ObjectId en string
+            "id": str(self.id),  
             "name": self.name,
             "prix": self.prix,
             "image": self.image,
@@ -65,7 +65,7 @@ class Article(Document):
     def save_data(self, datas):
         try:
             self.check_fields(datas)
-            article = Article(**datas)
+            article = ArticleModel(**datas)
             article.save()
             return True, str(article.id) #renvoie false et l'id en string (et non json)
         except Exception as e: 
@@ -75,7 +75,7 @@ class Article(Document):
         try:
             self.check_fields(datas)
             #la collection (l'id de l'objet).a update(**= clé valeur /datas = ses données à update)
-            result = Article.objects(id=ObjectId(id_article)).update_one(**datas)
+            result = ArticleModel.objects(id=ObjectId(id_article)).update_one(**datas)
             if result:
                 return True, str(result.id)
         except Exception as e: 
@@ -86,7 +86,7 @@ class Article(Document):
             logger.critical(id_article)
             if not ObjectId.is_valid(id_article):
                 raise ErrorExc("ID invalide")
-            result = Article.objects(id=ObjectId(id_article)).delete()
+            result = ArticleModel.objects(id=ObjectId(id_article)).delete()
             if result:
                 return False
         except Exception as e: 

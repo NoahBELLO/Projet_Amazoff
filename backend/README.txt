@@ -1,0 +1,1 @@
+Penser à faire un .env pour stocker les bdd en dur

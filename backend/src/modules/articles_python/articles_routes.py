@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request
 from loguru import logger
-from articles_python.articles_model import Article
+from articles_python.articles_model import ArticleModel
 from tools.customeException import ErrorExc
 
 bp = Blueprint("articles", __name__, url_prefix="/articles")
@@ -38,14 +38,13 @@ bp = Blueprint("articles", __name__, url_prefix="/articles")
 @bp.route("/", methods=["GET"])
 def get_articles():
     logger.critical("get all articles")
-    articles = Article.objects()  # Récupérer tous les articles avec .objects
-    logger.critical([article.to_dict() for article in articles])
+    articles = ArticleModel.objects()  # Récupérer tous les articles avec .objects
     return jsonify([article.to_dict() for article in articles])
 
 #route get single article
 @bp.route("/<article_id>", methods=["GET"])
 def get_single_article(article_id):
-    article = Article.objects(id=article_id).first() #.first pour récup le premier de la liste
+    article = ArticleModel.objects(id=article_id).first() #.first pour récup le premier de la liste
     if not article:
         return jsonify({"error": "Article not found"}), 404
     return jsonify(article.to_dict())
@@ -55,7 +54,7 @@ def get_single_article(article_id):
 def create_article():
     try:
         datas = request.json #request.form avec urlencoded, sinon request.json quand il y aura le front
-        db = Article()
+        db = ArticleModel()
         error, rs = db.save_data(datas)
         return jsonify({"error": not error, "rs": {"id": rs}})
     except ErrorExc as e:
@@ -66,7 +65,7 @@ def create_article():
 def patch_article(id_article):
     try:
         datas = request.form.to_dict(id_article) 
-        db = Article()
+        db = ArticleModel()
         error, rs = db.update_data(datas, id_article)
         return jsonify({"error": not error, "rs": {"id": rs}})
     except ErrorExc as e:
@@ -76,7 +75,7 @@ def patch_article(id_article):
 @bp.route("/delete/<string:id_article>", methods=["DELETE"])
 def delete_article(id_article):
     try:
-        db = Article()
+        db = ArticleModel()
         rs = db.delete_data(id_article)
         return jsonify(rs)
     except ErrorExc as e:
