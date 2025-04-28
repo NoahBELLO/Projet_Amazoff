@@ -3,6 +3,7 @@ from mongoengine import connect, disconnect_all
 from loguru import logger
 import sys
 import os
+from dotenv import load_dotenv
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 from articles_python.articles_routes import bp as articles_bp
@@ -17,22 +18,21 @@ app.register_blueprint(panier_bp)
 
 # Configuration CORS pour les articles et les paniers
 CORS(app, resources={
-    r"/articles/*": {"origins": "*"},
-    r"/panier/*": {"origins": "*"}
+    r"/articles/*": {"origins": os.getenv("CORS_ORIGINS", "*")},
+    r"/panier/*": {"origins": os.getenv("CORS_ORIGINS", "*")}
 })
 
 def init_db_connections():
     try:
-        # Déconnecter toutes les connexions existantes
         disconnect_all()
 
-        # Connexion à la base de données Articles
-        connect(db="Articles", host="mongodb+srv://florian:florian@clusterzero.qcluw.mongodb.net/Articles?retryWrites=true&w=majority", alias='articles-db')
-        logger.info("Connexion réussie à la base de données Articles avec l'alias 'articles-db'")
+        # articles
+        connect(db="Articles", host=os.getenv("MONGO_URI_ARTICLES"), alias='articles-db')
+        logger.info("Connexion réussie à la base de données Articles")
 
-        # Connexion à la base de données Paniers
-        connect(db="Paniers", host="mongodb+srv://florian:florian@clusterzero.qcluw.mongodb.net/Paniers?retryWrites=true&w=majority", alias='paniers-db')
-        logger.info("Connexion réussie à la base de données Paniers avec l'alias 'paniers-db'")
+        # paniers
+        connect(db="Paniers", host=os.getenv("MONGO_URI_PANIERS"), alias='paniers-db')
+        logger.info("Connexion réussie à la base de données Paniers")
 
     except Exception as e:
         logger.error(f"Erreur de connexion MongoDB : {e}")
