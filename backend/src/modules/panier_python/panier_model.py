@@ -2,6 +2,7 @@ from mongoengine import Document,  IntField, FloatField, ListField, StringField
 from bson import ObjectId
 from tools.customeException import ErrorExc
 from loguru import logger
+from articles_python.articles_model import ArticleModel
 
 #liste des fields utiles:
 # URLField      pour les URL
@@ -17,7 +18,6 @@ from loguru import logger
 
 class PanierModel(Document): 
     user_id = StringField(required=True, unique=True) #user unique
-    total = FloatField(required=False, default=0.0) #total débute à zero
     articles = ListField(required=False)
 
     meta = {'collection': 'panier', 'db_alias': 'paniers-db'}  # nom exact de la collection
@@ -27,10 +27,33 @@ class PanierModel(Document):
         return {
             "id": str(self.id), #l'id du panier
             "user_id": str(self.user_id), #l'id de l'user
-            "total": self.total,
             "articles": [str(article_id) for article_id in self.articles],  # convertir les ObjectId en chaînes
         }
     
+    def get_cart(self, user_id):
+        try:
+            panier = PanierModel.objects(user_id=user_id).first()
+            if not panier:
+                raise ErrorExc("Aucun panier trouvé pour cet utilisateur.")
+
+            articles = []
+            for id_article in panier.articles:
+                logger.critical(ObjectId(id_article))
+
+                item = ArticleModel.objects(id=id_article).first()
+                logger.critical(item)
+                if item:
+                    articles.append(item.to_dict())
+
+            logger.critical(articles)
+            return True, {
+                "articles": articles
+            }
+        except Exception as e:
+            raise ErrorExc(f"Erreur lors de la récupération du panier : {str(e)}")
+        
+        
+        
     #à la création du compte créer un panier
     def create_cart(self, user_id):
         if user_id:
@@ -42,21 +65,34 @@ class PanierModel(Document):
                 
                 panier = PanierModel(user_id=user_id)
                 panier.save()
-                logger.critical("Panier sauvegardé")
                 return True, str(panier.id)  # Renvoie True et l'id en string
             except Exception as e:
                 raise ErrorExc(f"Erreur lors de la création du panier : {str(e)}")
+            
         raise ErrorExc("ID utilisateur obligatoire")
     
-    # def update_data(self, datas, id_article):
-    #     try:
-    #         self.check_fields(datas)
-    #         #la collection (l'id de l'objet).a update(**= clé valeur /datas = ses données à update)
-    #         result = PanierModel.objects(id=ObjectId(id_article)).update_one(**datas)
-    #         if result:
-    #             return True, str(result.id)
-    #     except Exception as e: 
-    #         raise ErrorExc(f"ça n'a pas marché : {str(e)}")
+    def update_cart(self, datas, user_id):
+        try:
+            if 'articles' not in datas:
+                raise ErrorExc("Les données doivent contenir la section 'articles'.")
+
+            # update
+            articles = []
+            for article in datas['articles']:
+                articles.append(ObjectId(article)) #article convertis en objectId
+
+            result = PanierModel.objects(user_id=str(user_id)).update_one(set__articles=articles)
+
+            logger.critical(user_id)
+            if result == 0:
+                raise ErrorExc("Aucun panier trouvé pour cet utilisateur ou aucune modification effectuée.")
+
+            logger.critical(f"Panier mis à jour pour l'utilisateur {user_id}")
+
+            return True, str(user_id) 
+        
+        except Exception as e:
+            raise ErrorExc(f"Erreur lors de la mise à jour du panier : {str(e)}")
     
 
     # #à la suppresion du compte supprime le panier
@@ -71,7 +107,7 @@ class PanierModel(Document):
             if result == 0:
                 raise ErrorExc("Aucun panier trouvé pour cet utilisateur.")
 
-            logger.critical(f"Panier supprimé pour l'utilisateur {user_id}")
             return True
         except Exception as e:
             raise ErrorExc(f"Erreur lors de la suppression du panier : {str(e)}")
+    

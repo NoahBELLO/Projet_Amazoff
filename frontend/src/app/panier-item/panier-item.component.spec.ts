@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { UserCartPageComponent } from './user-cart-page.component';
+import { PanierItemComponent } from './panier-item.component';
 
-describe('UserCartPageComponent', () => {
-  let component: UserCartPageComponent;
-  let fixture: ComponentFixture<UserCartPageComponent>;
+describe('PanierItemComponent', () => {
+  let component: PanierItemComponent;
+  let fixture: ComponentFixture<PanierItemComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [UserCartPageComponent]
+      imports: [PanierItemComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(UserCartPageComponent);
+    fixture = TestBed.createComponent(PanierItemComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

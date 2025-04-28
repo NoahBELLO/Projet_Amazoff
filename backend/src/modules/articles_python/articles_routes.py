@@ -64,7 +64,7 @@ def create_article():
 @bp.route("/patch/<string:id_article>", methods=["PATCH"])
 def patch_article(id_article):
     try:
-        datas = request.form.to_dict(id_article) 
+        datas = request.json
         db = ArticleModel()
         error, rs = db.update_data(datas, id_article)
         return jsonify({"error": not error, "rs": {"id": rs}})
