@@ -12,6 +12,7 @@ from flask_cors import CORS
 
 app = Flask(__name__)
 
+# cd .\src\modules\   
 # Enregistrement des Blueprints
 app.register_blueprint(articles_bp)
 app.register_blueprint(panier_bp)

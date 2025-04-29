@@ -5,7 +5,7 @@ from tools.customeException import ErrorExc
 
 bp = Blueprint("panier", __name__, url_prefix="/panier")
 
-#route get single article
+#route get du panier
 @bp.route("/<user_id>", methods=["GET"])
 def get_single_article(user_id):
     db = PanierModel()
