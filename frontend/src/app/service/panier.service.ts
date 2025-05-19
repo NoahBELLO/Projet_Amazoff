@@ -15,13 +15,11 @@ export class PanierService {
   private baseUrl = 'http://localhost:6001/panier';
 
 
-  constructor(private http: HttpClient) {
-
-  }
+  constructor(private http: HttpClient) {}
 
 
   getPanierUser():Observable<{error: boolean, message?: string, panier?:{ articles: Article[] }}> {
-    const userId = '67371b2d1ed69fcb550f15e4'; // Remplacez par l'ID de l'utilisateur actuel
+    const userId = '67371b2d1ed69fcb550f15e4'; 
     const url = `${this.baseUrl}/${userId}`;
     return this.http.get<{ error: boolean, message: string, articles?: Article[] }>(url).pipe(
       catchError((error) => {
@@ -32,8 +30,6 @@ export class PanierService {
   }
   
   
-  
-
   addToPanier(article: Article) {
     const currentPanier = this.panierUser.value;
     const updatedPanier = [...currentPanier, article];

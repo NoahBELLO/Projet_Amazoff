@@ -1,6 +1,6 @@
 <app-topbar></app-topbar>
 <div class="présentation_article">
-    <img class="img" src="./assets/{{ article.image }}" alt="Un teeshirt orange">
+    <img class="img" src="./assets/{{ article.image }}" alt="{{ article.name }}">
     <div class="infos">
         <label class="nom_article">{{ article.name }}</label>
         <div class="stars">
@@ -15,9 +15,9 @@
     </div>
 
     <div class="achat">
-        <label *ngIf="article.stock > 0">{{ article.prix }}€</label>
-        <label *ngIf="article.stock > 0"> Livraison le: {{ article.livraison }} </label>
-        <div *ngIf="article.stock > 0; else elseBlock">
+        <label *ngIf="article.quantite > 0">{{ article.prix }}€</label>
+        <label *ngIf="article.quantite > 0"> Livraison le: {{ article.livraison }} </label>
+        <div *ngIf="article.quantite > 0; else elseBlock">
            <div class="quantity">
                <label>En stock</label>
                <label>Quantité:</label>

@@ -6,4 +6,6 @@ export interface Article {
     stars: number;
     reduction?: number; 
     description: string; 
+    sous_total?: number;
+    quantite?: number;
   }

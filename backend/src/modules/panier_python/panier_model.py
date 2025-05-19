@@ -37,15 +37,18 @@ class PanierModel(Document):
                 raise ErrorExc("Aucun panier trouvé pour cet utilisateur.")
 
             articles = []
-            for id_article in panier.articles:
-                logger.critical(ObjectId(id_article))
+            for article in panier.articles:
+                # logger.critical(ObjectId(article))
 
-                item = ArticleModel.objects(id=id_article).first()
-                logger.critical(item)
+                item = ArticleModel.objects(id=article).first()
+                # logger.critical(item)
                 if item:
                     articles.append(item.to_dict())
 
-            logger.critical(articles)
+            #ajout des sous-totaux
+            for article in articles:
+                article['sous_total'] = article['prix'] * article['quantite']
+
             return True, {
                 "articles": articles
             }

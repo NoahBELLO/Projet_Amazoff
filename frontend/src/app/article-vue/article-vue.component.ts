@@ -28,6 +28,7 @@ export class ArticleVueComponent implements OnInit {
         this.articleService.getArticleByObjectId(id).subscribe(
           (data: Article) => {
             this.article = data;
+            this.quantitees = this.articleService.getStock(this.article.quantite)
           },
           (error) => {
             console.error('Erreur lors de la récupération de l\'article', error);
