@@ -19,6 +19,7 @@ from articles_python.articles_model import ArticleModel
 class PanierModel(Document): 
     user_id = StringField(required=True, unique=True) #user unique
     articles = ListField(required=False)
+    total = FloatField(required=False, default=0.0)
 
     meta = {'collection': 'panier', 'db_alias': 'paniers-db'}  # nom exact de la collection
 
@@ -28,6 +29,7 @@ class PanierModel(Document):
             "id": str(self.id), #l'id du panier
             "user_id": str(self.user_id), #l'id de l'user
             "articles": [str(article_id) for article_id in self.articles],  # convertir les ObjectId en chaînes
+
         }
     
     def get_cart(self, user_id):
@@ -75,6 +77,7 @@ class PanierModel(Document):
         raise ErrorExc("ID utilisateur obligatoire")
     
     def update_cart(self, datas, user_id):
+        logger.critical(datas)
         try:
             if 'articles' not in datas:
                 raise ErrorExc("Les données doivent contenir la section 'articles'.")
@@ -97,6 +100,40 @@ class PanierModel(Document):
         except Exception as e:
             raise ErrorExc(f"Erreur lors de la mise à jour du panier : {str(e)}")
     
+    def delete_article(self, id_article, user_id):
+        logger.critical(f"user_id: {user_id}, id_article: {id_article}")
+        result = PanierModel.objects(user_id=str(user_id)).update_one(set__articles=articles)
+        return True
+    
+
+    def add_article(self, article_id, quantite, user_id):
+        try:
+            article = ArticleModel.objects(id=ObjectId(article_id)).first()
+            if not article or article.quantite < float(quantite):
+                logger.critical('stock insuffisant')
+                return {"error": True, "message": "Stock insuffisant"}, 400
+            
+            panier = PanierModel.objects(user_id=str(user_id)).first() #récup du panier
+            logger.critical(panier.articles)
+
+
+            article_trouve = self.article_present_dans_panier(panier, article_id)
+
+            if article_trouve:
+                article_trouve['quantite'] += float(quantite)
+            else:
+                panier.articles.append({
+                    "article_id": article_id,
+                    "quantite": float(quantite)
+                })
+            panier.save()
+            return True
+        except :
+            raise ErrorExc("Erreur d'ajout au panier")  
+
+    def modify_article(self, datas, user_id):
+        logger.critical(f"user_id: {user_id}, datas: {datas}")
+        return True
 
     # #à la suppresion du compte supprime le panier
     def delete_cart(self, user_id):
@@ -114,3 +151,10 @@ class PanierModel(Document):
         except Exception as e:
             raise ErrorExc(f"Erreur lors de la suppression du panier : {str(e)}")
     
+    #fonction utilitaire pour chercher si un article est dans le panier
+    def article_present_dans_panier(self, panier, article_id):
+        logger.critical(type(panier.articles))
+        for article_panier in panier.articles:
+            if article_panier['article_id'] == article_id:
+                return article_panier
+        return None

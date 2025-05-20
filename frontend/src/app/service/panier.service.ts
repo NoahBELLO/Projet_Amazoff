@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, catchError, Observable, throwError } from 'rxjs';
-import { HttpClient } from '@angular/common/http'; //l'import pour les requêtes http
+import { HttpClient, HttpHeaders } from '@angular/common/http'; //l'import pour les requêtes http
 import { Article } from './article.interface';
 
 @Injectable({
@@ -29,19 +29,36 @@ export class PanierService {
     );
   }
   
-  
-  addToPanier(article: Article) {
-    const currentPanier = this.panierUser.value;
-    const updatedPanier = [...currentPanier, article];
-    this.panierUser.next(updatedPanier);
-    localStorage.setItem('panier', JSON.stringify(updatedPanier));
+  //fonction de suppression d'un article du panier
+  removeArticleFromCart(articleId: string): Observable<{ error: boolean, message?: string }> {
+    const userId = '67371b2d1ed69fcb550f15e4';
+    const url = `${this.baseUrl}/remove/${userId}`;
+    
+    return this.http.patch<{ error: boolean, message?: string }>(
+      url,
+      { article_id: articleId },
+      { headers: { 'Content-Type': 'application/json' } }
+    );
   }
+  
+  //fonction d'ajout d'un article au panier
+  addArticleToCart(articleId: string, quantite: number): Observable<{ error: boolean, message?: string }> {
+    const userId = '67371b2d1ed69fcb550f15e4';
+    const url = `${this.baseUrl}/add/${userId}`;
 
-  removeFromPanier(articleId: string) {
-    const currentPanier = this.panierUser.value;
-    const updatedPanier = currentPanier.filter(article => article.id !== articleId);
-    this.panierUser.next(updatedPanier);
-    localStorage.setItem('panier', JSON.stringify(updatedPanier));
+    return this.http.patch<{ error: boolean, message?: string }>(
+      url,
+      { 
+        article_id: articleId,
+        quantite: quantite
+       },
+      { headers: { 'Content-Type': 'application/json' } }
+    );
+  }
+  
+  
+  editArticleFromCart(){
+
   }
 
   clearPanier() {

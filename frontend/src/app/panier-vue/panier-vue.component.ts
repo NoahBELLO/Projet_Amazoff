@@ -4,7 +4,7 @@ import { Article } from '../service/article.interface';
 import { TopbarComponent } from "../topbar/topbar.component";
 import { NgClass, NgFor, NgIf } from '@angular/common';
 import { ArticleService } from '../service/article.service';
-import { FormsModule } from '@angular/forms';
+import { FormsModule } from '@angular/forms';//pour les soucis de ngmodel
 
 
 
@@ -43,12 +43,14 @@ export class PanierVueComponent {
   };
 
   getStockOptions(stock: number): number[] {
-    console.log("le stock", this.articleService.getStock(stock))
     return this.articleService.getStock(stock);
   }
 
   removeFromPanier(articleId: string) {
-    this.panierService.removeFromPanier(articleId);
+    this.panierService.removeArticleFromCart(articleId).subscribe({
+      next: (res) => console.log(res),
+      error: (error) => console.error('Erreur lors du retrait', error)
+    });
   }
 
   clearPanier() {

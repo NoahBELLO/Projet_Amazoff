@@ -19,8 +19,16 @@ app.register_blueprint(panier_bp)
 
 # Configuration CORS pour les articles et les paniers
 CORS(app, resources={
-    r"/articles/*": {"origins": os.getenv("CORS_ORIGINS", "*")},
-    r"/panier/*": {"origins": os.getenv("CORS_ORIGINS", "*")}
+    r"/articles/*": {
+        "origins": os.getenv("CORS_ORIGINS", "*"),
+        "methods": ["GET", "POST", "PUT", "PATCH", "DELETE"],
+        "allow_headers": ["Content-Type", "Authorization"]
+    },
+    r"/panier/*": {
+        "origins": os.getenv("CORS_ORIGINS", "*"),
+        "methods": ["GET", "POST", "PUT", "PATCH", "DELETE"],
+        "allow_headers": ["Content-Type", "Authorization"]
+    }
 })
 
 def init_db_connections():
