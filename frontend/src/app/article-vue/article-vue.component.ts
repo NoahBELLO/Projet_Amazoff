@@ -17,7 +17,7 @@ export class ArticleVueComponent implements OnInit {
   //instancier les retours des fonctions
   article: any;
   stars: string[] = [];
-  quantitees: number[] = [];
+  stocks: number[] = [];
   selectedQuantity: number = 1;
 
   constructor(
@@ -33,7 +33,7 @@ export class ArticleVueComponent implements OnInit {
       this.articleService.getArticleByObjectId(id).subscribe(
         (data: Article) => {
           this.article = data;
-          this.quantitees = this.articleService.getStock(this.article.quantite)
+          this.stocks = this.articleService.getStock(this.article.stock)
         },
         (error) => {
           console.error('Erreur lors de la récupération de l\'article', error);
@@ -42,7 +42,6 @@ export class ArticleVueComponent implements OnInit {
     }
   }
   addArticleToCart(article_id: string){
-    console.log(this.selectedQuantity)
     this.panierService.addArticleToCart(article_id, this.selectedQuantity).subscribe({
       next: (res) => {
         if(!res.error){

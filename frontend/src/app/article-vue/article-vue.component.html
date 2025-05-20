@@ -22,8 +22,8 @@
                <label>En stock</label>
                <label>Quantité:</label>
                <select [(ngModel)]="selectedQuantity">
-                   <option *ngFor="let quantite of quantitees" [value]="quantite">
-                       {{ quantite }}
+                   <option *ngFor="let stock of stocks" [value]="stock">
+                       {{ stock }}
                    </option>
                </select>
 
