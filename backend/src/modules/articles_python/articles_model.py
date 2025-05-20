@@ -22,7 +22,7 @@ class ArticleModel(Document):
     reduction = IntField(required=False)
     description = StringField(required=True, max_length=200)
     prix_kg = FloatField(required=False)
-    quantite = FloatField(required=True)
+    stock = FloatField(required=True)
     stars = IntField(required=False)
 
     meta = {'collection': 'article' , 'db_alias': 'articles-db'}
@@ -37,7 +37,7 @@ class ArticleModel(Document):
             "reduction": self.reduction,
             "description": self.description,
             "prix_kg": self.prix_kg,
-            "quantite": self.quantite,
+            "stock": self.stock,
             "stars": self.stars,
         }
     
@@ -51,7 +51,7 @@ class ArticleModel(Document):
         if "prix" not in datas or float(datas['prix']) == 0 :
             raise ErrorExc(f"Veuillez définir un prix.")
         
-        if "quantite" not in datas or int(datas['quantite']) == 0 :
+        if "stock" not in datas or int(datas['stock']) == 0 :
             raise ErrorExc(f"Veuillez définir le stock.")
         
         if "description" not in datas or len(datas['description'].strip()) == 0:

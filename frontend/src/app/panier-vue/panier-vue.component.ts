@@ -35,22 +35,30 @@ export class PanierVueComponent {
           console.log("les datas", data.panier)
           this.panier = data.panier.articles.map(article => ({
             ...article,
-            quantite: article.quantite
+            stock: article.stock
           }));
         }
       }
     )
   };
 
-  getStockOptions(stock: number): number[] {
-    return this.articleService.getStock(stock);
-  }
-
   removeFromPanier(articleId: string) {
     this.panierService.removeArticleFromCart(articleId).subscribe({
       next: (res) => console.log(res),
       error: (error) => console.error('Erreur lors du retrait', error)
     });
+  }
+
+  getQuantityOptions(article: Article): number[] {
+    const stock: number[] = [];
+    for (let i = 1; i <= article.stock; i++) {
+      stock.push(i);
+    }
+    return stock;
+  }
+
+  modifyQuantite(article: any){
+    console.log(article.quantite)
   }
 
   clearPanier() {

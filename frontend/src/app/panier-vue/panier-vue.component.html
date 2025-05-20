@@ -16,8 +16,12 @@
             <td class="price-cell">{{ article.prix }} €</td>
             <!-- prototype pour définir la quantité il faut récup la quantité dispo max -->
             <td>
-              <select class="quantite_select" [(ngModel)]="article.quantite">
-                <option *ngFor="let q of getStockOptions(article.quantite!)" [value]="q">{{q}}</option>
+              <select class="quantite_select" [(ngModel)]="article.quantite_utilisateur" (change)="modifyQuantite(article)">
+                <option *ngFor="let quantite of getQuantityOptions(article)"
+                [value]="quantite"
+                [selected]="quantite === article.quantite_utilisateur"
+                >{{quantite}}
+              </option>
               </select>
             </td>
             <!-- prototype pour faire quantité sélectionnée x prix unitaire -->

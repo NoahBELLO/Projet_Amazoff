@@ -7,5 +7,6 @@ export interface Article {
     reduction?: number; 
     description: string; 
     sous_total?: number;
-    quantite?: number;
+    stock: number;
+    quantite_utilisateur?: number;
   }

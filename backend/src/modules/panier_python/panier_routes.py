@@ -12,7 +12,6 @@ def get_single_article(user_id):
     logger.critical("route get panier")
     try:
         error, rs = db.get_cart(user_id) #.first pour récup le premier de la liste
-        logger.critical(rs)
         return jsonify({"error": not error, "panier": rs})
     except ErrorExc as e:
         return jsonify({"error": True, "rs": str(e)})

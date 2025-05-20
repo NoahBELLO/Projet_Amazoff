@@ -34,26 +34,25 @@ class PanierModel(Document):
     
     def get_cart(self, user_id):
         try:
-            panier = PanierModel.objects(user_id=str(user_id)).first()
-            if not panier:
+            panier_bdd = PanierModel.objects(user_id=str(user_id)).first()
+            if not panier_bdd:
                 raise ErrorExc("Aucun panier trouvé pour cet utilisateur.")
 
-            articles = []
-            for article in panier.articles:
-                logger.critical(article)
+            panier_user = []
+            for article in panier_bdd.articles:
+                article_magasin = ArticleModel.objects(id=article['article_id']).first()
 
-                item = ArticleModel.objects(id=article['article_id']).first()
-                #logger.critical(item)
-                item['quantite'] = article['quantite']
-                if item:
-                    articles.append(item.to_dict())
-
-                #ajout des sous-totaux
-                for article in articles:
-                    article['sous_total'] = article['prix'] * article['quantite']
-
+                if article_magasin:
+                    article_magasin_dict = article_magasin.to_dict()
+                    #on ajoute le sous total par rapport au prix de la bdd (last updated price)
+                    article_magasin_dict['sous_total'] = float(article_magasin_dict['prix']) * float(article['quantite'])
+                    #ajout de la quantité de l'utilisateur
+                    article_magasin_dict['quantite_utilisateur'] = article['quantite']
+                    panier_user.append(article_magasin_dict) 
+            
+                  
             return True, {
-                "articles": articles
+                "articles": panier_user
             }
         except Exception as e:
             raise ErrorExc(f"Erreur lors de la récupération du panier : {str(e)}")
@@ -109,13 +108,11 @@ class PanierModel(Document):
                 raise ErrorExc("Panier non trouvé")
         
             # Filtrer les articles pour garder seulement ceux qui ne correspondent pas à l'ID
-            logger.critical(panier.articles)
             
             for article in panier.articles:
                 if str(article['article_id']) != str(article_to_delete['article_id']):
                     panier.articles.append(article)
             
-            logger.critical(panier.articles)
             panier.save()
 
             return True
