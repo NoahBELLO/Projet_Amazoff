@@ -21,7 +21,7 @@ export class PanierService {
   getPanierUser():Observable<{error: boolean, message?: string, panier?:{ articles: Article[] }}> {
     const userId = '67371b2d1ed69fcb550f15e4'; 
     const url = `${this.baseUrl}/${userId}`;
-    return this.http.get<{ error: boolean, message: string, articles?: Article[] }>(url).pipe(
+    return this.http.get<{ error: boolean, message?: string, articles?: Article[] }>(url).pipe(
       catchError((error) => {
         console.error('Erreur lors de la récupération du panier depuis le backend', error);
         return throwError(() => ({ error: true, message: 'Erreur lors de la récupération du panier' }));

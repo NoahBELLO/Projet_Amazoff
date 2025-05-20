@@ -34,22 +34,23 @@ class PanierModel(Document):
     
     def get_cart(self, user_id):
         try:
-            panier = PanierModel.objects(user_id=user_id).first()
+            panier = PanierModel.objects(user_id=str(user_id)).first()
             if not panier:
                 raise ErrorExc("Aucun panier trouvé pour cet utilisateur.")
 
             articles = []
             for article in panier.articles:
-                # logger.critical(ObjectId(article))
+                logger.critical(article)
 
-                item = ArticleModel.objects(id=article).first()
-                # logger.critical(item)
+                item = ArticleModel.objects(id=article['article_id']).first()
+                #logger.critical(item)
+                item['quantite'] = article['quantite']
                 if item:
                     articles.append(item.to_dict())
 
-            #ajout des sous-totaux
-            for article in articles:
-                article['sous_total'] = article['prix'] * article['quantite']
+                #ajout des sous-totaux
+                for article in articles:
+                    article['sous_total'] = article['prix'] * article['quantite']
 
             return True, {
                 "articles": articles
