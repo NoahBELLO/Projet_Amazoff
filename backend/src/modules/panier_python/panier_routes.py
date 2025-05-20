@@ -28,7 +28,7 @@ def create_cart(user_id):
         return jsonify({"error": True, "rs": str(e)})
     
 #route remove article
-@bp.route("/remove/<string:id_user>", methods=["PATCH"])
+@bp.route("/remove_from_cart/<string:id_user>", methods=["PATCH"])
 def delete_article_from_cart(id_user):
     logger.critical(request.json)
     try:
@@ -40,7 +40,7 @@ def delete_article_from_cart(id_user):
         return jsonify({"error": True, "rs": str(e)})
     
 #route add article
-@bp.route("/add/<string:id_user>", methods=["PATCH"])
+@bp.route("/add_to_cart/<string:id_user>", methods=["PATCH"])
 def add_article_from_cart(id_user):
     logger.critical(request.json)
     try:
@@ -48,20 +48,22 @@ def add_article_from_cart(id_user):
         article_id = datas.get('article_id')
         quantite = datas.get('quantite', 1)
         db = PanierModel()
-        error = db.add_article(article_id, quantite, id_user)
+        error = db.add_reduce_quantity(article_id, quantite, id_user)
         return jsonify({"error": not error})
     except ErrorExc as e:
         return jsonify({"error": True, "rs": str(e)})
 
 #route modify article
-@bp.route("/edit/<string:id_user>", methods=["PATCH"])
+@bp.route("/edit_cart/<string:id_user>", methods=["PATCH"])
 def update_article_from_cart(id_user):
     logger.critical(request.json)
     try:
         datas = request.json 
+        article_id = datas.get('article_id')
+        quantite = datas.get('quantite')
         db = PanierModel()
-        error, rs = db.modify_article(datas, id_user)
-        return jsonify({"error": not error, "rs": {"id": rs}})
+        error = db.add_reduce_quantity(article_id, quantite, id_user, edit=True)
+        return jsonify({"error": not error})
     except ErrorExc as e:
         return jsonify({"error": True, "rs": str(e)})
     

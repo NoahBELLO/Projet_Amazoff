@@ -42,10 +42,17 @@ export class PanierVueComponent {
     )
   };
 
-  removeFromPanier(articleId: string) {
+  removeFromPanier(articleId: string):void {
     this.panierService.removeArticleFromCart(articleId).subscribe({
-      next: (res) => console.log(res),
-      error: (error) => console.error('Erreur lors du retrait', error)
+      next: (response) => {
+        if (!response.error) {
+          alert("Article supprimé avec succès")
+        } 
+      },
+      error: (error) => {  
+        alert(error)
+        console.error('Erreur lors de la mise à jour:', error);      
+      }
     });
   }
 
@@ -57,9 +64,21 @@ export class PanierVueComponent {
     return stock;
   }
 
-  modifyQuantite(article: any){
-    console.log(article.quantite)
+
+  modifyQuantite(article: Article) {
+    this.panierService.updateQuantiteUtilisateur(article).subscribe({
+      next: (response) => {
+        if (!response.error) {
+          article.sous_total = article.prix * article.quantite_utilisateur!;
+        } 
+      },
+      error: (error) => {  
+        console.error('Erreur lors de la mise à jour:', error);      
+      }
+    });
   }
+  
+
 
   clearPanier() {
     this.panierService.clearPanier();

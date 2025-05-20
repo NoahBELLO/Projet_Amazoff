@@ -32,7 +32,7 @@ export class PanierService {
   //fonction de suppression d'un article du panier
   removeArticleFromCart(articleId: string): Observable<{ error: boolean, message?: string }> {
     const userId = '67371b2d1ed69fcb550f15e4';
-    const url = `${this.baseUrl}/remove/${userId}`;
+    const url = `${this.baseUrl}/remove_from_cart/${userId}`;
     
     return this.http.patch<{ error: boolean, message?: string }>(
       url,
@@ -44,7 +44,7 @@ export class PanierService {
   //fonction d'ajout d'un article au panier
   addArticleToCart(articleId: string, quantite: number): Observable<{ error: boolean, message?: string }> {
     const userId = '67371b2d1ed69fcb550f15e4';
-    const url = `${this.baseUrl}/add/${userId}`;
+    const url = `${this.baseUrl}/add_to_cart/${userId}`;
 
     return this.http.patch<{ error: boolean, message?: string }>(
       url,
@@ -57,9 +57,21 @@ export class PanierService {
   }
   
   
-  editArticleFromCart(){
+  updateQuantiteUtilisateur(article: Article): Observable<{ error: boolean, message?: string }>{
+    const userId = '67371b2d1ed69fcb550f15e4';
+    const url = `${this.baseUrl}/edit_cart/${userId}`;
 
+    return this.http.patch<{ error: boolean, message?: string }>(
+      url,
+      { 
+        article_id: article.id,
+        quantite: article.quantite_utilisateur
+       },
+      { headers: { 'Content-Type': 'application/json' } }
+    );
   }
+
+  
 
   clearPanier() {
     this.panierUser.next([]);

@@ -15,9 +15,9 @@
     </div>
 
     <div class="achat">
-        <label *ngIf="article.quantite > 0">{{ article.prix }}€</label>
-        <label *ngIf="article.quantite > 0"> Livraison le: {{ article.livraison }} </label>
-        <div *ngIf="article.quantite > 0; else elseBlock">
+        <label *ngIf="article.stock > 0">{{ article.prix }}€</label>
+        <label *ngIf="article.stock > 0"> Livraison le: {{ article.livraison }} </label>
+        <div *ngIf="article.stock > 0; else elseBlock">
            <div class="quantity">
                <label>En stock</label>
                <label>Quantité:</label>

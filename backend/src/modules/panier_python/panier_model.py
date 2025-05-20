@@ -48,8 +48,7 @@ class PanierModel(Document):
                     article_magasin_dict['sous_total'] = float(article_magasin_dict['prix']) * float(article['quantite'])
                     #ajout de la quantité de l'utilisateur
                     article_magasin_dict['quantite_utilisateur'] = article['quantite']
-                    panier_user.append(article_magasin_dict) 
-            
+                    panier_user.append(article_magasin_dict)             
                   
             return True, {
                 "articles": panier_user
@@ -70,84 +69,56 @@ class PanierModel(Document):
                 
                 panier = PanierModel(user_id=user_id)
                 panier.save()
-                return True, str(panier.id)  # Renvoie True et l'id en string
+                return True, str(panier.id) 
             except Exception as e:
                 raise ErrorExc(f"Erreur lors de la création du panier : {str(e)}")
             
         raise ErrorExc("ID utilisateur obligatoire")
-    
-    def update_cart(self, datas, user_id):
-        logger.critical(datas)
-        try:
-            if 'articles' not in datas:
-                raise ErrorExc("Les données doivent contenir la section 'articles'.")
 
-            # update
-            articles = []
-            for article in datas['articles']:
-                articles.append(ObjectId(article)) #article convertis en objectId
 
-            result = PanierModel.objects(user_id=str(user_id)).update_one(set__articles=articles)
-
-            logger.critical(user_id)
-            if result == 0:
-                raise ErrorExc("Aucun panier trouvé pour cet utilisateur ou aucune modification effectuée.")
-
-            logger.critical(f"Panier mis à jour pour l'utilisateur {user_id}")
-
-            return True, str(user_id) 
-        
-        except Exception as e:
-            raise ErrorExc(f"Erreur lors de la mise à jour du panier : {str(e)}")
-    
     def delete_article(self, article_to_delete, user_id):
         #logger.critical(f"user_id: {user_id}, id_article: {id_article}")
         try:
             panier = PanierModel.objects(user_id=str(user_id)).first() #récup du panier
             if not panier:
                 raise ErrorExc("Panier non trouvé")
-        
-            # Filtrer les articles pour garder seulement ceux qui ne correspondent pas à l'ID
-            
+            new_articles = []
             for article in panier.articles:
                 if str(article['article_id']) != str(article_to_delete['article_id']):
-                    panier.articles.append(article)
-            
+                    new_articles.append(article)
+                    
+            panier.articles = new_articles
+            logger.critical(panier.articles)
             panier.save()
 
             return True
         except:
             raise ErrorExc("L'article non trouvé dans le panier")    
 
-    def add_article(self, article_id, quantite, user_id):
+    def add_reduce_quantity(self, article_id, quantite, user_id, edit=False):
         try:
-            article = ArticleModel.objects(id=ObjectId(article_id)).first()
-            if not article or article.quantite < float(quantite):
-                #logger.critical('stock insuffisant')
-                return {"error": True, "message": "Stock insuffisant"}, 400
-            
+            article = ArticleModel.objects(id=article_id).first()
+            if not article or article.stock < float(quantite):#vérif des stocks dispo
+                raise ErrorExc ("Stock insuffisant")
             panier = PanierModel.objects(user_id=str(user_id)).first() #récup du panier
-            #logger.critical(panier.articles)
-
-
             article_trouve = self.article_present_dans_panier(panier, article_id)
 
-            if article_trouve:
+            if article_trouve and edit == False:
                 article_trouve['quantite'] += float(quantite)
+            elif article_trouve and edit == True:
+                article_trouve['quantite'] = float(quantite)
             else:
                 panier.articles.append({
                     "article_id": article_id,
                     "quantite": float(quantite)
                 })
             panier.save()
+
             return True
         except :
-            raise ErrorExc("Erreur d'ajout au panier")  
+            raise ErrorExc("Erreur modification du panier")  
 
-    def modify_article(self, datas, user_id):
-        logger.critical(f"user_id: {user_id}, datas: {datas}")
-        return True
-
+    
     # #à la suppresion du compte supprime le panier
     def delete_cart(self, user_id):
         try:
