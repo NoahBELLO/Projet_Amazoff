@@ -35,7 +35,7 @@ def delete_article_from_cart(id_user):
     try:
         id_article = request.json 
         db = PanierModel()
-        error, rs = db.delete_article(id_article, id_user)
+        error = db.delete_article(id_article, id_user)
         return jsonify({"error": not error})
     except ErrorExc as e:
         return jsonify({"error": True, "rs": str(e)})
@@ -49,8 +49,8 @@ def add_article_from_cart(id_user):
         article_id = datas.get('article_id')
         quantite = datas.get('quantite', 1)
         db = PanierModel()
-        error, rs = db.add_article(article_id, quantite, id_user)
-        return jsonify({"error": not error, "rs": {"id": rs}})
+        error = db.add_article(article_id, quantite, id_user)
+        return jsonify({"error": not error})
     except ErrorExc as e:
         return jsonify({"error": True, "rs": str(e)})
 

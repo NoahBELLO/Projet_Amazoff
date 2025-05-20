@@ -101,21 +101,36 @@ class PanierModel(Document):
         except Exception as e:
             raise ErrorExc(f"Erreur lors de la mise à jour du panier : {str(e)}")
     
-    def delete_article(self, id_article, user_id):
-        logger.critical(f"user_id: {user_id}, id_article: {id_article}")
-        result = PanierModel.objects(user_id=str(user_id)).update_one(set__articles=articles)
-        return True
-    
+    def delete_article(self, article_to_delete, user_id):
+        #logger.critical(f"user_id: {user_id}, id_article: {id_article}")
+        try:
+            panier = PanierModel.objects(user_id=str(user_id)).first() #récup du panier
+            if not panier:
+                raise ErrorExc("Panier non trouvé")
+        
+            # Filtrer les articles pour garder seulement ceux qui ne correspondent pas à l'ID
+            logger.critical(panier.articles)
+            
+            for article in panier.articles:
+                if str(article['article_id']) != str(article_to_delete['article_id']):
+                    panier.articles.append(article)
+            
+            logger.critical(panier.articles)
+            panier.save()
+
+            return True
+        except:
+            raise ErrorExc("L'article non trouvé dans le panier")    
 
     def add_article(self, article_id, quantite, user_id):
         try:
             article = ArticleModel.objects(id=ObjectId(article_id)).first()
             if not article or article.quantite < float(quantite):
-                logger.critical('stock insuffisant')
+                #logger.critical('stock insuffisant')
                 return {"error": True, "message": "Stock insuffisant"}, 400
             
             panier = PanierModel.objects(user_id=str(user_id)).first() #récup du panier
-            logger.critical(panier.articles)
+            #logger.critical(panier.articles)
 
 
             article_trouve = self.article_present_dans_panier(panier, article_id)
@@ -154,7 +169,6 @@ class PanierModel(Document):
     
     #fonction utilitaire pour chercher si un article est dans le panier
     def article_present_dans_panier(self, panier, article_id):
-        logger.critical(type(panier.articles))
         for article_panier in panier.articles:
             if article_panier['article_id'] == article_id:
                 return article_panier

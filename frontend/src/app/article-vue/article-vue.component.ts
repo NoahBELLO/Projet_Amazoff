@@ -44,7 +44,10 @@ export class ArticleVueComponent implements OnInit {
   addArticleToCart(article_id: string){
     console.log(this.selectedQuantity)
     this.panierService.addArticleToCart(article_id, this.selectedQuantity).subscribe({
-      next: (res) => console.log(res),
+      next: (res) => {
+        if(!res.error){
+          alert("Article ajouté avec succès") //@notification
+        }},
       error: (error) => console.error("Erreur lors de l'ajout", error)
     });
 
