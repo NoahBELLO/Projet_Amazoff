@@ -22,8 +22,6 @@ export class ArticlePageComponentComponent implements OnInit {
       this.articleService.getArticles().subscribe(
         (data: Article[]) => {
           this.articles = data; //enregistrement des articles dans le  tableau articles
-          console.log(this.articles)
-            
         },
         (error) => {
           console.error('Erreur lors de la récupération des articles', error);
