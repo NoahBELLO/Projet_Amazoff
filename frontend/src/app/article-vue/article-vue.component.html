@@ -26,8 +26,12 @@
                        {{ stock }}
                    </option>
                </select>
-
            </div>
+           
+        <div id="bouton">
+            <button id="ajouter" (click)="addArticleToCart(article.id)">Ajouter au panier</button>
+            <button id="acheter">Acheter cet article</button>
+        </div>
         </div>
         <ng-template #elseBlock>
             <div class="quantity">
@@ -38,9 +42,5 @@
 
         <!-- <div id="quantity" *ngIf="article.stock > 0; else cas"> -->
 
-        <div id="bouton">
-            <button id="ajouter" (click)="addArticleToCart(article.id)">Ajouter au panier</button>
-            <button id="acheter">Acheter cet article</button>
-        </div>
     </div>
 </div>
