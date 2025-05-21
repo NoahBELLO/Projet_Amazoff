@@ -1,6 +1,9 @@
 <app-topbar></app-topbar>
 <div class="présentation_article">
-    <img class="img" src="./assets/{{ article.image }}" alt="{{ article.name }}">
+    <div class="article-image-container">
+        <img [src]="'./assets/' + article.image" [alt]="article.name" class="article-image">
+        <div *ngIf="article.reduction > 0" class="discount-badge">-{{ article.reduction }}%</div>
+    </div>
     <div class="infos">
         <label class="nom_article">{{ article.name }}</label>
         <div class="stars">
@@ -15,32 +18,38 @@
     </div>
 
     <div class="achat">
-        <label *ngIf="article.stock > 0">{{ article.prix }}€</label>
+        <label *ngIf="article.stock > 0"  class="prix-initial " >{{ article.prix }}€</label>
+        <span class="prix-reduit">
+            {{ article.prix * (1 - article.reduction/100) | number:'1.2-2' }}€
+          </span>
+
         <label *ngIf="article.stock > 0"> Livraison le: {{ article.livraison }} </label>
         <div *ngIf="article.stock > 0; else elseBlock">
-           <div class="quantity">
-               <label>En stock</label>
-               <label>Quantité:</label>
-               <select [(ngModel)]="selectedQuantity">
-                   <option *ngFor="let stock of stocks" [value]="stock">
-                       {{ stock }}
-                   </option>
-               </select>
-           </div>
-           
-        <div id="bouton">
-            <button id="ajouter" (click)="addArticleToCart(article.id)">Ajouter au panier</button>
-            <button id="acheter">Acheter cet article</button>
-        </div>
+            <div class="disponibilite">
+                <i class="fas fa-check-circle disponible-icon"></i>
+                <label>En stock</label>
+            </div>
+            <div class="quantite-select">
+                <label>Quantité:</label>
+                <select [(ngModel)]="selectedQuantity" class="quantite-dropdown">
+                    <option *ngFor="let stock of stocks" [value]="stock">
+                        {{ stock }}
+                    </option>
+                </select>
+            </div>
+
+            <div id="bouton">
+                <button id="ajouter" (click)="addArticleToCart(article.id)">Ajouter au panier</button>
+                <button id="acheter">Acheter cet article</button>
+            </div>
         </div>
         <ng-template #elseBlock>
-            <div class="quantity">
-            <label style="color: red;">Rupture de stock</label>
-            <label>Disponible Prochainement</label>
-        </div>
+            <div class="disponibilite">
+                <i class="fas fa-times-circle indisponible-icon"></i>
+                <label style="color: red;">Rupture de stock</label>
+                <label>Disponible Prochainement</label>
+            </div>
         </ng-template>
-
-        <!-- <div id="quantity" *ngIf="article.stock > 0; else cas"> -->
 
     </div>
 </div>

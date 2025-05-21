@@ -58,4 +58,9 @@ export class ArticleService {
     return quantitees;
   }
 
+  // ratingArticle(rating: number): Observable<{ error: boolean, message?: string }>{
+
+  //   return 
+  // }
+
 }
