@@ -3,7 +3,7 @@ import { TopbarComponent} from "../topbar/topbar.component";
 import { ArticlePageComponentComponent } from "../article-page-component/article-page-component.component";
 import { NgFor } from '@angular/common';
 import { ArticleService } from '../service/article.service';
-import { Article } from '../service/article.interface';
+import { Article, ResponseApi } from '../service/article.interface';
 
 @Component({
   selector: 'app-dashboard',
@@ -20,8 +20,8 @@ export class DashboardComponent implements OnInit{
 
   ngOnInit() {
     this.articleService.getArticles().subscribe(
-      (data: Article[]) => {
-        this.articles = data;
+      (response: ResponseApi) => {
+        this.articles = response.rs;
       },
       (error) => {
         console.error('Erreur lors de la récupération des articles', error);

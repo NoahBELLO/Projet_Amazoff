@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, catchError, Observable, throwError } from 'rxjs';
 import { HttpClient, HttpHeaders } from '@angular/common/http'; //l'import pour les requêtes http
-import { Article } from './article.interface';
+import { Article, ResponseApi } from './article.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -30,11 +30,11 @@ export class PanierService {
   }
   
   //fonction de suppression d'un article du panier
-  removeArticleFromCart(articleId: string): Observable<{ error: boolean, message?: string }> {
+  removeArticleFromCart(articleId: string): Observable<ResponseApi> {
     const userId = '67371b2d1ed69fcb550f15e4';
     const url = `${this.baseUrl}/remove_from_cart/${userId}`;
     
-    return this.http.patch<{ error: boolean, message?: string }>(
+    return this.http.patch<ResponseApi>(
       url,
       { article_id: articleId },
       { headers: { 'Content-Type': 'application/json' } }
@@ -42,11 +42,11 @@ export class PanierService {
   }
   
   //fonction d'ajout d'un article au panier
-  addArticleToCart(articleId: string, quantite: number): Observable<{ error: boolean, message?: string }> {
+  addArticleToCart(articleId: string, quantite: number): Observable<ResponseApi> {
     const userId = '67371b2d1ed69fcb550f15e4';
     const url = `${this.baseUrl}/add_to_cart/${userId}`;
 
-    return this.http.patch<{ error: boolean, message?: string }>(
+    return this.http.patch<ResponseApi>(
       url,
       { 
         article_id: articleId,
@@ -56,12 +56,12 @@ export class PanierService {
     );
   }
   
-  
-  updateQuantiteUtilisateur(article: Article): Observable<{ error: boolean, message?: string }>{
+  //fonction de modification de la quantité d'un article dans un panier
+  updateQuantiteUtilisateur(article: Article): Observable<ResponseApi>{
     const userId = '67371b2d1ed69fcb550f15e4';
     const url = `${this.baseUrl}/edit_cart/${userId}`;
 
-    return this.http.patch<{ error: boolean, message?: string }>(
+    return this.http.patch<ResponseApi>(
       url,
       { 
         article_id: article.id,
@@ -69,12 +69,5 @@ export class PanierService {
        },
       { headers: { 'Content-Type': 'application/json' } }
     );
-  }
-
-  
-
-  clearPanier() {
-    this.panierUser.next([]);
-    localStorage.removeItem('panier');
   }
 }

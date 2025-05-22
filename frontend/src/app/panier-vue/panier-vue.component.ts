@@ -78,12 +78,6 @@ export class PanierVueComponent {
     });
   }
   
-
-
-  clearPanier() {
-    this.panierService.clearPanier();
-  }
-
   getTotal(): number {
     //reduce pour faire la somme des article.sous_total dans un tableau
     return this.panier.reduce((sum, article) => sum + article.sous_total!, 0);

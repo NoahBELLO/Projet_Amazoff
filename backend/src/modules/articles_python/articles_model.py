@@ -1,6 +1,7 @@
 from mongoengine import Document, StringField, IntField, DateTimeField, FloatField
 from bson import ObjectId
 from tools.customeException import ErrorExc
+from avis_python.avis_model import AvisModel
 from loguru import logger
 
 #liste des fields utiles:
@@ -23,8 +24,6 @@ class ArticleModel(Document):
     description = StringField(required=True, max_length=200)
     prix_kg = FloatField(required=False)
     stock = FloatField(required=True)
-    stars = IntField(required=False)
-
     meta = {'collection': 'article' , 'db_alias': 'articles-db'}
 
     def to_dict(self):
@@ -38,7 +37,6 @@ class ArticleModel(Document):
             "description": self.description,
             "prix_kg": self.prix_kg,
             "stock": self.stock,
-            "stars": self.stars,
         }
     
     def check_fields(self, datas):
@@ -61,6 +59,25 @@ class ArticleModel(Document):
         #     if float(datas['reduction']):
         #         raise ErrorExc(f"Veuillez définir une réduction valide (doit être un nombre).")
 
+    def get_all_articles(self):
+        articles = ArticleModel.objects()  # Récupérer tous les articles avec .objects
+        articles_dict = []
+        for article in articles:
+            articles_dict.append(article.to_dict())
+            avis = AvisModel.objects(article_id=article.article_id)
+        return True, articles_dict
+
+
+    def get_article(self, article_id):
+        article = ArticleModel.objects(id=article_id).first() #.first pour récup le premier de la liste
+        if not article:
+            raise ErrorExc("Article non trouvé")
+        avis = AvisModel.objects(article_id=article_id).first().to_dict() #récupére les avis et les met dans un dict
+        article = article.to_dict()
+        article['avis'] = avis['comments'] #la liste des commentaires
+        article['stars'] = avis['stars'] #la notation
+        logger.critical(article)
+        return True, article
 
     def save_data(self, datas):
         try:
@@ -88,6 +105,6 @@ class ArticleModel(Document):
                 raise ErrorExc("ID invalide")
             result = ArticleModel.objects(id=ObjectId(id_article)).delete()
             if result:
-                return False
+                return True
         except Exception as e: 
             raise ErrorExc(f"ça n'a pas marché : {str(e)}")

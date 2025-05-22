@@ -1,17 +1,23 @@
 import { Component, NgModule, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ArticleService } from '../service/article.service';
 import { TopbarComponent } from '../topbar/topbar.component';
-import { Article } from '../service/article.interface';
 import { CommonModule, NgClass, NgFor, NgIf } from '@angular/common';
 import { PanierService } from '../service/panier.service';
 import { FormsModule } from '@angular/forms'; //pour les soucis de ngmodel
+import { ArticleRatingModalComponent } from '../article-rating-modal/article-rating-modal.component';
 
 @Component({
   selector: 'app-article-vue',
   templateUrl: './article-vue.component.html',
   styleUrls: ['./article-vue.component.css'],
-  imports: [TopbarComponent, NgFor, NgClass, NgIf, FormsModule, CommonModule]
+  imports: [TopbarComponent,
+    NgFor,
+    NgClass,
+    NgIf,
+    FormsModule,
+    CommonModule,
+    ArticleRatingModalComponent]
 })
 export class ArticleVueComponent implements OnInit {
   //instancier les retours des fonctions
@@ -33,10 +39,10 @@ export class ArticleVueComponent implements OnInit {
     const id = this.route.snapshot.paramMap.get('id'); // Récupérez l'ID de l'URL
     if (id) {
       this.articleService.getArticleByObjectId(id).subscribe({
-        next: (data) => {
-          this.article = data;
+        next: (response) => {
+          this.article = response.rs;
           this.stocks = this.articleService.getStock(this.article.stock);
-          this.stars = this.articleService.starsArray(data.stars);
+          // this.stars = this.articleService.starsArray(data.stars);
         },
         error: (error) => console.error('Erreur lors de la récupération de l\'article', error)
       });
@@ -53,10 +59,4 @@ export class ArticleVueComponent implements OnInit {
       error: (error) => console.error("Erreur lors de l'ajout", error)
     });
   }
-  // service à mettre en place une fois que les commandes seront faites
-  // rateArticle(rating: number) {
-  //   this.selectedRating = rating;
-  //   this.isRatingSelected = true;
-  //   // this.articleService.ratingArticle(rating);
-  // }
 }

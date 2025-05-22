@@ -38,16 +38,24 @@ bp = Blueprint("articles", __name__, url_prefix="/articles")
 @bp.route("/", methods=["GET"])
 def get_articles():
     logger.critical("get all articles")
-    articles = ArticleModel.objects()  # Récupérer tous les articles avec .objects
-    return jsonify([article.to_dict() for article in articles])
+    try:
+        db = ArticleModel()
+        error, rs = db.get_all_articles()
+        return jsonify({"error": not error, "rs": rs})
+    except ErrorExc as e:
+        return jsonify({"error": True, "rs": str(e)})
+    
 
 #route get single article
 @bp.route("/<article_id>", methods=["GET"])
 def get_single_article(article_id):
-    article = ArticleModel.objects(id=article_id).first() #.first pour récup le premier de la liste
-    if not article:
-        return jsonify({"error": "Article not found"}), 404
-    return jsonify(article.to_dict())
+    logger.critical("get articles")
+    try:
+        db = ArticleModel()
+        error, rs = db.get_article(article_id)
+        return jsonify({"error": not error, "rs": rs})
+    except ErrorExc as e:
+        return jsonify({"error": True, "rs": str(e)})
 
 #route create
 @bp.route("/create", methods=["POST"])
@@ -77,6 +85,6 @@ def delete_article(id_article):
     try:
         db = ArticleModel()
         rs = db.delete_data(id_article)
-        return jsonify(rs)
+        return jsonify({"error": not rs})
     except ErrorExc as e:
         return jsonify({"error": True, "rs": str(e)})

@@ -17,39 +17,49 @@
         </div>
     </div>
 
-    <div class="achat">
-        <label *ngIf="article.stock > 0"  class="prix-initial " >{{ article.prix }}€</label>
-        <span class="prix-reduit">
-            {{ article.prix * (1 - article.reduction/100) | number:'1.2-2' }}€
-          </span>
+    <div>
+        <div class="achat">
+            <label *ngIf="article.stock > 0" class="prix-initial ">{{ article.prix }}€</label>
+            <span class="prix-reduit">
+                {{ article.prix * (1 - article.reduction/100) | number:'1.2-2' }}€
+            </span>
 
-        <label *ngIf="article.stock > 0"> Livraison le: {{ article.livraison }} </label>
-        <div *ngIf="article.stock > 0; else elseBlock">
-            <div class="disponibilite">
-                <i class="fas fa-check-circle disponible-icon"></i>
-                <label>En stock</label>
-            </div>
-            <div class="quantite-select">
-                <label>Quantité:</label>
-                <select [(ngModel)]="selectedQuantity" class="quantite-dropdown">
-                    <option *ngFor="let stock of stocks" [value]="stock">
-                        {{ stock }}
-                    </option>
-                </select>
-            </div>
+            <label *ngIf="article.stock > 0"> Livraison le: {{ article.livraison }} </label>
+            <div *ngIf="article.stock > 0; else elseBlock">
+                <div class="disponibilite">
+                    <i class="fas fa-check-circle disponible-icon"></i>
+                    <label>En stock</label>
+                </div>
+                <div class="quantite-select">
+                    <label>Quantité:</label>
+                    <select [(ngModel)]="selectedQuantity" class="quantite-dropdown">
+                        <option *ngFor="let stock of stocks" [value]="stock">
+                            {{ stock }}
+                        </option>
+                    </select>
+                </div>
 
-            <div id="bouton">
-                <button id="ajouter" (click)="addArticleToCart(article.id)">Ajouter au panier</button>
-                <button id="acheter">Acheter cet article</button>
+                <div id="bouton">
+                    <button id="ajouter" (click)="addArticleToCart(article.id)">Ajouter au panier</button>
+                    <button id="acheter">Acheter cet article</button>
+                </div>
             </div>
+            <ng-template #elseBlock>
+                <div class="disponibilite">
+                    <i class="fas fa-times-circle indisponible-icon"></i>
+                    <label style="color: red;">Rupture de stock</label>
+                    <label>Disponible Prochainement</label>
+                </div>
+            </ng-template>
         </div>
-        <ng-template #elseBlock>
-            <div class="disponibilite">
-                <i class="fas fa-times-circle indisponible-icon"></i>
-                <label style="color: red;">Rupture de stock</label>
-                <label>Disponible Prochainement</label>
-            </div>
-        </ng-template>
-
+        <div class="rate">
+            <button class="boutton_rate" (click)="ratingModal.openModal()">Évaluer ce produit</button>
+        </div>
     </div>
 </div>
+
+<!-- Modale d'évaluation -->
+<app-article-rating-modal
+  [articleId]="article.id"
+  #ratingModal>
+</app-article-rating-modal>

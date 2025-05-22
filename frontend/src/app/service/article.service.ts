@@ -1,34 +1,33 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http'; //l'import pour les requêtes http
 import { Observable } from 'rxjs';
-import { Article } from './article.interface';
+import { Article, RatingData, ResponseApi } from './article.interface';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ArticleService {
 
-  private articles: any[] = [];
-
-  private baseUrl = 'http://localhost:6001/articles';
+  private articleBaseUrl = 'http://localhost:6001/articles';
+  private avisBaseUrl = 'http://localhost:6001/avis';
 
   constructor(private http: HttpClient) { }
 
   //observable gère les réponses asychrones
-  createArticle(articleData: FormData): Observable<any> {
-    const url = `${this.baseUrl}/create`;
+  createArticle(articleData: FormData): Observable<ResponseApi> {
+    const url = `${this.articleBaseUrl}/create`;
     //post suivi de l'objet article
-    return this.http.post<Article>(url, articleData);
+    return this.http.post<ResponseApi>(url, articleData);
   }
 
-  getArticles(): Observable<Article[]> {
-    const url = `${this.baseUrl}/`;
-    return this.http.get<Article[]>(url);
+  getArticles(): Observable<ResponseApi> {
+    const url = `${this.articleBaseUrl}/`;
+    return this.http.get<ResponseApi>(url);
   }
 
-  getArticleByObjectId(id: string): Observable<Article> {
-    const url = `${this.baseUrl}/${id}`;
-    return this.http.get<Article>(url);
+  getArticleByObjectId(id: string): Observable<ResponseApi> {
+    const url = `${this.articleBaseUrl}/${id}`;
+    return this.http.get<ResponseApi>(url);
 
   }
 
@@ -58,9 +57,19 @@ export class ArticleService {
     return quantitees;
   }
 
-  // ratingArticle(rating: number): Observable<{ error: boolean, message?: string }>{
+  ratingArticle(ratingData: RatingData): Observable<ResponseApi>{
+    const userId = '67371b2d1ed69fcb550f15e4';
+    const url = `${this.avisBaseUrl}/rating_article`;
+    ratingData.comments.user_id = userId;
 
-  //   return 
-  // }
+    return this.http.patch<ResponseApi>(
+      url,
+      {
+        article_id: ratingData.articleId,
+        comments: ratingData.comments,
+      },
+      { headers: { 'Content-Type': 'application/json' } }
+    )
+  }
 
 }

@@ -19,16 +19,22 @@ export class ArticlePageComponentComponent implements OnInit {
     protected articleService: ArticleService) {}
 
     ngOnInit() {
-      this.articleService.getArticles().subscribe(
-        (data: Article[]) => {
-          this.articles = data; //enregistrement des articles dans le  tableau articles
+      this.articleService.getArticles().subscribe({
+        next: (response) => {
+          if (response.error == false) {
+            this.articles = response.rs
+          }
+          else{
+            alert(response.error)
+          }
         },
-        (error) => {
-          console.error('Erreur lors de la récupération des articles', error);
-        }
-      );
-      
+        error: (error) =>{
+          alert("Erreur lors de l'évaluation")
+          console.error("Erreur lors de l'évaluation", error)
+        }  
+      });
     }
   }
+  
 
 

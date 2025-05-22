@@ -118,6 +118,7 @@ label {
 
 select {
     width: 100px;
+    cursor: pointer;
 }
 
 
@@ -137,15 +138,19 @@ button {
 #ajouter {
     background-color: #ffd814;
     border-color: #ffd814;
+    cursor: pointer;
+    transition: all 0.2s;
 }
 
 #acheter {
     background-color: #ffa41c;
     border-color: #ffa41c;
+    cursor: pointer;
+    transition: all 0.2s;
 }
 
 #ajouter:hover {
-    background-color: #ffce12;
+    background-color: #dfb50d;
     border-color: #ffce12;
 }
 
@@ -153,3 +158,19 @@ button {
     background-color: #fa8900;
     border-color: #fa8900;
 }
+.rate{
+    display:flex;
+    justify-content: center;
+    max-width: 300px;margin-top: 50px;
+}
+.boutton_rate{
+    background-color: #b0eaf5;
+    justify-content: center;
+    border: 1px solid #ddd;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.boutton_rate:hover {
+    background-color: #85def0;
+        color: #000;
+  }
