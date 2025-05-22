@@ -67,7 +67,6 @@ def update_article_from_cart(id_user):
     except ErrorExc as e:
         return jsonify({"error": True, "rs": str(e)})
     
-
 #delete le panier
 @bp.route("/delete_cart/<string:user_id>", methods=["DELETE"])
 def delete_cart(user_id):

@@ -2,3 +2,13 @@ Faire un bouton retour pour les articles
 rajouter une image aux sections
 changer le comportement au survol des sections
 supprimer le code inutilisé pour le get_all des articles (nottament les loggers)
+
+créer des categories pour les articles (sport, high-tech-etc)
+implémenter la barre de recherche des articles
+
+# Livraisons
+créer une collection avec les adresses et appliquer l'id user ou l'id magasin aux adresses
+Num_rue
+code_postal
+ville
+complément adresse
