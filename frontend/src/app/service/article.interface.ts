@@ -27,5 +27,8 @@ export interface RatingData {
 export interface CommentData {
   comment: string;
   stars: number;
-  user_id: string | null;
+  user_id?: string | null;
+  fname?: string | null;
+  name?: string | null;
+  date_publication?: Date;
 }

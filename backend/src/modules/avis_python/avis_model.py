@@ -1,7 +1,10 @@
+import time
 from mongoengine import Document, StringField, IntField, DateTimeField, FloatField, ListField
 from bson import ObjectId
 from tools.customeException import ErrorExc
 from loguru import logger
+from user_python.user_model import UserModel
+
 
 class AvisModel(Document): 
     article_id = StringField(required=True)
@@ -39,16 +42,33 @@ class AvisModel(Document):
             article_id = str(datas['article_id'])
             comments = datas['comments']
             stars = float(comments['stars'])
+
+            #ajout de l'utilisateur au données de son commentaire
+            user = UserModel.objects(id=comments['user_id']).first().to_dict()
+            DATETIME = time.strftime('%d-%m-%Y-%H-%M-%S')
+            comments['fname'] = user['fname']
+            comments['name'] = user['name']
+            comments['date_publication'] = DATETIME
+
             try:
                 avis = AvisModel.objects(article_id=article_id).first()  
-                if avis is None:
+                #cas premier avis
+                if not avis:
                     avis = AvisModel(
                         article_id=article_id,
                         stars=stars,
                         evaluations=1,
                         comments=[comments] 
                     )
-                    logger.info(f"Création d'un nouvel avis pour l'article {article_id}")
+                    avis.save()
+                    return True
+                #cas tableau comments vide uniquement
+                if len(avis.comments) < 0:
+                    avis = AvisModel(
+                        stars=stars,
+                        evaluations=1,
+                        comments=[comments] 
+                    )
                     avis.save()
                     return True
                 else:

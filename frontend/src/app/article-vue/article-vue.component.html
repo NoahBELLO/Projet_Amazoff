@@ -57,6 +57,19 @@
         </div>
     </div>
 </div>
+<div class="bloc_commentaires">
+    <div *ngFor="let commentaire of avis">
+        <div class="stars">
+            <i *ngFor="let star of articleService.starsArray(commentaire.stars)" [ngClass]="star"></i>
+            <span class="username">{{ commentaire.fname || 'Utilisateur anonyme' }} {{commentaire.name }} le {{commentaire.date_publication }}</span>
+
+        </div>
+        <div>
+            <p>{{ commentaire.comment}}</p>
+        </div>
+    </div>
+</div>
+
 
 <!-- Modale d'évaluation -->
 <app-article-rating-modal

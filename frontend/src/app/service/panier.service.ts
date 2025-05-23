@@ -19,7 +19,7 @@ export class PanierService {
 
 
   getPanierUser():Observable<{error: boolean, message?: string, panier?:{ articles: Article[] }}> {
-    const userId = '67371b2d1ed69fcb550f15e4'; 
+    const userId = '67371b2d1ed69fcb550f15e5'; 
     const url = `${this.baseUrl}/${userId}`;
     return this.http.get<{ error: boolean, message?: string, articles?: Article[] }>(url).pipe(
       catchError((error) => {
@@ -31,7 +31,7 @@ export class PanierService {
   
   //fonction de suppression d'un article du panier
   removeArticleFromCart(articleId: string): Observable<ResponseApi> {
-    const userId = '67371b2d1ed69fcb550f15e4';
+    const userId = '67371b2d1ed69fcb550f15e5';
     const url = `${this.baseUrl}/remove_from_cart/${userId}`;
     
     return this.http.patch<ResponseApi>(
@@ -43,7 +43,7 @@ export class PanierService {
   
   //fonction d'ajout d'un article au panier
   addArticleToCart(articleId: string, quantite: number): Observable<ResponseApi> {
-    const userId = '67371b2d1ed69fcb550f15e4';
+    const userId = '67371b2d1ed69fcb550f15e5';
     const url = `${this.baseUrl}/add_to_cart/${userId}`;
 
     return this.http.patch<ResponseApi>(
@@ -58,7 +58,7 @@ export class PanierService {
   
   //fonction de modification de la quantité d'un article dans un panier
   updateQuantiteUtilisateur(article: Article): Observable<ResponseApi>{
-    const userId = '67371b2d1ed69fcb550f15e4';
+    const userId = '67371b2d1ed69fcb550f15e5';
     const url = `${this.baseUrl}/edit_cart/${userId}`;
 
     return this.http.patch<ResponseApi>(

@@ -9,6 +9,7 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 from articles_python.articles_routes import bp as articles_bp
 from panier_python.panier_routes import bp as panier_bp
 from avis_python.avis_routes import bp as avis_bp
+# from user_python.user_routes import bp as users_bp
 from flask_cors import CORS
 
 app = Flask(__name__)
@@ -18,8 +19,8 @@ app = Flask(__name__)
 app.register_blueprint(articles_bp)
 app.register_blueprint(panier_bp)
 app.register_blueprint(avis_bp)
+# app.register_blueprint(users_bp)
 
-# Configuration CORS pour les articles et les paniers
 CORS(app, resources={
     r"/articles/*": {
         "origins": os.getenv("CORS_ORIGINS", "*"),
@@ -54,13 +55,17 @@ def init_db_connections():
         connect(db="Avis", host=os.getenv("MONGO_URI_AVIS"), alias='avis-db')
         logger.info("Connexion réussie à la base de données Avis")
 
+        # # users
+        connect(db="Utilisateurs", host=os.getenv("MONGO_URI_USERS"), alias='users-db')
+        logger.info("Connexion réussie à la base de données Utilisateurs")
+        
     except Exception as e:
         logger.critical(f"Erreur de connexion MongoDB : {e}")
         
 def check_db_connections():
     try:
         # Vérifier chaque connexion
-        for alias in ['articles-db', 'paniers-db', 'avis-db']:
+        for alias in ['articles-db', 'paniers-db', 'avis-db', 'users-db']:
             try:
                 db = get_db(alias)
                 db.command('ping')
@@ -75,6 +80,6 @@ def check_db_connections():
 
 # Initialiser les connexions à la base de données
 init_db_connections()
-
+#check_db_connections()
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=6001, debug=True)  # debug pour reset à chaque modification de code

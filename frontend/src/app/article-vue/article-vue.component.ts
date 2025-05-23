@@ -6,6 +6,7 @@ import { CommonModule, NgClass, NgFor, NgIf } from '@angular/common';
 import { PanierService } from '../service/panier.service';
 import { FormsModule } from '@angular/forms'; //pour les soucis de ngmodel
 import { ArticleRatingModalComponent } from '../article-rating-modal/article-rating-modal.component';
+import { CommentData } from '../service/article.interface';
 
 @Component({
   selector: 'app-article-vue',
@@ -23,6 +24,7 @@ export class ArticleVueComponent implements OnInit {
   //instancier les retours des fonctions
   article: any;
   stars: string[] = [];
+  avis: CommentData[] = [];
   stocks: number[] = [];
   selectedQuantity: number = 1;
   selectedRating: number = 0;
@@ -30,7 +32,7 @@ export class ArticleVueComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private articleService: ArticleService, //pour utiliser ses fonctions
+    protected articleService: ArticleService, //pour utiliser ses fonctions
     private panierService: PanierService) { }
 
 
@@ -43,6 +45,8 @@ export class ArticleVueComponent implements OnInit {
           this.article = response.rs;
           this.stocks = this.articleService.getStock(this.article.stock);
           this.stars = this.articleService.starsArray(this.article.stars);
+          this.avis = this.article.avis
+          console.log(this.avis)
         },
         error: (error) => console.error('Erreur lors de la récupération de l\'article', error)
       });

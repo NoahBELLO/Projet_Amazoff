@@ -16,7 +16,7 @@ export class ArticleRatingModalComponent {
   selectedRating: number = 0;
   comment: string = '';
 
-   constructor(
+  constructor(
     private articleService: ArticleService) { }
 
   openModal(): void {
@@ -39,12 +39,12 @@ export class ArticleRatingModalComponent {
       return;
     }
 
-    const ratingData :RatingData = {
+    const ratingData: RatingData = {
       articleId: this.articleId,
       comments: {
         comment: this.comment,
         stars: this.selectedRating,
-        user_id: null }
+      }
     };
 
     console.log('Évaluation soumise:', ratingData);
@@ -55,10 +55,10 @@ export class ArticleRatingModalComponent {
           this.closeModal();
         }
       },
-      error: (error) =>{
+      error: (error) => {
         alert("Erreur lors de l'évaluation")
         console.error("Erreur lors de l'évaluation", error)
-      }  
+      }
     });
   }
 }
