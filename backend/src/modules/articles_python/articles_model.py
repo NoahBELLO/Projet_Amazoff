@@ -63,8 +63,14 @@ class ArticleModel(Document):
         articles = ArticleModel.objects()  # Récupérer tous les articles avec .objects
         articles_dict = []
         for article in articles:
-            articles_dict.append(article.to_dict())
-            avis = AvisModel.objects(article_id=article.article_id)
+            article = article.to_dict()
+            try:
+                avis = AvisModel.objects(article_id=str(article['id'])).first().to_dict()
+                article['avis'] = avis['comments'] #la liste des commentaires
+                article['stars'] = avis['stars'] #la notation
+            except:
+                pass
+            articles_dict.append(article)
         return True, articles_dict
 
 
@@ -76,7 +82,6 @@ class ArticleModel(Document):
         article = article.to_dict()
         article['avis'] = avis['comments'] #la liste des commentaires
         article['stars'] = avis['stars'] #la notation
-        logger.critical(article)
         return True, article
 
     def save_data(self, datas):

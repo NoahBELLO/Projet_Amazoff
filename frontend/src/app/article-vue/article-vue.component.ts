@@ -42,7 +42,7 @@ export class ArticleVueComponent implements OnInit {
         next: (response) => {
           this.article = response.rs;
           this.stocks = this.articleService.getStock(this.article.stock);
-          // this.stars = this.articleService.starsArray(data.stars);
+          this.stars = this.articleService.starsArray(this.article.stars);
         },
         error: (error) => console.error('Erreur lors de la récupération de l\'article', error)
       });
