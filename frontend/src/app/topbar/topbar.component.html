@@ -1,6 +1,6 @@
 <div id="banniere">
-    <div id="accueil" >
-        <img id="logo" src="../../assets/logo.png" alt="Logo du site Amazoff" [routerLink]="['/dashboard']" >
+    <div id="accueil">
+        <img id="logo" src="../../assets/logo.png" alt="Logo du site Amazoff" [routerLink]="['/dashboard']">
         <div class="welcome">
             <p>Bonjour Florian</p>
             <p style="font-weight: bold; ">Des offres exclusives vous attendent !</p>
@@ -8,7 +8,15 @@
     </div>
     <div>
         <div class="menu">
-            <i class="fa fa-cart-shopping large-icon" [routerLink]="['/user-cart']"></i>
+            <div class="panier-icon-container">
+                <i class="fa fa-cart-shopping large-icon" [routerLink]="['/user-cart']"></i>
+                <!-- permet de s'abonner à l'observable si c'est pas déjà fait -->
+                <ng-container *ngIf="(nombreArticles$ | async) as count">
+                    <span *ngIf="count > 0" class="panier-badge">{{ count }}</span>
+                </ng-container>
+            </div>
+
+
             <i class="fa fa-bars large-icon"></i>
             <i class="fa fa-bell large-icon"></i>
             <div class="user-info" [routerLink]="['/user-account']">
@@ -19,6 +27,6 @@
                 <input id="recherche" type="text" placeholder="Rechercher...">
                 <i class="fa fa-search"></i>
             </div>
-            </div>
         </div>
     </div>
+</div>

@@ -1,5 +1,5 @@
 import { Component, NgModule, OnInit } from '@angular/core';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ArticleService } from '../service/article.service';
 import { TopbarComponent } from '../topbar/topbar.component';
 import { CommonModule, NgClass, NgFor, NgIf } from '@angular/common';
@@ -33,7 +33,8 @@ export class ArticleVueComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     protected articleService: ArticleService, //pour utiliser ses fonctions
-    private panierService: PanierService) { }
+    private panierService: PanierService,
+    private router: Router) { }
 
 
   //éxecute à l'init
@@ -45,8 +46,7 @@ export class ArticleVueComponent implements OnInit {
           this.article = response.rs;
           this.stocks = this.articleService.getStock(this.article.stock);
           this.stars = this.articleService.starsArray(this.article.stars);
-          this.avis = this.article.avis
-          console.log(this.avis)
+          this.avis = this.article.avis ||  {}
         },
         error: (error) => console.error('Erreur lors de la récupération de l\'article', error)
       });
@@ -57,7 +57,7 @@ export class ArticleVueComponent implements OnInit {
     this.panierService.addArticleToCart(article_id, this.selectedQuantity).subscribe({
       next: (res) => {
         if (!res.error) {
-          alert("Article ajouté avec succès") //@notification
+          this.router.navigate(['/user-cart'])
         }
       },
       error: (error) => console.error("Erreur lors de l'ajout", error)

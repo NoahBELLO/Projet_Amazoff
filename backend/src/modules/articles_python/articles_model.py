@@ -78,10 +78,13 @@ class ArticleModel(Document):
         article = ArticleModel.objects(id=article_id).first() #.first pour récup le premier de la liste
         if not article:
             raise ErrorExc("Article non trouvé")
-        avis = AvisModel.objects(article_id=article_id).first().to_dict() #récupére les avis et les met dans un dict
+        avis = AvisModel.objects(article_id=article_id).first()#récupére les avis et les met dans un dict
+        logger.critical(avis)
         article = article.to_dict()
-        article['avis'] = avis['comments'] #la liste des commentaires
-        article['stars'] = avis['stars'] #la notation
+        if avis:
+            avis.to_dict()
+            article['avis'] = avis['comments'] #la liste des commentaires
+            article['stars'] = avis['stars'] #la notation
         return True, article
 
     def save_data(self, datas):

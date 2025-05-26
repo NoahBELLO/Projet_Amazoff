@@ -5,12 +5,13 @@ import { TopbarComponent } from "../topbar/topbar.component";
 import { NgClass, NgFor, NgIf } from '@angular/common';
 import { ArticleService } from '../service/article.service';
 import { FormsModule } from '@angular/forms';//pour les soucis de ngmodel
+import { Router, RouterLink } from '@angular/router';
 
 
 
 @Component({
   selector: 'app-panier-vue',
-  imports: [TopbarComponent, NgFor, NgIf, FormsModule],
+  imports: [TopbarComponent, NgFor, NgIf, FormsModule, RouterLink],
   templateUrl: './panier-vue.component.html',
   styleUrl: './panier-vue.component.css'
 })
@@ -22,36 +23,43 @@ export class PanierVueComponent {
 
   constructor(
     private panierService: PanierService,
-    private articleService: ArticleService) { }
+    private articleService: ArticleService,
+    private router: Router
+  ) { }
 
   ngOnInit() {
     this.panierService.getPanierUser().subscribe(
-      (data) => {
-        if (data.error) {
-          this.error = data.error;
-          this.message = data.message || 'Erreur inconnue';
-        }
-        else if (data.panier && data.panier.articles) {
-          console.log("les datas", data.panier)
-          this.panier = data.panier.articles.map(article => ({
+      (response) => {
+        if (!response.error) {
+          this.panier = response.rs.articles.map((article: { stock: any; }) => ({
             ...article,
             stock: article.stock
           }));
+        } else {
+          this.error = response.error;
+          this.message = response.message || 'Erreur inconnue';
         }
+      },
+      (err) => {
+        this.error = true;
+        this.message = 'Erreur lors de la récupération du panier';
+        console.error(err);
       }
-    )
-  };
+    );
+  }
 
-  removeFromPanier(articleId: string):void {
+
+  removeFromPanier(articleId: string): void {
     this.panierService.removeArticleFromCart(articleId).subscribe({
       next: (response) => {
         if (!response.error) {
-          alert("Article supprimé avec succès")
-        } 
+          console.log("succès")
+          window.location.reload(); //rafraichis la page
+        }
       },
-      error: (error) => {  
+      error: (error) => {
         alert(error)
-        console.error('Erreur lors de la mise à jour:', error);      
+        console.error('Erreur lors de la mise à jour:', error);
       }
     });
   }
@@ -70,14 +78,15 @@ export class PanierVueComponent {
       next: (response) => {
         if (!response.error) {
           article.sous_total = article.prix * article.quantite_utilisateur!;
-        } 
+          window.location.reload();
+        }
       },
-      error: (error) => {  
-        console.error('Erreur lors de la mise à jour:', error);      
+      error: (error) => {
+        console.error('Erreur lors de la mise à jour:', error);
       }
     });
   }
-  
+
   getTotal(): number {
     //reduce pour faire la somme des article.sous_total dans un tableau
     return this.panier.reduce((sum, article) => sum + article.sous_total!, 0);
