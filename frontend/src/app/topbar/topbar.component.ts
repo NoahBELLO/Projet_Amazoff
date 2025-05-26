@@ -33,9 +33,7 @@ export class TopbarComponent {
     this.nombreArticles$ = this.panierService.getNombreArticlesAuPanier();
 
     // S'abonner aux changements du nombre d'articles
-    this.nombreArticles$.subscribe(count => {
-      console.log('articles:', count);
-    });
+    this.nombreArticles$.subscribe();
   }
 
 

@@ -1,4 +1,4 @@
-import { Component, NgModule, OnInit } from '@angular/core';
+import { Component, NgModule, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ArticleService } from '../service/article.service';
 import { TopbarComponent } from '../topbar/topbar.component';
@@ -21,6 +21,8 @@ import { CommentData } from '../service/article.interface';
     ArticleRatingModalComponent]
 })
 export class ArticleVueComponent implements OnInit {
+  //sert à déclarer la modale d'avis
+  @ViewChild('ratingModal') ratingModal!: ArticleRatingModalComponent;
   //instancier les retours des fonctions
   article: any;
   stars: string[] = [];
@@ -46,7 +48,7 @@ export class ArticleVueComponent implements OnInit {
           this.article = response.rs;
           this.stocks = this.articleService.getStock(this.article.stock);
           this.stars = this.articleService.starsArray(this.article.stars);
-          this.avis = this.article.avis ||  {}
+          this.avis = this.article.avis || {}
         },
         error: (error) => console.error('Erreur lors de la récupération de l\'article', error)
       });
