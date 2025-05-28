@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, json
 from loguru import logger
 from articles_python.articles_model import ArticleModel
 from tools.customeException import ErrorExc
@@ -37,14 +37,15 @@ bp = Blueprint("articles", __name__, url_prefix="/articles")
 #route get all articles
 @bp.route("/", methods=["GET"])
 def get_articles():
-    logger.critical("get all articles")
     try:
-        db = ArticleModel()
-        error, rs = db.get_all_articles()
-        return jsonify({"error": not error, "rs": rs})
-    except ErrorExc as e:
+        with open("cached_articles.json", "r", encoding="utf-8") as f:
+            articles = json.load(f)
+        return jsonify({"error": False, "rs": articles})
+    except FileNotFoundError:
+        return jsonify({"error": True, "rs": "Cache non trouvé, lancez le batch"})
+    except Exception as e:
         return jsonify({"error": True, "rs": str(e)})
-    
+
 
 #route get single article
 @bp.route("/<article_id>", methods=["GET"])
