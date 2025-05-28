@@ -104,7 +104,7 @@ class ArticleModel(Document):
             if result:
                 return True, str(result.id)
         except Exception as e: 
-            raise ErrorExc(f"ça n'a pas marché : {str(e)}")
+            raise ErrorExc(f"Erreur lors de la mise à jour : {str(e)}")
     
     def delete_data(self, id_article):
         try:
@@ -115,4 +115,4 @@ class ArticleModel(Document):
             if result:
                 return True
         except Exception as e: 
-            raise ErrorExc(f"ça n'a pas marché : {str(e)}")
+            raise ErrorExc(f"Erreur lors de la suppression : {str(e)}")

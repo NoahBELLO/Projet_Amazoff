@@ -45,6 +45,9 @@ class AvisModel(Document):
 
             #ajout de l'utilisateur au données de son commentaire
             user = UserModel.objects(id=comments['user_id']).first().to_dict()
+            if user == None:
+                raise ErrorExc("Utilisateur inconnu")
+            
             DATETIME = time.strftime('%d-%m-%Y-%H-%M-%S')
             comments['fname'] = user['fname']
             comments['name'] = user['name']
