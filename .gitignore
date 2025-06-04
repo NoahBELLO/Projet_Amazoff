@@ -2,9 +2,9 @@ node_modules/
 environnements/conf.d/default.conf
 backend/.env
 backend/node_modules/
-backend/src/authentification/node_modules/
-backend/src/authentification/.env
-backend/src/role/node_modules/
-backend/src/role/.env
-backend/src/users/node_modules/
-backend/src/users/.env
+backend/src/modules/authentification/.env
+backend/src/modules/authentification/node_modules/
+backend/src/modules/roles/.env
+backend/src/modules/roles/node_modules/
+backend/src/modules/users/.env
+backend/src/modules/users/node_modules/
