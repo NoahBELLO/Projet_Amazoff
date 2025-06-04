@@ -35,7 +35,7 @@ class AvisModel(Document):
         if "user_id" not in comments or len(str(comments['user_id'])) == 0 :
             raise ErrorExc(f"Utilisateur non reconnu.")
 
-    
+
     def rating_article(self, datas):
             #datas = article_id, rating, user_id, comment
             self.check_fields(datas)

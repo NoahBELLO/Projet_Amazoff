@@ -5,8 +5,8 @@ from articles_python.articles_model import ArticleModel
 from loguru import logger
 
 def run_batch_articles():
-    disconnect_all()
     connect(db="Articles", host=os.getenv("MONGO_URI_ARTICLES"), alias='articles-db')
+
 
     db = ArticleModel()
     _, articles = db.get_all_articles()

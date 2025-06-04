@@ -1,3 +1,4 @@
+import os
 from flask import Blueprint, jsonify, request, json
 from loguru import logger
 from articles_python.articles_model import ArticleModel
@@ -33,20 +34,33 @@ bp = Blueprint("articles", __name__, url_prefix="/articles")
 # iregex – string field match by regex (case insensitive)
 # match – performs an $elemMatch so you can match an entire document within an array
 
-COMPTEUR = 0
 
 @bp.route("/", methods=["GET"])
 def get_articles():
     try:
-        with open("cached_articles.json", "r", encoding="utf-8") as f:
+        # Récupère le chemin absolu du fichier cache
+        cache_path = os.path.join(os.path.dirname(__file__), "cache", "cached_articles.json")
+
+        with open(cache_path, "r", encoding="utf-8") as f:
             articles = json.load(f)
+
         return jsonify({"error": False, "rs": articles})
+
     except FileNotFoundError:
-        return jsonify({"error": True, "rs": "Cache non trouvé, lancez le batch"})
+        return jsonify({"error": True, "rs": "Cache non trouvé, lancez le batch."})
     except Exception as e:
         return jsonify({"error": True, "rs": str(e)})
 
-
+@bp.route("/all", methods=["GET"])
+def get_all_articles():
+    logger.critical("get all_articles")
+    try:
+        db = ArticleModel()
+        error, rs = db.get_all_articles()
+        return jsonify({"error": not error, "rs": rs})
+    except ErrorExc as e:
+        return jsonify({"error": True, "rs": str(e)})
+    
 #route get single article
 @bp.route("/<article_id>", methods=["GET"])
 def get_single_article(article_id):

@@ -65,12 +65,17 @@ class ArticleModel(Document):
         for article in articles:
             article = article.to_dict()
             try:
-                avis = AvisModel.objects(article_id=str(article['id'])).first().to_dict()
-                article['avis'] = avis['comments'] #la liste des commentaires
-                article['stars'] = avis['stars'] #la notation
+                avis = AvisModel.objects(article_id=str(article['id'])).first()
+                if avis:
+                    avis = avis.to_dict()
+                    article['avis'] = avis.get('comments', [])
+                    article['stars'] = avis.get('stars', 0)
+                else:
+                    logger.debug(f"Aucun avis trouvé pour article_id {article['id']}")
             except:
                 pass
             articles_dict.append(article)
+        logger.critical(articles_dict)
         return True, articles_dict
 
 
