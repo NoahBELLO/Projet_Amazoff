@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, make_response, redirect
 from loguru import logger
 from articles_python.articles_model import Article
 from tools.customeException import ErrorExc
@@ -33,13 +33,24 @@ bp = Blueprint("articles", __name__, url_prefix="/articles")
 # iregex – string field match by regex (case insensitive)
 # match – performs an $elemMatch so you can match an entire document within an array
 
+COMPTEUR = 0
 
-#route get all articles
 @bp.route("/", methods=["GET"])
 def get_articles():
-    logger.critical("get all articles")
-    articles = Article.objects()  # Récupérer tous les articles avec .objects
-    logger.critical([article.to_dict() for article in articles])
+    global COMPTEUR 
+    COMPTEUR += 1
+    logger.critical(f"Compteur : {COMPTEUR}")
+    
+    if COMPTEUR > 25:
+        return make_response(jsonify({'error': 'Too many requests'}), 305)
+    
+    if COMPTEUR > 15:
+        return make_response(jsonify({'error': 'Erreur 500 simulée'}), 500)
+    
+    if COMPTEUR > 10:
+        return make_response(jsonify({'error': 'Test error'}), 400)
+    
+    articles = Article.objects()
     return jsonify([article.to_dict() for article in articles])
 
 #route get single article
