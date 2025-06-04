@@ -1,0 +1,60 @@
+<app-topbar></app-topbar>
+<div class="panier-container">
+  <div *ngIf="panier.length > 0; else noArticles">
+    <h2 class="title">Votre panier</h2>
+
+    <div class="tableau">
+      <table class="panier-table">
+        <tbody>
+          <tr class="panier-article">
+            <td>Désignation</td>
+            <td>Prix</td>
+            <td>Quantité</td>
+            <td>sous-total</td>
+            <td></td>
+          </tr>
+          <tr *ngFor="let article of panier" class="panier-article">
+            <td>
+              <div class="infos_article">
+                <img [routerLink]="['/article', article.id]" [src]="'./assets/' + article.image" alt="{{ article.name }}" class="article_img">
+                <a [routerLink]="['/article', article.id]" class="article_nom">{{ article.name }}</a>
+              </div>
+            </td>
+            <td class="price-cell">{{ article.prix }} €</td>
+            <!-- prototype pour définir la quantité il faut récup la quantité dispo max -->
+            <td>
+              <select class="quantite_select" [(ngModel)]="article.quantite_utilisateur" (change)="modifyQuantite(article)">
+                <option *ngFor="let quantite of getQuantityOptions(article)"
+                [value]="quantite"
+                [selected]="quantite === article.quantite_utilisateur"
+                >{{quantite}}
+              </option>
+              </select>
+            </td>
+            <!-- prototype pour faire quantité sélectionnée x prix unitaire -->
+            <td>sous total: {{ article.sous_total }} €</td>
+            <td class="action-cell">
+              <button class="supprimer" (click)="removeFromPanier(article.id)">Supprimer</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="panier_summary">
+      <div class="summary_article">
+        <span>Sous-total ({{ panier.length }} articles):</span>
+        <span>{{ getTotal() }} €</span>
+      </div>
+      <button class="checkout-btn">Passer la commande</button>
+    </div>
+  </div>
+
+  <ng-template #noArticles>
+    <div class="empty-cart">
+      <h2>Votre panier est vide</h2>
+      <p>Ajoutez des articles à votre panier pour commencer</p>
+      <button class="continue-shopping-btn">Continuer vos achats</button>
+    </div>
+  </ng-template>
+</div>

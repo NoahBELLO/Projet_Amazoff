@@ -9,6 +9,7 @@ import { TopbarComponent } from './topbar/topbar.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { UserAccountPageComponent } from './user-account-page/user-account-page.component';
 import { ArticleCreatePageComponent } from './article-create-page/article-create-page.component';
+import { CommonModule } from '@angular/common';
 
 
 @NgModule({
@@ -24,6 +25,7 @@ import { ArticleCreatePageComponent } from './article-create-page/article-create
     ReactiveFormsModule,
     UserAccountPageComponent,
     ArticleCreatePageComponent,
+    CommonModule,
     HttpClientModule,
   ],
   providers: [],

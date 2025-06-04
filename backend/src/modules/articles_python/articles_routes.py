@@ -1,6 +1,6 @@
-from flask import Blueprint, jsonify, request, make_response, redirect
+from flask import Blueprint, jsonify, request, json
 from loguru import logger
-from articles_python.articles_model import Article
+from articles_python.articles_model import ArticleModel
 from tools.customeException import ErrorExc
 
 bp = Blueprint("articles", __name__, url_prefix="/articles")
@@ -37,36 +37,33 @@ COMPTEUR = 0
 
 @bp.route("/", methods=["GET"])
 def get_articles():
-    global COMPTEUR 
-    COMPTEUR += 1
-    logger.critical(f"Compteur : {COMPTEUR}")
-    
-    if COMPTEUR > 25:
-        return make_response(jsonify({'error': 'Too many requests'}), 305)
-    
-    if COMPTEUR > 15:
-        return make_response(jsonify({'error': 'Erreur 500 simulée'}), 500)
-    
-    if COMPTEUR > 10:
-        return make_response(jsonify({'error': 'Test error'}), 400)
-    
-    articles = Article.objects()
-    return jsonify([article.to_dict() for article in articles])
+    try:
+        with open("cached_articles.json", "r", encoding="utf-8") as f:
+            articles = json.load(f)
+        return jsonify({"error": False, "rs": articles})
+    except FileNotFoundError:
+        return jsonify({"error": True, "rs": "Cache non trouvé, lancez le batch"})
+    except Exception as e:
+        return jsonify({"error": True, "rs": str(e)})
+
 
 #route get single article
 @bp.route("/<article_id>", methods=["GET"])
 def get_single_article(article_id):
-    article = Article.objects(id=article_id).first() #.first pour récup le premier de la liste
-    if not article:
-        return jsonify({"error": "Article not found"}), 404
-    return jsonify(article.to_dict())
+    logger.critical("get articles")
+    try:
+        db = ArticleModel()
+        error, rs = db.get_article(article_id)
+        return jsonify({"error": not error, "rs": rs})
+    except ErrorExc as e:
+        return jsonify({"error": True, "rs": str(e)})
 
 #route create
 @bp.route("/create", methods=["POST"])
 def create_article():
     try:
         datas = request.json #request.form avec urlencoded, sinon request.json quand il y aura le front
-        db = Article()
+        db = ArticleModel()
         error, rs = db.save_data(datas)
         return jsonify({"error": not error, "rs": {"id": rs}})
     except ErrorExc as e:
@@ -76,8 +73,8 @@ def create_article():
 @bp.route("/patch/<string:id_article>", methods=["PATCH"])
 def patch_article(id_article):
     try:
-        datas = request.form.to_dict(id_article) 
-        db = Article()
+        datas = request.json
+        db = ArticleModel()
         error, rs = db.update_data(datas, id_article)
         return jsonify({"error": not error, "rs": {"id": rs}})
     except ErrorExc as e:
@@ -87,8 +84,8 @@ def patch_article(id_article):
 @bp.route("/delete/<string:id_article>", methods=["DELETE"])
 def delete_article(id_article):
     try:
-        db = Article()
+        db = ArticleModel()
         rs = db.delete_data(id_article)
-        return jsonify(rs)
+        return jsonify({"error": not rs})
     except ErrorExc as e:
         return jsonify({"error": True, "rs": str(e)})

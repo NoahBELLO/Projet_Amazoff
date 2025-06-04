@@ -1,0 +1,36 @@
+<div class="rating-modal-overlay" *ngIf="isModalOpen" (click)="closeModal()">
+    <div class="rating-modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>Votre évaluation</h2>
+        <button class="close-button" (click)="closeModal()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+  
+      <div class="modal-body">
+        <div class="rating-section">
+          <div class="star-rating">
+            <i *ngFor="let star of [1,2,3,4,5]"
+               [class.fas]="selectedRating >= star"
+               [class.far]="selectedRating < star"
+               class="fa-star"
+               (click)="selectRating(star)">
+            </i>
+          </div>
+        </div>
+  
+        <div class="comment-section">
+          <h3>Votre avis:</h3>
+          <textarea [(ngModel)]="comment" name="comment"
+                   placeholder="Partagez votre expérience avec ce produit..."
+                   class="comment-textarea"></textarea>
+        </div>
+      </div>
+  
+      <div class="modal-footer">
+        <button class="cancel-button" (click)="closeModal()">Annuler</button>
+        <button class="submit-button" (click)="submitRating()">Envoyer l'évaluation</button>
+      </div>
+    </div>
+  </div>
+  

@@ -1,0 +1,129 @@
+.panier-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+  }
+  
+  .title {
+    font-size: 24px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 10px;
+  }
+  
+  .tableau{
+    width: 100%;
+    overflow-x: auto;
+  }
+  
+  .panier-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+      
+  .panier-article {
+    border-bottom: 1px solid #ddd;
+    padding: 15px 0;
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr 0.5fr;
+    align-items: center;
+  }
+  
+  .infos_article {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+  
+  .article_img {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+    cursor: pointer;
+  }
+  
+  .article_nom {
+    font-size: 16px;
+  }
+  
+  .quantite_select {
+    width: 60px;
+    padding: 5px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+  }
+  
+  .supprimer{
+    background: none;
+    border: none;
+    color: #0066c0;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  
+  .supprimer:hover {
+    text-decoration: underline;
+  }
+  
+  .panier_summary {
+    margin-top: 20px;
+    padding: 20px;
+    background-color: #f8f8f8;
+    border-radius: 5px;
+    text-align: right;
+  }
+  
+  .summary_article {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    font-size: 18px;
+  }
+  
+  .checkout-btn {
+    background-color: #ffd814;
+    border: none;
+    color: #111;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 10px;
+  }
+  
+  .checkout-btn:hover {
+    background-color: #f7ca00;
+  }
+  
+  .empty-cart {
+    text-align: center;
+    padding: 40px;
+    margin-top: 50px;
+  }
+  
+  .empty-cart h2 {
+    font-size: 24px;
+    margin-bottom: 10px;
+  }
+  
+  .empty-cart p {
+    color: #555;
+    margin-bottom: 20px;
+  }
+  
+  .continue-shopping-btn {
+    background-color: #f0c14b;
+    border: none;
+    color: #111;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .continue-shopping-btn:hover {
+    background-color: #ddb347;
+  }
+    

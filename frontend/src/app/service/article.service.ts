@@ -1,38 +1,41 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http'; //l'import pour les requêtes http
 import { Observable } from 'rxjs';
-import { Article } from './article.model';
+import { Article, RatingData, ResponseApi } from './article.interface';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ArticleService {
 
-  private articles: any[] = [];
+  private articleBaseUrl = 'http://localhost:6001/articles';
+  private avisBaseUrl = 'http://localhost:6001/avis';
 
-  private baseUrl = 'http://localhost:6001/articles';
+  constructor(private http: HttpClient) { }
 
-  constructor(private http: HttpClient) {}
-  
   //observable gère les réponses asychrones
-  createArticle(article: Article): Observable<Article>{
-    console.log("l'article:", article);
-    const url = `${this.baseUrl}/create`;
+  createArticle(articleData: FormData): Observable<ResponseApi> {
+    const url = `${this.articleBaseUrl}/create`;
     //post suivi de l'objet article
-    return this.http.post<Article>(url, article);
+    return this.http.post<ResponseApi>(url, articleData);
   }
 
-  getArticles(): Observable<Article[]> {
-    const url = `${this.baseUrl}/`;
-    return this.http.get<Article[]>(url);
+  getArticles(): Observable<ResponseApi> {
+    const url = `${this.articleBaseUrl}/`;
+    return this.http.get<ResponseApi>(url);
   }
-  
 
-   starsArray(etoiles: number): string[] {
+  getArticleByObjectId(id: string): Observable<ResponseApi> {
+    const url = `${this.articleBaseUrl}/${id}`;
+    return this.http.get<ResponseApi>(url);
+
+  }
+
+  starsArray(etoiles: number): string[] {
     const etoiles_pleines: number = Math.floor(etoiles); //arrondi à l'entier inférieur
     const demi_etoile: boolean = (etoiles % 1) >= 0.5; //vérifie si supérieur à .5
     const etoiles_vides: number = 5 - etoiles_pleines - (demi_etoile ? 1 : 0); //vérifie si demi étoile
-  
+
     let rating: string[] = [];
     for (let i = 0; i < etoiles_pleines; i++) {
       rating.push("fas fa-star");
@@ -43,15 +46,30 @@ export class ArticleService {
     for (let i = 0; i < etoiles_vides; i++) {
       rating.push("far fa-star");
     }
-  
+
     return rating;
   }
 
-  getStock(stock: number): number[]{
+  getStock(stock: number): number[] {
     let quantitees: number[] = []
-    for(let i =0; i < stock; i++)
-      quantitees.push(i+1);
-    return quantitees ;
+    for (let i = 0; i < stock; i++)
+      quantitees.push(i + 1);
+    return quantitees;
   }
-  
+
+  ratingArticle(ratingData: RatingData): Observable<ResponseApi>{
+    const userId = '67371b2d1ed69fcb550f15e5';
+    const url = `${this.avisBaseUrl}/rating_article`;
+    ratingData.comments.user_id = userId;
+
+    return this.http.patch<ResponseApi>(
+      url,
+      {
+        article_id: ratingData.articleId,
+        comments: ratingData.comments,
+      },
+      { headers: { 'Content-Type': 'application/json' } }
+    )
+  }
+
 }

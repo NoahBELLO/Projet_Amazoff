@@ -2,7 +2,7 @@ import { NgClass, NgFor } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
 import { ArticleService } from '../service/article.service';
 import { RouterLink } from '@angular/router';
-import { Article } from '../service/article.model';
+import { Article } from '../service/article.interface';
 
 @Component({
   selector: 'app-article-page-component',
@@ -16,22 +16,25 @@ export class ArticlePageComponentComponent implements OnInit {
   articles: Article[] = [];
 
   constructor(
-    private articleService: ArticleService) {}
+    protected articleService: ArticleService) {}
 
     ngOnInit() {
-      this.articleService.getArticles().subscribe(
-        (data: Article[]) => {
-          this.articles = data; //enregistrement des articles dans le  tableau articles
-          console.log("articles = ", this.articles)
-          if (this.article) {
-            this.stars = this.articleService.starsArray(this.article.stars);
+      this.articleService.getArticles().subscribe({
+        next: (response) => {
+          if (response.error == false) {
+            this.articles = response.rs
+          }
+          else{
+            alert(response.error)
           }
         },
-        (error) => {
-          console.error('Erreur lors de la récupération des articles', error);
-        }
-      );
+        error: (error) =>{
+          alert("Erreur lors de l'évaluation")
+          console.error("Erreur lors de l'évaluation", error)
+        }  
+      });
     }
   }
+  
 
 
