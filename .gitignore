@@ -6,3 +6,5 @@ backend/src/authentification/node_modules/
 backend/src/authentification/.env
 backend/src/role/node_modules/
 backend/src/role/.env
+backend/src/users/node_modules/
+backend/src/users/.env
