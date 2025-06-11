@@ -7,7 +7,7 @@
     justify-content: space-between;
 }
 
-/* css image */
+/* CSS pour les images */
 img {
     height: 500px;
 }
@@ -48,9 +48,10 @@ label {
 
 .stars {
     justify-content: flex-start;
+    margin-bottom: 10px;
 }
 
-/* css achat */
+/* CSS pour les achats */
 .disponibilite {
     display: flex;
     align-items: center;
@@ -174,3 +175,28 @@ button {
     background-color: #85def0;
         color: #000;
   }
+
+/* CSS pour les avis */
+.bloc_commentaires {
+    margin-top: 20px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.bloc_commentaires div {
+    margin-bottom: 20px;
+    padding: 15px;
+    max-width: 500px;
+}
+
+.username {
+    font-weight: bold;
+    color: #333;
+    margin-left: 10px;
+}
+
+.bloc_commentaires p {
+    margin: 10px 0;
+    line-height: 1.6;
+}

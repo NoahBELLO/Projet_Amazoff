@@ -1369,3 +1369,4 @@ node_modules/whatwg-url/lib/URLSearchParams-impl.js
 node_modules/whatwg-url/lib/URLSearchParams.js
 node_modules/whatwg-url/lib/utils.js
 node_modules/whatwg-url/lib/VoidFunction.js
+backend/src/modules/articles_python/cache/cached_articles.json

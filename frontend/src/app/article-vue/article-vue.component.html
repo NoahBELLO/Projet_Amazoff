@@ -64,13 +64,12 @@
 <div class="bloc_commentaires">
     <div *ngIf="article?.avis">
         <div *ngFor="let commentaire of avis">
-            <div class="stars">
-                <i *ngFor="let star of articleService.starsArray(commentaire.stars)" [ngClass]="star"></i>
-                <span class="username">{{ commentaire.fname || 'Utilisateur anonyme' }} {{commentaire.name }} le
-                    {{commentaire.date_publication }}</span>
-
-            </div>
             <div>
+                <div class="stars">
+                    <i *ngFor="let star of articleService.starsArray(commentaire.stars)" [ngClass]="star"></i>
+                    <span class="username">{{ commentaire.fname || 'Utilisateur anonyme' }} {{commentaire.name }} le
+                        {{commentaire.date_publication }}</span>
+                </div>
                 <p>{{ commentaire.comment}}</p>
             </div>
         </div>
