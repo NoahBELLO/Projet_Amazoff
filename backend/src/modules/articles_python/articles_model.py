@@ -75,7 +75,6 @@ class ArticleModel(Document):
             except:
                 pass
             articles_dict.append(article)
-        logger.critical(articles_dict)
         return True, articles_dict
 
 

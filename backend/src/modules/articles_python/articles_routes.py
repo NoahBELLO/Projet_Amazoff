@@ -53,7 +53,6 @@ def get_articles():
 
 @bp.route("/all", methods=["GET"])
 def get_all_articles():
-    logger.critical("get all_articles")
     try:
         db = ArticleModel()
         error, rs = db.get_all_articles()
