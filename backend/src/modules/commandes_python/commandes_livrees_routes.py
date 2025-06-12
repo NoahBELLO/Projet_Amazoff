@@ -9,9 +9,10 @@ bp = Blueprint("livrees", __name__, url_prefix="/livrees")
 @bp.route("/<user_id>", methods=["GET"])
 def get_commandes_livrees(user_id):
     logger.critical("route get commandes livrées")
-    return("routes checked")
-    # # try:
-    # #     error, rs = db.get_commandes(user_id) 
-    #     return jsonify({"error": not error, "rs": rs})
-    # except ErrorExc as e:
-    #     return jsonify({"error": True, "rs": str(e)})
+    db = CommandesLivreesModel()
+    try:
+        error, rs = db.get_commande(user_id) 
+        logger.critical(rs)
+        return jsonify({"error": not error, "rs": rs})
+    except ErrorExc as e:
+        return jsonify({"error": True, "rs": str(e)})

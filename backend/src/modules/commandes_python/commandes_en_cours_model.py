@@ -4,6 +4,8 @@ from tools.customeException import ErrorExc
 from loguru import logger
 from user_python.user_model import UserModel
 import time
+import random
+
 
 
 class CommandesEnCoursModel(Document): 
@@ -12,6 +14,7 @@ class CommandesEnCoursModel(Document):
     total = FloatField(required=True)
     paiement = StringField(required=True)
     date_publication = StringField(required=False)
+    numero_commande = IntField(required=True, unique=True)
 
     meta = {'collection': 'commandes_en_cours', 'db_alias': 'commandes-db'}
 
@@ -22,7 +25,8 @@ class CommandesEnCoursModel(Document):
             "commandes": self.commandes,
             "total": self.total,
             "paiement": self.paiement,
-            "date_publication" : self.date_publication
+            "date_publication" : self.date_publication,
+            "numero_commande": self.numero_commande
         }
     
     def check_fields(self, datas):
@@ -39,6 +43,22 @@ class CommandesEnCoursModel(Document):
             raise ErrorExc("Total de la commande manquant ou invalide.")
 
         return datas
+    def generate_unique_numero(self):
+        MAX_TRIES = 1000
+        for _ in range(MAX_TRIES):
+            numero = random.randint(100000, 999999)  # 6 chiffres
+            en_cours_exists = CommandesEnCoursModel.objects(numero_commande=numero).first()
+            try:
+                #import local !
+                from commandes_livrees_model import CommandesLivreesModel
+                livree_exists = CommandesLivreesModel.objects(numero_commande=numero).first()
+            except ImportError:
+                livree_exists = None  
+
+            if not en_cours_exists and not livree_exists:
+                logger.critical(numero)
+                return numero
+        raise ErrorExc("Impossible de générer un numéro de commande unique après plusieurs tentatives.")
 
     def get_commande(self, user_id):
         try:
@@ -59,7 +79,7 @@ class CommandesEnCoursModel(Document):
                 raise ErrorExc("Utilisateur inconnu")
             datas['date_publication'] =  time.strftime('%d-%m-%Y-%H-%M-%S') #date en string
             datas['user_id'] = user_id
-            logger.critical(datas)
+            datas['numero_commande'] = self.generate_unique_numero()
             commande = CommandesEnCoursModel(**datas)
             commande.save()
             return True, str(commande.id)
@@ -67,14 +87,12 @@ class CommandesEnCoursModel(Document):
         except ErrorExc as e:
             raise ErrorExc(f"Erreur lors de l'enregistrement de la commande {e}")
 
-    def delete(self, commandes_id):
+    def delete(self, numero_commande):
         try:
-            if not ObjectId.is_valid(commandes_id):
-                raise ErrorExc("ID invalide")
-            commande = CommandesEnCoursModel.objects(id=ObjectId(commandes_id)).first().to_dict()
+            commande = CommandesEnCoursModel.objects(numero_commande=numero_commande).first().to_dict()
             commande['date_livraison'] = time.strftime('%d-%m-%Y-%H-%M-%S')
             user_id = commande['user_id']
-            result = CommandesEnCoursModel.objects(id=ObjectId(commandes_id)).delete()
+            result = CommandesEnCoursModel.objects(numero_commande=numero_commande).delete()
             if result:
                 return False, commande, user_id #backup si jamais l'insertion dans l'autre bdd foire
             else:

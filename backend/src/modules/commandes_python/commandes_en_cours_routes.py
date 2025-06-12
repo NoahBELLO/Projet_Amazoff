@@ -28,21 +28,22 @@ def create_commande(user_id):
     except ErrorExc as e:
         return jsonify({"error": True, "rs": str(e)})
     
-@bp.route("/delete/<commande_id>", methods=["DELETE"])
-def delete_commande(commande_id):
-    logger.critical("route delete commandes en cours")
+@bp.route("/delete/<numero_commande>", methods=["DELETE"])
+def commande_livrees(numero_commande):
+    logger.critical("route commande livrées")
     db_en_cours = CommandesEnCoursModel()
     db_livrees = CommandesLivreesModel()
     try:
-        error, commande, user_id = db_en_cours.delete(commande_id) 
+        error, commande, user_id = db_en_cours.delete(numero_commande) 
         if error:
             raise ErrorExc("ereur lors de la suppression")
         error, rs = db_livrees.create(commande)
-        if error:
+        logger.critical(error, rs)
+        if error is False:
             del commande['date_livraison']
             error, rs = db_en_cours.create(user_id, commande)
             if rs:
                 raise ErrorExc("erreur insertion commande livrée")
-        return jsonify({"error": not error})
+        return jsonify({"error": not error, 'rs': rs})
     except ErrorExc as e:
         return jsonify({"error": True, "rs": str(e)})
