@@ -37,7 +37,13 @@
         <button id="suivre">Suivre votre colis</button>
         <button id="probleme">Problème avec la commande</button>
       </ng-container>
-      <button id="avis">Donner son avis sur le produit</button>
+      <button id="avis" (click)="ratingModal.openModal(article.article_id)">Donner son avis sur le produit</button>
     </div>
+
+    <app-article-rating-modal #ratingModal *ngIf="article">
+    </app-article-rating-modal>
+
   </div>
 </div>
+
+<!-- Modale d'évaluation -->

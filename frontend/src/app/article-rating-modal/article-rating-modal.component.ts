@@ -19,10 +19,11 @@ export class ArticleRatingModalComponent {
   constructor(
     private articleService: ArticleService) { }
 
-  openModal(): void {
+  openModal(articleId: string): void {
     this.isModalOpen = true;
     this.selectedRating = 0;
     this.comment = '';
+    this.articleId = articleId
   }
 
   closeModal(): void {
@@ -46,7 +47,7 @@ export class ArticleRatingModalComponent {
         stars: this.selectedRating,
       }
     };
-
+    console.log(this.articleId)
     console.log('Évaluation soumise:', ratingData);
     this.articleService.ratingArticle(ratingData).subscribe({
       next: (response) => {
