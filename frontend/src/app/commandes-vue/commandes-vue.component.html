@@ -1,1 +1,17 @@
-<p>commandes-vue works!</p>
+<app-topbar></app-topbar>
+
+<h2 class="commande-section-title en-cours">📦 Vos commandes en cours</h2>
+<app-commande-bloc
+  *ngFor="let commande of commandes_en_cours"
+  [commande]="commande"
+  [isDelivered]="false">
+</app-commande-bloc>
+
+<hr>
+
+<h2 class="commande-section-title livrees">✅ Vos commandes livrées</h2>
+<app-commande-bloc
+  *ngFor="let commande of commandes_livrees"
+  [commande]="commande"
+  [isDelivered]="true">
+</app-commande-bloc>

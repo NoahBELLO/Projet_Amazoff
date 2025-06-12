@@ -1,0 +1,43 @@
+<div class="bloc-commande">
+  <div class="bloc-header-commande">
+    <div class="mini-bloc-commande">
+      <strong>Commande effectuée le :</strong><br>
+      <span>{{ commande.date_publication }}</span>
+    </div>
+    <div class="mini-bloc-total">
+      <strong>Total :</strong><br>
+      <span>{{ commande.total }} €</span>
+    </div>
+    <div class="mini-bloc-numero-commande">
+      <strong>N° de commande :</strong><br>
+      <span>{{ commande.numero_commande }}</span>
+    </div>
+    <div *ngIf="commande.date_livraison" class="mini-bloc-livraison">
+      <strong>Livrée le :</strong><br>
+      <span>{{ commande.date_livraison }}</span>
+    </div>
+  </div>
+
+
+  <div *ngFor="let article of commande.commandes" class="bloc-body-commande">
+    <div class="mini-bloc-image">
+      <img src="./assets/{{ article.image }}" alt="{{ article.name }}">
+    </div>
+    <div class="mini-bloc-description">
+      <div class="nom-article">{{ article.name }}</div>
+      <div class="infos-article">
+        <div><strong>Quantité :</strong> {{ article.quantite }}</div>
+        <div><strong>Prix unitaire :</strong> {{ article.prix }} €</div>
+        <div><strong>Réduction :</strong> {{ article.reduction }}%</div>
+        <div><strong>Sous-total :</strong> {{ article.sous_total }} €</div>
+      </div>
+    </div>
+    <div class="mini-bloc-bouttons">
+      <ng-container *ngIf="!isDelivered">
+        <button id="suivre">Suivre votre colis</button>
+        <button id="probleme">Problème avec la commande</button>
+      </ng-container>
+      <button id="avis">Donner son avis sur le produit</button>
+    </div>
+  </div>
+</div>
