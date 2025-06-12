@@ -21,10 +21,10 @@
 
   <div *ngFor="let article of commande.commandes" class="bloc-body-commande">
     <div class="mini-bloc-image">
-      <img src="./assets/{{ article.image }}" alt="{{ article.name }}">
+      <img [routerLink]="['/article', article.article_id]" src="./assets/{{ article.image }}" alt="{{ article.name }}">
     </div>
     <div class="mini-bloc-description">
-      <div class="nom-article">{{ article.name }}</div>
+      <div [routerLink]="['/article', article.article_id]" class="nom-article">{{ article.name }}</div>
       <div class="infos-article">
         <div><strong>Quantité :</strong> {{ article.quantite }}</div>
         <div><strong>Prix unitaire :</strong> {{ article.prix }} €</div>
