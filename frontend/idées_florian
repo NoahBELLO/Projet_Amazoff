@@ -25,3 +25,5 @@ complément adresse
 # Commandes
 Link le bouton acheter a commande en envoyée pour skip le processus de paiement
 rajouter un bouton qui met une commande comme livrée pour simuler la livraison effectuée
+Ajout d'un bouton pour imprimer le reçu
+Ajout d'un bouton retourner ou remplacer les articles

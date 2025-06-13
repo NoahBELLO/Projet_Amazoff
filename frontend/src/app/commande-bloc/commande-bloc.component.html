@@ -37,9 +37,14 @@
         <button id="suivre">Suivre votre colis</button>
         <button id="probleme">Problème avec la commande</button>
       </ng-container>
+      <ng-container *ngIf="isDelivered">
+        <button id="retour" (click)="retourModal.openModal(article.article_id)">Retourner l'article</button>
+        <button id="receipt">Imprimer le reçu</button>
+      </ng-container>
       <button id="avis" (click)="ratingModal.openModal(article.article_id)">Donner son avis sur le produit</button>
     </div>
 
+  <app-commande-retour #retourModal [articleId]="article.article_id"></app-commande-retour>
     <app-article-rating-modal #ratingModal *ngIf="article">
     </app-article-rating-modal>
 
