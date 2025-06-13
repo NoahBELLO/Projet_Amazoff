@@ -1,3 +1,5 @@
+import os
+from flask import json
 from mongoengine import Document, StringField, IntField, DateTimeField, FloatField
 from bson import ObjectId
 from tools.customeException import ErrorExc
@@ -70,8 +72,6 @@ class ArticleModel(Document):
                     avis = avis.to_dict()
                     article['avis'] = avis.get('comments', [])
                     article['stars'] = avis.get('stars', 0)
-                else:
-                    logger.debug(f"Aucun avis trouvé pour article_id {article['id']}")
             except:
                 pass
             articles_dict.append(article)
@@ -112,7 +112,6 @@ class ArticleModel(Document):
     
     def delete_data(self, id_article):
         try:
-            logger.critical(id_article)
             if not ObjectId.is_valid(id_article):
                 raise ErrorExc("ID invalide")
             result = ArticleModel.objects(id=ObjectId(id_article)).delete()
@@ -120,3 +119,47 @@ class ArticleModel(Document):
                 return True
         except Exception as e: 
             raise ErrorExc(f"Erreur lors de la suppression : {str(e)}")
+    
+    def search(self, searchKeys=False):
+        searchKeysFiltered = {}
+
+        if searchKeys:
+            for k, v in searchKeys.items():
+                if len(str(v).strip()) > 0:
+                    searchKeysFiltered[k] = v
+
+        # charge les articles depuis le cache
+        articles = self.load_cached_articles()
+
+        # si aucun critère : retourne tout
+        if not searchKeysFiltered:
+            return True, articles
+
+        # si recherche texte avec 'q'
+        if 'q' in searchKeysFiltered:
+            query = searchKeysFiltered.pop('q').strip().lower()
+
+            #cherche une correspondance
+            def matches(article):
+                return any(
+                    query in str(article.get(field, '')).lower()
+                    for field in ['name', 'description']
+                )
+
+            results = list(filter(matches, articles))
+
+        else:
+            # recherche stricte
+            results = [
+                a for a in articles
+                if all(str(a.get(k)) == str(v) for k, v in searchKeysFiltered.items())
+            ]
+
+        return True, results or []
+
+
+       
+    def load_cached_articles(self):
+        chemin = os.path.join(os.path.dirname(__file__), 'cache', 'cached_articles.json')
+        with open(chemin, 'r', encoding='utf-8') as f:
+            return json.load(f)

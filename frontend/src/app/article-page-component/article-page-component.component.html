@@ -2,9 +2,9 @@
 <div *ngFor="let article of articles" class="article_component" [routerLink]="['/article', article.id]">
     <div class="header_article_component">
         <label class="prix">{{ article.prix }}€</label>
-        <button class="options-button">
+        <!-- <button class="options-button">
             <i class="fas fa-ellipsis-v"></i>
-        </button>
+        </button> -->
     </div>
     <div class="picture">
         <img class="img" src="./assets/{{ article.image }}" alt="{{ article.name }}">
