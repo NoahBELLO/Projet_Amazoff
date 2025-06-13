@@ -6,6 +6,10 @@ supprimer le code inutilisé pour le get_all des articles (nottament les loggers
 créer des categories pour les articles (sport, high-tech-etc)
 implémenter la barre de recherche des articles
 
+# articles
+créer une liste des articles du magasin (rajouter un id pour savoir le magasin auquel il appartient?)
+dans cette liste possibilité d'éditer ou de supprimer
+
 # avis
 permettre l'edition de son propre avis
 
@@ -17,3 +21,7 @@ ville
 complément adresse
 
 # Panier
+
+# Commandes
+Link le bouton acheter a commande en envoyée pour skip le processus de paiement
+rajouter un bouton qui met une commande comme livrée pour simuler la livraison effectuée

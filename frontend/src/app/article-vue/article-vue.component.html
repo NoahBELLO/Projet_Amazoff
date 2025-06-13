@@ -62,19 +62,25 @@
     </div>
 </div>
 <div class="bloc_commentaires">
-    <div *ngIf="article?.avis">
-        <div *ngFor="let commentaire of avis">
-            <div>
-                <div class="stars">
-                    <i *ngFor="let star of articleService.starsArray(commentaire.stars)" [ngClass]="star"></i>
-                    <span class="username">{{ commentaire.fname || 'Utilisateur anonyme' }} {{commentaire.name }} le
-                        {{commentaire.date_publication }}</span>
-                </div>
-                <p>{{ commentaire.comment}}</p>
-            </div>
+  <div *ngIf="article?.avis">
+    <div *ngFor="let commentaire of avis">
+        <!-- ignore les commentaires vides -->
+      <ng-container *ngIf="commentaire.comment && commentaire.comment.trim() !== ''">
+        <div>
+          <div class="stars">
+            <i *ngFor="let star of articleService.starsArray(commentaire.stars)" [ngClass]="star"></i>
+            <span class="username">
+              {{ commentaire.fname || 'Utilisateur anonyme' }} {{ commentaire.name }} le
+              {{ commentaire.date_publication }}
+            </span>
+          </div>
+          <p>{{ commentaire.comment }}</p>
         </div>
+      </ng-container>
     </div>
+  </div>
 </div>
+
 
 
 <!-- Modale d'évaluation -->
