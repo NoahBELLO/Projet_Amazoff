@@ -1,5 +1,6 @@
 flask
 mongoengine
-flask-cor
+flask-cors
 dot-env
 dotenv
+loguru
