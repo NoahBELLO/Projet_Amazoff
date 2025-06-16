@@ -2,5 +2,6 @@ flask
 mongoengine
 flask-cors
 dot-env
+APScheduler
 dotenv
 loguru

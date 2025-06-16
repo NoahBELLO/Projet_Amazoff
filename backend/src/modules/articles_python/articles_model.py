@@ -80,10 +80,13 @@ class ArticleModel(Document):
         article = ArticleModel.objects(id=article_id).first() #.first pour récup le premier de la liste
         if not article:
             raise ErrorExc("Article non trouvé")
-        avis = AvisModel.objects(article_id=article_id).first().to_dict() #récupére les avis et les met dans un dict
+        avis = AvisModel.objects(article_id=article_id).first()#récupére les avis et les met dans un dict
+        logger.critical(avis)
         article = article.to_dict()
-        article['avis'] = avis['comments'] #la liste des commentaires
-        article['stars'] = avis['stars'] #la notation
+        if avis:
+            avis.to_dict()
+            article['avis'] = avis['comments'] #la liste des commentaires
+            article['stars'] = avis['stars'] #la notation
         return True, article
 
     def save_data(self, datas):
@@ -103,7 +106,7 @@ class ArticleModel(Document):
             if result:
                 return True, str(result.id)
         except Exception as e: 
-            raise ErrorExc(f"ça n'a pas marché : {str(e)}")
+            raise ErrorExc(f"Erreur lors de la mise à jour : {str(e)}")
     
     def delete_data(self, id_article):
         try:
@@ -114,4 +117,4 @@ class ArticleModel(Document):
             if result:
                 return True
         except Exception as e: 
-            raise ErrorExc(f"ça n'a pas marché : {str(e)}")
+            raise ErrorExc(f"Erreur lors de la suppression : {str(e)}")

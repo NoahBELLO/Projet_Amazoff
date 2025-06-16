@@ -1,7 +1,8 @@
 <app-topbar></app-topbar>
-<div class="présentation_article">
-    <div class="article-image-container">
-        <img [src]="'./assets/' + article.image" [alt]="article.name" class="article-image">
+<div class="présentation_article" *ngIf="article">
+    <div class="article-image-container" *ngIf="article">
+        <img [src]="'./assets/' + (article.image || 'default.jpg')" alt="{{ article.name || 'Article' }}"
+            class="article-image">
         <div *ngIf="article.reduction > 0" class="discount-badge">-{{ article.reduction }}%</div>
     </div>
     <div class="infos">
@@ -17,6 +18,9 @@
         </div>
     </div>
 
+    <div *ngIf="!article" class="loading">
+        <i class="fas fa-spinner fa-spin"></i> Chargement en cours...
+    </div>
     <div>
         <div class="achat">
             <label *ngIf="article.stock > 0" class="prix-initial ">{{ article.prix }}€</label>
@@ -58,21 +62,22 @@
     </div>
 </div>
 <div class="bloc_commentaires">
-    <div *ngFor="let commentaire of avis">
-        <div class="stars">
-            <i *ngFor="let star of articleService.starsArray(commentaire.stars)" [ngClass]="star"></i>
-            <span class="username">{{ commentaire.fname || 'Utilisateur anonyme' }} {{commentaire.name }} le {{commentaire.date_publication }}</span>
+    <div *ngIf="article?.avis">
+        <div *ngFor="let commentaire of avis">
+            <div class="stars">
+                <i *ngFor="let star of articleService.starsArray(commentaire.stars)" [ngClass]="star"></i>
+                <span class="username">{{ commentaire.fname || 'Utilisateur anonyme' }} {{commentaire.name }} le
+                    {{commentaire.date_publication }}</span>
 
-        </div>
-        <div>
-            <p>{{ commentaire.comment}}</p>
+            </div>
+            <div>
+                <p>{{ commentaire.comment}}</p>
+            </div>
         </div>
     </div>
 </div>
 
 
 <!-- Modale d'évaluation -->
-<app-article-rating-modal
-  [articleId]="article.id"
-  #ratingModal>
+<app-article-rating-modal [articleId]="article?.id" #ratingModal *ngIf="article">
 </app-article-rating-modal>

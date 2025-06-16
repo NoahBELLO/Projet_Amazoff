@@ -8,7 +8,6 @@ implémenter la barre de recherche des articles
 
 # avis
 permettre l'edition de son propre avis
-remettre l'affichage des étoiles dans le dashboard et la vue d'un article
 
 # Livraisons
 créer une collection avec les adresses et appliquer l'id user ou l'id magasin aux adresses
@@ -16,3 +15,5 @@ Num_rue
 code_postal
 ville
 complément adresse
+
+# Panier

@@ -16,8 +16,8 @@
           <tr *ngFor="let article of panier" class="panier-article">
             <td>
               <div class="infos_article">
-                <img [src]="'./assets/' + article.image" alt="{{ article.name }}" class="article_img">
-                <span class="article_nom">{{ article.name }}</span>
+                <img [routerLink]="['/article', article.id]" [src]="'./assets/' + article.image" alt="{{ article.name }}" class="article_img">
+                <a [routerLink]="['/article', article.id]" class="article_nom">{{ article.name }}</a>
               </div>
             </td>
             <td class="price-cell">{{ article.prix }} €</td>
