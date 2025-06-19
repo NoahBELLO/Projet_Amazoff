@@ -1,9 +1,15 @@
+from datetime import datetime, timezone
 import os
 from flask import Blueprint, jsonify, request, json
 from loguru import logger
 from articles_python.articles_model import ArticleModel
+from articles_python.articles_model import ArticleModelMD
 from tools.customeException import ErrorExc
+from tools.db_health import test_mongo, test_maria, disable_mongo, disable_maria
+from bson import ObjectId
 
+
+LOG_FILE = os.path.join(os.path.dirname(__file__), 'failed_insert_articles.log')
 bp = Blueprint("articles", __name__, url_prefix="/articles")
 
 
@@ -34,13 +40,20 @@ bp = Blueprint("articles", __name__, url_prefix="/articles")
 # iregex – string field match by regex (case insensitive)
 # match – performs an $elemMatch so you can match an entire document within an array
 
+def log_failure(target: str, datas: dict, error: Exception):
+    timestamp = datetime.now(timezone.utc).isoformat()  
+    with open(LOG_FILE, 'a', encoding='utf-8') as fichier:
+        fichier.write(
+            f"{timestamp} | {target} INSERT FAILED | "
+            f"data={datas!r} | error={error}\n"
+        )
 
 @bp.route("/", methods=["GET"])
 def get_articles():
     try:
         # Récupère le chemin absolu du fichier cache
         cache_path = os.path.join(os.path.dirname(__file__), "cache", "cached_articles.json")
-
+        logger.critical("debug")
         with open(cache_path, "r", encoding="utf-8") as f:
             articles = json.load(f)
 
@@ -55,7 +68,9 @@ def get_articles():
 # def get_all_articles():
 #     try:
 #         db = ArticleModel()
+#         dbmd = ArticleModelMD()
 #         error, rs = db.get_all_articles()
+#         datas = dbmd.get_name()
 #         return jsonify({"error": not error, "rs": rs})
 #     except ErrorExc as e:
 #         return jsonify({"error": True, "rs": str(e)})
@@ -63,6 +78,7 @@ def get_articles():
 @bp.route("/search", methods=["POST"])
 def search_articles():
     try:
+        logger.critical("route search")
         db = ArticleModel()
         searchKeys = request.json
         error, rs = db.search(searchKeys)
@@ -74,34 +90,96 @@ def search_articles():
 @bp.route("/<article_id>", methods=["GET"])
 def get_single_article(article_id):
     logger.critical("get articles")
-    try:
-        db = ArticleModel()
-        error, rs = db.get_article(article_id)
-        return jsonify({"error": not error, "rs": rs})
-    except ErrorExc as e:
-        return jsonify({"error": True, "rs": str(e)})
+    if test_mongo():
+        try:
+            db = ArticleModel()
+            err_mongo, rs_mongo = db.get_article(article_id)
+            return jsonify({"error": not err_mongo, "rs": rs_mongo})
+        except ErrorExc as e:
+            return jsonify({"error": True, "rs": str(e)})
+    
+    if not test_mongo() and test_maria():
+        try:
+            db2 = ArticleModelMD()
+            err_maria, rs_maria = db.get_article(article_id)
+        except ErrorExc as e:
+            return jsonify({"error": True, "rs": str(e)})
 
+         
 #route create
 @bp.route("/create", methods=["POST"])
 def create_article():
-    try:
-        datas = request.json #request.form avec urlencoded, sinon request.json quand il y aura le front
-        db = ArticleModel()
-        error, rs = db.save_data(datas)
-        return jsonify({"error": not error, "rs": {"id": rs}})
-    except ErrorExc as e:
-        return jsonify({"error": True, "rs": str(e)})
+    datas = request.json
+    response = {"error": False, "ids": {}}
+    logger.critical('route create')
+    mongo_id = False
+    # MongoDB 
+    if test_mongo():
+        try:
+            logger.critical('mongo')
+            err_mongo, mongo_id = ArticleModel().save_data(datas)
+            if err_mongo:
+                response["ids"]["mongo"] = mongo_id
 
-#route patch
+        except Exception as e:
+            logger.warning(f"Échec MongoDB : {e}")
+            log_failure('MONGO', datas, e)
+            disable_mongo()
+
+    # MariaDB 
+    if test_maria():
+        logger.critical('maria')
+        try:
+            if not mongo_id:
+                mongo_id = ObjectId()
+                logger.critical(f"mon id généré {mongo_id}")
+            datas_sql = datas
+            datas_sql['id_mongo'] = mongo_id
+            err_maria, maria_id = ArticleModelMD().create(datas)
+            if err_maria:
+                response["ids"]["mariadb"] = maria_id
+
+        except Exception as e:
+            logger.warning(f"Échec MariaDB : {e}")
+            log_failure('MARIADB', datas, e)
+            disable_maria()
+
+    # Réponse 
+    if not response["ids"]:
+        return jsonify({"error": True, "message": "Aucun insert n’a fonctionné."})
+    return jsonify({'error': False, 'rs': response})
+
+
 @bp.route("/patch/<string:id_article>", methods=["PATCH"])
 def patch_article(id_article):
+    datas = request.json or {}
+    response = {"error": False, "updated": {}}
+
+    # MongoDB
     try:
-        datas = request.json
-        db = ArticleModel()
-        error, rs = db.update_data(datas, id_article)
-        return jsonify({"error": not error, "rs": {"id": rs}})
+        err_mongo, mongo_id = ArticleModel().update_data(datas, id_article)
+        if err_mongo:
+            response["updated"]["mongo"] = mongo_id
+
     except ErrorExc as e:
-        return jsonify({"error": True, "rs": str(e)})
+        logger.warning(f"[PATCH] Échec MongoDB pour id={id_article} : {e}")
+        log_failure('MONGO', {"id": id_article, **datas}, e)
+
+    # MariaDB
+    try:
+        result_sql = ArticleModelMD().update(id_article, datas)
+        if result_sql.isUpdated():
+            response["updated"]["mariadb"] = result_sql.rowCount()
+
+    except Exception as e:
+        logger.warning(f"[PATCH] Échec MariaDB pour id={id_article} : {e}")
+        log_failure('MARIADB', {"id": id_article, **datas}, e)
+
+    if not response["updated"]:
+        return jsonify({"error": True, "message": "Aucune mise à jour n’a été appliquée."})
+
+    return jsonify({"error": False, "rs": response})
+
     
 #route delete
 @bp.route("/delete/<string:id_article>", methods=["DELETE"])

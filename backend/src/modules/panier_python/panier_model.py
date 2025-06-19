@@ -3,6 +3,8 @@ from bson import ObjectId
 from tools.customeException import ErrorExc
 from loguru import logger
 from articles_python.articles_model import ArticleModel
+from articles_python.articles_bdd import TableArticles
+from panier_python.panier_bdd import TablePanier
 
 #liste des fields utiles:
 # URLField      pour les URL
@@ -19,7 +21,6 @@ from articles_python.articles_model import ArticleModel
 class PanierModel(Document): 
     user_id = StringField(required=True, unique=True) #user unique
     articles = ListField(required=False)
-    total = FloatField(required=False, default=0.0)
 
     meta = {'collection': 'panier', 'db_alias': 'paniers-db'}  # nom exact de la collection
 
@@ -114,7 +115,7 @@ class PanierModel(Document):
                 })
             panier.save()
 
-            return True
+            return True, article_id
         except :
             raise ErrorExc("Erreur modification du panier")  
 
@@ -122,11 +123,9 @@ class PanierModel(Document):
     # #à la suppresion du compte supprime le panier
     def delete_cart(self, user_id):
         try:
-            # Vérifiez si le user_id est valide
             if not user_id:
                 raise ErrorExc("ID utilisateur invalide")
 
-            # Supprimez le panier associé à l'utilisateur
             result = PanierModel.objects(user_id=user_id).delete()
             if result == 0:
                 raise ErrorExc("Aucun panier trouvé pour cet utilisateur.")
@@ -141,3 +140,83 @@ class PanierModel(Document):
             if article_panier['article_id'] == article_id:
                 return article_panier
         return None
+    
+class PanierModelMD():
+    _id = 0
+    _user_id = 0
+    
+    def __init__(self, id = 0):
+        self._db = TablePanier()
+        if id :
+            self._id = id
+    
+    def create_cart(self, datas):
+        _user_id = datas['user_id']
+        db = TablePanier()
+        db.create(datas)
+        if db.getLastId() < 1:
+            raise ErrorExc("Échec de l'insertion en base de données.")
+        id = db.getLastId()
+        return True, id
+    
+    def get_cart(self, user_id):
+        try:
+            db = TablePanier()
+            logger.critical(user_id)
+            datas = db.get_cart(user_id)
+            if datas:
+                return True, datas
+        except Exception as e:
+            raise ErrorExc(f"Erreur lors de la récupération du panier : {str(e)}")
+        
+    #def delete_article(self, article_to_delete, user_id):
+
+    def add_reduce_quantity(self, article_id, quantite, user_id, edit=False):
+        try:
+            db_article = TableArticles()
+            article = db_article.get_by_id(article_id)
+            if not article or article['stock'] < float(quantite):
+                raise ErrorExc ("Stock insuffisant")
+            db = TablePanier()
+            panier = db.get_cart(user_id)
+
+            if panier:
+                article_trouve = self.article_present_dans_panier(panier, article_id)
+
+                # verification que le stock le permet par rapport à ce que l'utilisateur à déjà
+                if article_trouve is not None and article_trouve['quantite'] + float(quantite) < article['stock']:
+                    raise ErrorExc("Vous ne pouvez commander plus que la quantité disponible")
+                elif article_trouve is not None and edit == False:
+                    article_trouve['quantite'] += float(quantite)
+                elif article_trouve is not None and edit == True:
+                    article_trouve['quantite'] = float(quantite)
+                else:
+                    panier['articles'].append({
+                        "article_id": article_id,
+                        "quantite": float(quantite)
+                    })
+                db.update(panier['id'], panier)
+
+            return True, article_id
+        except ErrorExc as e:
+            raise ErrorExc(f"Erreur modification du panier {e}")  
+
+    
+    def delete_cart(self, user_id):
+        try: 
+            if not user_id:
+                raise ErrorExc("ID utilisateur invalide")
+            
+            db = TablePanier()
+            rs = db.delete(user_id)
+            if rs:
+                return True
+        except Exception as e:
+            raise ErrorExc(f"Erreur lors de la suppression du panier : {str(e)}")
+   
+    def article_present_dans_panier(self, panier, article_id):
+        for article_panier in panier['articles']:
+            if article_panier['article_id'] == article_id:
+                return article_panier
+        return None
+

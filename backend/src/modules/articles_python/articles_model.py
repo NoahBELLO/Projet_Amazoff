@@ -1,6 +1,7 @@
 import os
 from flask import json
 from mongoengine import Document, StringField, IntField, DateTimeField, FloatField
+from articles_python.articles_bdd import TableArticles
 from bson import ObjectId
 from tools.customeException import ErrorExc
 from avis_python.avis_model import AvisModel
@@ -120,7 +121,9 @@ class ArticleModel(Document):
         except Exception as e: 
             raise ErrorExc(f"Erreur lors de la suppression : {str(e)}")
     
+    #ce search recherche uniquement dans le fichier json
     def search(self, searchKeys=False):
+        logger.critical('test')
         searchKeysFiltered = {}
 
         if searchKeys:
@@ -163,3 +166,60 @@ class ArticleModel(Document):
         chemin = os.path.join(os.path.dirname(__file__), 'cache', 'cached_articles.json')
         with open(chemin, 'r', encoding='utf-8') as f:
             return json.load(f)
+
+
+class ArticleModelMD():
+    _id = 0
+    _user_id = 0
+    
+    def __init__(self, id = 0):
+        self._db = TableArticles()
+        if id :
+            self._id = id
+    
+    def check_fields(self, datas):
+        if "name" not in datas or len(datas['name'].strip()) == 0:
+            raise ErrorExc(f"Veuillez définir un nom d'article.")
+        
+        # if "image" not in datas or len(datas['image'].strip()) == 0:
+        #     raise ErrorExc(f"Veuillez choisir une image.")
+        
+        if "prix" not in datas or float(datas['prix']) == 0 :
+            raise ErrorExc(f"Veuillez définir un prix.")
+        
+        if "stock" not in datas or int(datas['stock']) == 0 :
+            raise ErrorExc(f"Veuillez définir le stock.")
+        
+        if "description" not in datas or len(datas['description'].strip()) == 0:
+            raise ErrorExc(f"Veuillez définir une description.")
+        
+        # if "reduction" in datas:
+        #     if float(datas['reduction']):
+        #         raise ErrorExc(f"Veuillez définir une réduction valide (doit être un nombre).")
+
+    def create(self, datas):
+        db = TableArticles()
+        db.create(datas)
+        if db.getLastId() < 1:
+            raise ErrorExc("Échec de l'insertion en base de données.")
+        self._id = db.getLastId()
+        return True, self._id
+
+    def update(self, datas, id_article):
+        self.check_fields(datas)
+        db = TableArticles()
+        db.update(id_article, datas)
+        if not db.isValid():
+            raise ErrorExc("Modification non sauvegardée en base de données.")
+        return True, id_article
+    
+    def get_all_articles(self):
+        db = TableArticles()
+        filters = ""
+        datas = db.search(filters)
+        return datas
+    
+    def get_article(self, id_article):
+        db = TableArticles()
+        datas = db.search(id_article)
+        return datas

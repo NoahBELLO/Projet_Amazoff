@@ -1,0 +1,53 @@
+2025-06-19T12:41:30.413235+00:00 | MONGO_CART INSERT FAILED | data={'user_id': '67371b2d1ed69fcb550f15e5'} | error=Erreur lors de la création du panier : localhost:27017: [WinError 10061] Aucune connexion n’a pu être établie car l’ordinateur cible l’a expressément refusée (configured timeouts: socketTimeoutMS: 5000.0ms, connectTimeoutMS: 5000.0ms), Timeout: 5.0s, Topology Description: <TopologyDescription id: 6854055a040c955fdd4d7f3f, topology_type: Unknown, servers: [<ServerDescription ('localhost', 27017) server_type: Unknown, rtt: None, error=AutoReconnect('localhost:27017: [WinError 10061] Aucune connexion n’a pu être établie car l’ordinateur cible l’a expressément refusée (configured timeouts: socketTimeoutMS: 5000.0ms, connectTimeoutMS: 5000.0ms)')>]>
+2025-06-19T13:05:10.219594+00:00 | MONGO_CART INSERT FAILED | data={'user_id': '67371b2d1ed69fcb550f15e5'} | error=Erreur modification du panier
+2025-06-19T13:05:10.299970+00:00 | MARIADB_CART INSERT FAILED | data={'user_id': '67371b2d1ed69fcb550f15e5'} | error=Erreur modification du panier
+2025-06-19T13:10:03.028405+00:00 | MONGO_CART INSERT FAILED | data={'user_id': '67371b2d1ed69fcb550f15e5'} | error=Erreur modification du panier
+2025-06-19T13:10:03.110266+00:00 | MARIADB_CART INSERT FAILED | data={'user_id': '67371b2d1ed69fcb550f15e5'} | error=Erreur modification du panier
+2025-06-19T13:11:18.091503+00:00 | MONGO_CART INSERT FAILED | data={'user_id': '67371b2d1ed69fcb550f15e5'} | error=Erreur modification du panier
+2025-06-19T13:11:18.172493+00:00 | MARIADB_CART INSERT FAILED | data={'user_id': '67371b2d1ed69fcb550f15e5'} | error=Erreur modification du panier
+2025-06-19T13:11:43.879170+00:00 | MONGO_CART INSERT FAILED | data={'user_id': '67371b2d1ed69fcb550f15e5'} | error=Erreur modification du panier
+2025-06-19T13:11:43.963440+00:00 | MARIADB_CART INSERT FAILED | data={'user_id': '67371b2d1ed69fcb550f15e5'} | error=Erreur modification du panier
+2025-06-19T13:12:13.726970+00:00 | MONGO_CART INSERT FAILED | data={'user_id': '67371b2d1ed69fcb550f15e5'} | error=Erreur modification du panier
+2025-06-19T13:12:13.845006+00:00 | MARIADB_CART INSERT FAILED | data={'user_id': '67371b2d1ed69fcb550f15e5'} | error=Erreur modification du panier
+2025-06-19T13:12:37.501717+00:00 | MONGO_CART INSERT FAILED | data={'user_id': '67371b2d1ed69fcb550f15e5'} | error=Erreur modification du panier
+2025-06-19T13:12:37.583813+00:00 | MARIADB_CART INSERT FAILED | data={'user_id': '67371b2d1ed69fcb550f15e5'} | error=Erreur modification du panier
+2025-06-19T13:13:23.713493+00:00 | MONGO_CART INSERT FAILED | data={'user_id': '67371b2d1ed69fcb550f15e5'} | error=Erreur modification du panier
+2025-06-19T13:13:23.873049+00:00 | MARIADB_CART INSERT FAILED | data={'user_id': '67371b2d1ed69fcb550f15e5'} | error=cannot unpack non-iterable bool object
+2025-06-19T13:15:27.003148+00:00 | MONGO_CART INSERT FAILED | data={'user_id': '67371b2d1ed69fcb550f15e5'} | error=Erreur lors de la création du panier : localhost:27017: [WinError 10061] Aucune connexion n’a pu être établie car l’ordinateur cible l’a expressément refusée (configured timeouts: socketTimeoutMS: 5000.0ms, connectTimeoutMS: 5000.0ms), Timeout: 5.0s, Topology Description: <TopologyDescription id: 68540d5b6ed04064009fa0c7, topology_type: Unknown, servers: [<ServerDescription ('localhost', 27017) server_type: Unknown, rtt: None, error=AutoReconnect('localhost:27017: [WinError 10061] Aucune connexion n’a pu être établie car l’ordinateur cible l’a expressément refusée (configured timeouts: socketTimeoutMS: 5000.0ms, connectTimeoutMS: 5000.0ms)')>]>
+2025-06-19T13:15:36.817900+00:00 | MARIADB_CART INSERT FAILED | data={'user_id': '67371b2d1ed69fcb550f15e5'} | error=Erreur modification du panier
+2025-06-19T13:22:11.613816+00:00 | MONGO_CART INSERT FAILED | data={'user_id': '67371b2d1ed69fcb550f15e5'} | error=Erreur modification du panier
+2025-06-19T13:22:11.831620+00:00 | MARIADB_CART INSERT FAILED | data={'user_id': '67371b2d1ed69fcb550f15e5'} | error=Erreur modification du panier
+2025-06-19T13:23:19.330960+00:00 | MONGO_CART INSERT FAILED | data={'user_id': '67371b2d1ed69fcb550f15e5'} | error=Erreur modification du panier
+2025-06-19T13:23:19.549641+00:00 | MARIADB_CART INSERT FAILED | data={'user_id': '67371b2d1ed69fcb550f15e5'} | error=Erreur modification du panier
+2025-06-19T13:23:50.121997+00:00 | MONGO_CART INSERT FAILED | data={'user_id': '67371b2d1ed69fcb550f15e5'} | error=Erreur modification du panier
+2025-06-19T13:23:50.339193+00:00 | MARIADB_CART INSERT FAILED | data={'user_id': '67371b2d1ed69fcb550f15e5'} | error=Erreur modification du panier
+2025-06-19T13:25:54.928415+00:00 | MONGO_CART INSERT FAILED | data={'user_id': '67371b2d1ed69fcb550f15e5'} | error=Erreur modification du panier
+2025-06-19T13:25:55.145626+00:00 | MARIADB_CART INSERT FAILED | data={'user_id': '67371b2d1ed69fcb550f15e5'} | error='list' object has no attribute 'keys'
+2025-06-19T13:27:53.534273+00:00 | MONGO_CART INSERT FAILED | data={'user_id': '67371b2d1ed69fcb550f15e5'} | error=Erreur modification du panier
+2025-06-19T13:27:53.750408+00:00 | MARIADB_CART INSERT FAILED | data={'user_id': '67371b2d1ed69fcb550f15e5'} | error='list' object has no attribute 'keys'
+2025-06-19T13:28:23.825736+00:00 | MONGO_CART INSERT FAILED | data={'user_id': '67371b2d1ed69fcb550f15e5'} | error=Erreur modification du panier
+2025-06-19T13:28:24.044910+00:00 | MARIADB_CART INSERT FAILED | data={'user_id': '67371b2d1ed69fcb550f15e5'} | error='list' object has no attribute 'keys'
+2025-06-19T13:29:11.712301+00:00 | MONGO_CART INSERT FAILED | data={'user_id': '67371b2d1ed69fcb550f15e5'} | error=Erreur modification du panier
+2025-06-19T13:29:11.961465+00:00 | MARIADB_CART INSERT FAILED | data={'user_id': '67371b2d1ed69fcb550f15e5'} | error=cannot unpack non-iterable bool object
+2025-06-19T13:43:00.111312+00:00 | MONGO_CART INSERT FAILED | data={'user_id': '67371b2d1ed69fcb550f15e5'} | error=Erreur modification du panier
+2025-06-19T13:45:58.101791+00:00 | MONGO_CART INSERT FAILED | data={'user_id': '67371b2d1ed69fcb550f15e5'} | error=Erreur modification du panier
+2025-06-19T13:45:58.258013+00:00 | MARIADB_CART INSERT FAILED | data={'user_id': '67371b2d1ed69fcb550f15e5'} | error='NoneType' object is not subscriptable
+2025-06-19T13:46:36.317520+00:00 | MONGO_CART INSERT FAILED | data={'user_id': '67371b2d1ed69fcb550f15e5'} | error=Erreur modification du panier
+2025-06-19T13:46:36.471829+00:00 | MARIADB_CART INSERT FAILED | data={'user_id': '67371b2d1ed69fcb550f15e5'} | error='NoneType' object is not subscriptable
+2025-06-19T13:47:59.029827+00:00 | MONGO_CART INSERT FAILED | data={'user_id': '67371b2d1ed69fcb550f15e5'} | error=Erreur modification du panier
+2025-06-19T13:47:59.188829+00:00 | MARIADB_CART INSERT FAILED | data={'user_id': '67371b2d1ed69fcb550f15e5'} | error='NoneType' object is not subscriptable
+2025-06-19T13:49:07.249643+00:00 | MONGO_CART INSERT FAILED | data={'user_id': '67371b2d1ed69fcb550f15e5'} | error=Erreur modification du panier
+2025-06-19T13:49:07.408218+00:00 | MARIADB_CART INSERT FAILED | data={'user_id': '67371b2d1ed69fcb550f15e5'} | error='NoneType' object is not subscriptable
+2025-06-19T13:49:34.534524+00:00 | MONGO_CART INSERT FAILED | data={'user_id': '67371b2d1ed69fcb550f15e5'} | error=Erreur modification du panier
+2025-06-19T13:49:34.692566+00:00 | MARIADB_CART INSERT FAILED | data={'user_id': '67371b2d1ed69fcb550f15e5'} | error='NoneType' object is not subscriptable
+2025-06-19T13:50:19.180050+00:00 | MONGO_CART INSERT FAILED | data={'user_id': '67371b2d1ed69fcb550f15e5'} | error=Erreur modification du panier
+2025-06-19T13:50:19.339456+00:00 | MARIADB_CART INSERT FAILED | data={'user_id': '67371b2d1ed69fcb550f15e5'} | error='NoneType' object is not subscriptable
+2025-06-19T13:52:37.161466+00:00 | MONGO_CART INSERT FAILED | data={'user_id': '67371b2d1ed69fcb550f15e5'} | error=Erreur modification du panier
+2025-06-19T13:54:22.839923+00:00 | MONGO_CART INSERT FAILED | data={'user_id': '67371b2d1ed69fcb550f15e5'} | error=Erreur modification du panier
+2025-06-19T13:54:23.001551+00:00 | MARIADB_CART INSERT FAILED | data={'user_id': '67371b2d1ed69fcb550f15e5'} | error=Erreur modification du panier Vous ne pouvez commander plus que la quantité disponible
+2025-06-19T13:55:00.660051+00:00 | MONGO_CART INSERT FAILED | data={'user_id': '67371b2d1ed69fcb550f15e5'} | error=Erreur modification du panier
+2025-06-19T13:55:49.855746+00:00 | MONGO_CART INSERT FAILED | data={'user_id': '67371b2d1ed69fcb550f15e5'} | error=Erreur modification du panier
+2025-06-19T13:56:57.431617+00:00 | MONGO_CART INSERT FAILED | data={'user_id': '67371b2d1ed69fcb550f15e5'} | error=Erreur modification du panier
+2025-06-19T13:57:29.274909+00:00 | MONGO_CART INSERT FAILED | data={'user_id': '67371b2d1ed69fcb550f15e5'} | error=Erreur modification du panier
+2025-06-19T13:57:29.525271+00:00 | MARIADB_CART INSERT FAILED | data={'user_id': '67371b2d1ed69fcb550f15e5'} | error='ids'
+2025-06-19T13:57:59.121739+00:00 | MONGO_CART INSERT FAILED | data={'user_id': '67371b2d1ed69fcb550f15e5'} | error=Erreur modification du panier
