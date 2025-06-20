@@ -64,16 +64,6 @@ def get_articles():
     except Exception as e:
         return jsonify({"error": True, "rs": str(e)})
 
-# @bp.route("/all", methods=["GET"])
-# def get_all_articles():
-#     try:
-#         db = ArticleModel()
-#         dbmd = ArticleModelMD()
-#         error, rs = db.get_all_articles()
-#         datas = dbmd.get_name()
-#         return jsonify({"error": not error, "rs": rs})
-#     except ErrorExc as e:
-#         return jsonify({"error": True, "rs": str(e)})
     
 @bp.route("/search", methods=["POST"])
 def search_articles():
