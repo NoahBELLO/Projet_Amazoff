@@ -23,15 +23,13 @@ class TablePanier(Mysql):
     def create_script(self):
         return f"""
             CREATE TABLE `panier` (
-            `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-            `id_mongo` VARCHAR(24) NOT NULL,
+            `id` VARCHAR(24) NOT NULL,
             `user_id` VARCHAR(24) NOT NULL,
-            `total` DECIMAL(10,2) NOT NULL,
             `articles` LONGTEXT,
             `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
             `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
             PRIMARY KEY (`id`),
-            UNIQUE KEY `uq_panier_id_mongo` (`id_mongo`),
+            UNIQUE KEY `uq_panier_id` (`id`),
             INDEX `idx_panier_user` (`user_id`)
             ) ENGINE=InnoDB
             DEFAULT CHARSET=utf8mb4

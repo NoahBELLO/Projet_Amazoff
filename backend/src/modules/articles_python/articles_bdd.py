@@ -22,21 +22,24 @@ class TableArticles(Mysql):
     def create_script(self):
         return f"""
             CREATE TABLE `article` (
-            `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-            `id_mongo` VARCHAR(200) NOT NULL,
-            `name` VARCHAR(200) NOT NULL,
-            `prix` FLOAT  NOT NULL,
-            `image` VARCHAR(255) NULL,
-            `reduction` INT(10) NULL,
-            `description` VARCHAR(200) NOT NULL,
-            `prix_kg` FLOAT  NULL,
-            `stock` FLOAT NOT NULL,
-            PRIMARY KEY (`id`)
-            );
-
+            `id_maria`   INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+            `id`   CHAR(24)        NOT NULL ,
+            `name`       VARCHAR(200)    NOT NULL,
+            `prix`       FLOAT  NOT NULL,
+            `image`      VARCHAR(255)    NULL,
+            `reduction`  INT             NULL,
+            `description` VARCHAR(200)   NOT NULL,
+            `stock`      INT(11)   NOT NULL,
+            PRIMARY KEY (`id_maria`),
+            UNIQUE KEY `uq_article_id` (`id`)
+            ) ENGINE=InnoDB
+            DEFAULT CHARSET=utf8mb4
+            COLLATE=utf8mb4_unicode_ci;
         """
     
     def format_for_db(self, datas):
+        if 'image' in datas and datas['image'] is None:
+            del datas['image']
         return datas
     
     def format_from_db(self, datas):
@@ -60,8 +63,11 @@ class TableArticles(Mysql):
                     if k == "name":
                         where_str += f'({_table}.name LIKE "%{v}%")'
                         continue
-                    elif k == "id_mongo":
-                        where_str += f'{_table}.id_mongo = {v}'
+                    elif k == "id_maria":
+                        where_str += f'{_table}.id_maria= "{v}"'
+                        continue
+                    elif k == "id":
+                        where_str += f'{_table}.id= "{v}"'
                         continue
                     else:
                         where_str += f'{_table}.{k} = "{v}"'
@@ -69,7 +75,7 @@ class TableArticles(Mysql):
                 where = f"WHERE {where_str}"
                 
             query = f"""
-                SELECT {_table}.id, {_table}.name, {_table}.prix, {_table}.image, {_table}.reduction, {_table}.description, {_table}.prix_kg, {_table}.stock    
+                SELECT {_table}.id_maria, {_table}.id, {_table}.name, {_table}.prix, {_table}.image, {_table}.reduction, {_table}.description, {_table}.stock    
                 FROM {_table}              
                 {where}
 
@@ -82,9 +88,9 @@ class TableArticles(Mysql):
     
     def get_by_id(self, id_article):
         query = f"""
-                SELECT {_table}.id, {_table}.name, {_table}.prix, {_table}.image, {_table}.reduction, {_table}.description, {_table}.prix_kg, {_table}.stock    
+                SELECT {_table}.id_maria, {_table}.id, {_table}.name, {_table}.prix, {_table}.image, {_table}.reduction, {_table}.description, {_table}.stock    
                 FROM {_table}              
-                WHERE {_table}.id_mongo = "{id_article}"
+                WHERE {_table}.id = "{id_article}"
             """
         rs = self.fetch(query)
         return self.format_from_db(rs[0])

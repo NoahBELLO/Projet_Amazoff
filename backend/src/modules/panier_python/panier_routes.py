@@ -23,6 +23,7 @@ def log_failure(target: str, datas: dict, error: Exception):
 def get_single_article(user_id):
     logger.critical("route get panier")
 
+    logger.critical(test_mongo())
     if test_mongo():
         try:                
             db = PanierModel()
@@ -33,17 +34,21 @@ def get_single_article(user_id):
             disable_mongo()
             logger.info(f'erreur mongo {e}')
         
+    logger.critical(test_maria())
     if test_maria():
         try:
             db2 = PanierModelMD()
             logger.critical(user_id)
             err_maria, rs_maria = db2.get_cart(str(user_id)) 
+            logger.critical(rs_maria)
             if err_maria:
                 return jsonify({"error": not err_maria, "rs": rs_maria})
             return jsonify({"error": True, "rs": str(e)})
         except ErrorExc as e:
             disable_maria()
             logger.info(f'erreur maria {e}')
+            return jsonify({"error": not err_maria, "message": str(e)})
+    logger.critical('cooldodwn de 30 s')
         
 
 #création du panier
@@ -74,7 +79,7 @@ def create_cart(user_id):
                 mongo_id = ObjectId()
                 logger.critical(f"[CREATE_CART] MongoId généré : {mongo_id}")
             
-            datas_maria = {"total": 0, "articles": [], "user_id": user_id, "id_mongo": mongo_id}
+            datas_maria = {"total": 0, "articles": [], "user_id": user_id, "id": mongo_id}
             db2 = PanierModelMD()
             err_maria, maria_id = db2.create_cart(datas_maria)
             if err_maria:
@@ -95,7 +100,7 @@ def create_cart(user_id):
 #route remove article
 @bp.route("/remove_from_cart/<string:user_id>", methods=["PATCH"])
 def delete_article_from_cart(user_id):
-    logger.critical('route add_article')
+    logger.critical('route remove_article')
     response = {"ids": {}}
     datas = request.json
     id_article = datas.get('article_id')
@@ -143,7 +148,6 @@ def add_article_from_cart(user_id):
     article_id = datas.get('article_id')
     quantite = datas.get('quantite', 1)
 
-   
       # --- MongoDB ---
     if test_mongo():
         try:
@@ -162,6 +166,7 @@ def add_article_from_cart(user_id):
     if test_maria():
         try:            
             db2 = PanierModelMD()
+            logger.critical("ajout par maria")
             err_maria, id_article_maria = db2.add_reduce_quantity(article_id, quantite, user_id)
             if err_maria:
                 response["ids"]["mariadb"] = id_article_maria

@@ -51,9 +51,7 @@ class PanierModel(Document):
                     article_magasin_dict['quantite_utilisateur'] = article['quantite']
                     panier_user.append(article_magasin_dict)             
                   
-            return True, {
-                "articles": panier_user
-            }
+            return True, {"articles": panier_user}
         except Exception as e:
             raise ErrorExc(f"Erreur lors de la récupération du panier : {str(e)}")
         
@@ -101,16 +99,15 @@ class PanierModel(Document):
                 raise ErrorExc ("Stock insuffisant")
             panier = PanierModel.objects(user_id=str(user_id)).first() #récup du panier
             article_trouve = self.article_present_dans_panier(panier, article_id)
-
-            if article_trouve and edit == False:
-                article_trouve['quantite'] += float(quantite)
-            elif article_trouve and edit == True:
-                article_trouve['quantite'] = float(quantite)
-            else:
+            if not article_trouve:
                 panier.articles.append({
                     "article_id": article_id,
                     "quantite": float(quantite)
                 })
+            elif article_trouve and edit == False:
+                article_trouve['quantite'] += float(quantite)
+            elif article_trouve and edit == True:
+                article_trouve['quantite'] = float(quantite)       
             panier.save()
 
             return True, article_id
@@ -137,7 +134,7 @@ class PanierModel(Document):
         for article_panier in panier.articles:
             if article_panier['article_id'] == article_id:
                 return article_panier
-        return None
+        return False
     
 class PanierModelMD():
     _id = 0
@@ -160,13 +157,24 @@ class PanierModelMD():
     def get_cart(self, user_id):
         try:
             db = TablePanier()
-            datas = db.get_cart(user_id)
-            if datas:
-                return True, datas
+            panier_bdd = db.get_cart(user_id)
+            if not panier_bdd:
+                raise ErrorExc("Aucun panier trouvé pour cet utilisateur")
+            panier_user = []
+            db_articles = TableArticles()
+            for article in panier_bdd['articles']:
+                article_magasin = db_articles.get_by_id(article['article_id'])
+                article_magasin['sous_total'] = float(article_magasin['prix']) * float(article['quantite'])
+                article_magasin['quantite_utilisateur'] = article['quantite']
+                panier_user.append(article_magasin)
+            
+            return True, {"articles": panier_user}
         except Exception as e:
             raise ErrorExc(f"Erreur lors de la récupération du panier : {str(e)}")
+
         
     def delete_article(self, article_to_delete, user_id):
+        logger.critical(article_to_delete)
         try:
             db = TablePanier()
             panier = db.get_cart(user_id)           
@@ -185,28 +193,26 @@ class PanierModelMD():
 
     def add_reduce_quantity(self, article_id, quantite, user_id, edit=False):
         try:
+            #vérif de l'article et du stock
             db_article = TableArticles()
             article = db_article.get_by_id(article_id)
             if not article or article['stock'] < float(quantite):
                 raise ErrorExc ("Stock insuffisant")
+            #obtention du panier
             db = TablePanier()
             panier = db.get_cart(user_id)
-
             if panier:
-                article_trouve = self.article_present_dans_panier(panier, article_id)
-
-                # verification que le stock le permet par rapport à ce que l'utilisateur à déjà
-                if article_trouve is not None and article_trouve['quantite'] + float(quantite) < article['stock']:
-                    raise ErrorExc("Vous ne pouvez commander plus que la quantité disponible")
-                elif article_trouve is not None and edit == False:
-                    article_trouve['quantite'] += float(quantite)
-                elif article_trouve is not None and edit == True:
-                    article_trouve['quantite'] = float(quantite)
-                else:
+                article_trouve = self.article_present_dans_panier(panier['articles'], article_id)
+                if not article_trouve:
                     panier['articles'].append({
                         "article_id": article_id,
                         "quantite": float(quantite)
                     })
+                elif article_trouve and edit == False:
+                    article_trouve['quantite'] += float(quantite)
+                elif article_trouve  and edit == True:
+                    article_trouve['quantite'] = float(quantite)
+               
                 db.update(panier['id'], panier)
                 if not db.isValid():
                     raise ErrorExc("Modification non sauvegardée en base de données.")   
@@ -231,7 +237,7 @@ class PanierModelMD():
 
         
     def article_present_dans_panier(self, panier, article_id):
-        for article_panier in panier['articles']:
-            if article_panier['article_id'] == article_id:
+        for article_panier in panier:
+            if str(article_panier['article_id']) == str(article_id):
                 return article_panier
-        return None
+        return False

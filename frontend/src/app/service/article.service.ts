@@ -26,6 +26,7 @@ export class ArticleService {
   // }
 
   getArticleByObjectId(id: string): Observable<ResponseApi> {
+    console.log(id)
     const url = `${this.articleBaseUrl}/${id}`;
     return this.http.get<ResponseApi>(url);
 

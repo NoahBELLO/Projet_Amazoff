@@ -123,7 +123,7 @@ def wait_for_mariadb_ready(timeout: int = 3, interval: float = 1.0):
 
 
 if __name__ == "__main__":
-     #exécute le batch et le scheduler QUE dans le process enfant
+    # # # #  exécute le batch et le scheduler QUE dans le process enfant
     if os.environ.get("WERKZEUG_RUN_MAIN") == "true":
         #test des BDD
         mongo_ok = wait_for_mongo_ready(os.getenv("MONGO_URI_ARTICLES")) \

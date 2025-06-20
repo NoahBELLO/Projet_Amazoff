@@ -4,6 +4,7 @@ from flask import Blueprint, jsonify, request, json
 from loguru import logger
 from articles_python.articles_model import ArticleModel
 from articles_python.articles_model import ArticleModelMD
+from articles_python.articles_bdd import TableArticles
 from tools.customeException import ErrorExc
 from tools.db_health import test_mongo, test_maria, disable_mongo, disable_maria
 from bson import ObjectId
@@ -67,8 +68,8 @@ def get_articles():
     
 @bp.route("/search", methods=["POST"])
 def search_articles():
+    #cherche dans le batch pas besoin de dupliquer le modèle
     try:
-        logger.critical("route search")
         db = ArticleModel()
         searchKeys = request.json
         error, rs = db.search(searchKeys)
@@ -79,34 +80,44 @@ def search_articles():
 #route get single article
 @bp.route("/<article_id>", methods=["GET"])
 def get_single_article(article_id):
-    logger.critical("get articles")
     if test_mongo():
         try:
             db = ArticleModel()
             err_mongo, rs_mongo = db.get_article(article_id)
+            if not err_mongo:
+                raise ErrorExc("MongoDB n'a pas récupéré l'article")
             return jsonify({"error": not err_mongo, "rs": rs_mongo})
         except ErrorExc as e:
-            return jsonify({"error": True, "rs": str(e)})
+            disable_mongo()
+            logger.info(f'erreur mongo {e}')
     
     if not test_mongo() and test_maria():
         try:
             db2 = ArticleModelMD()
-            err_maria, rs_maria = db.get_article(article_id)
+            err_maria, rs_maria = db2.get_article(article_id)
+            if not err_maria:
+                raise ErrorExc("Maria n'a pas récupéré l'article")
+            return jsonify({"error": not err_maria, "rs": rs_maria})
         except ErrorExc as e:
-            return jsonify({"error": True, "rs": str(e)})
+            disable_maria()
+            logger.info(f'erreur maria {e}')
+            return jsonify({"error": not err_maria, "message": str(e)})
+        
 
          
 #route create
 @bp.route("/create", methods=["POST"])
 def create_article():
     datas = request.json
-    response = {"error": False, "ids": {}}
+    response = {"ids": {}}
     logger.critical('route create')
     mongo_id = False
+    id_maria = TableArticles().getLastId()
     # MongoDB 
     if test_mongo():
         try:
             logger.critical('mongo')
+            datas['id_maria'] = id_maria + 1
             err_mongo, mongo_id = ArticleModel().save_data(datas)
             if err_mongo:
                 response["ids"]["mongo"] = mongo_id
@@ -124,7 +135,7 @@ def create_article():
                 mongo_id = ObjectId()
                 logger.critical(f"mon id généré {mongo_id}")
             datas_sql = datas
-            datas_sql['id_mongo'] = mongo_id
+            datas_sql['id'] = str(mongo_id)
             err_maria, maria_id = ArticleModelMD().create(datas)
             if err_maria:
                 response["ids"]["mariadb"] = maria_id
@@ -157,10 +168,10 @@ def patch_article(id_article):
 
     # MariaDB
     try:
-        result_sql = ArticleModelMD().update(id_article, datas)
-        if result_sql.isUpdated():
-            response["updated"]["mariadb"] = result_sql.rowCount()
-
+        err_maria, maria_id = ArticleModelMD().update(datas, id_article)
+        if err_maria:
+            response["updated"]["mariadb"] = maria_id
+            
     except Exception as e:
         logger.warning(f"[PATCH] Échec MariaDB pour id={id_article} : {e}")
         log_failure('MARIADB', {"id": id_article, **datas}, e)

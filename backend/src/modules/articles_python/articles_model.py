@@ -20,12 +20,12 @@ from loguru import logger
 # .delete()                     supprime 
 
 class ArticleModel(Document): 
+    id_maria = IntField(required=True)
     name = StringField(required=True, max_length=200)
     prix = FloatField(required=True)
     image = StringField(required=False)
     reduction = IntField(required=False)
     description = StringField(required=True, max_length=200)
-    prix_kg = FloatField(required=False)
     stock = FloatField(required=True)
     meta = {'collection': 'article' , 'db_alias': 'articles-db'}
 
@@ -33,12 +33,12 @@ class ArticleModel(Document):
         """Convertir un document en dictionnaire"""
         return {
             "id": str(self.id),  
+            "id_maria": self.id_maria,
             "name": self.name,
             "prix": self.prix,
             "image": self.image,
             "reduction": self.reduction,
             "description": self.description,
-            "prix_kg": self.prix_kg,
             "stock": self.stock,
         }
     
@@ -76,21 +76,28 @@ class ArticleModel(Document):
             except:
                 pass
             articles_dict.append(article)
-        return True, articles_dict
-
+        if articles_dict:
+            return True, articles_dict
+        return False, []
 
     def get_article(self, article_id):
-        article = ArticleModel.objects(id=article_id).first() #.first pour récup le premier de la liste
-        if not article:
-            raise ErrorExc("Article non trouvé")
-        avis = AvisModel.objects(article_id=article_id).first()#récupére les avis et les met dans un dict
-        logger.critical(avis)
-        article = article.to_dict()
-        if avis:
-            avis.to_dict()
-            article['avis'] = avis['comments'] #la liste des commentaires
-            article['stars'] = avis['stars'] #la notation
-        return True, article
+        try:
+            article = ArticleModel.objects(id=article_id).first() #.first pour récup le premier de la liste
+            logger.critical(article)
+            if not article:
+                raise ErrorExc("Article non trouvé")
+            avis = AvisModel.objects(article_id=article_id).first()#récupére les avis et les met dans un dict
+            logger.critical(avis)
+            article = article.to_dict()
+            if avis:
+                avis.to_dict()
+                article['avis'] = avis['comments'] #la liste des commentaires
+                article['stars'] = avis['stars'] #la notation
+            return True, article
+        except:
+            #cas où mongo est down
+            return False, article_id
+            
 
     def save_data(self, datas):
         try:
@@ -106,8 +113,9 @@ class ArticleModel(Document):
             self.check_fields(datas)
             #la collection (l'id de l'objet).a update(**= clé valeur /datas = ses données à update)
             result = ArticleModel.objects(id=ObjectId(id_article)).update_one(**datas)
-            if result:
-                return True, str(result.id)
+            if result >= 1:
+                return True, str(id_article)
+            return False, str(id_article)
         except Exception as e: 
             raise ErrorExc(f"Erreur lors de la mise à jour : {str(e)}")
     
@@ -123,7 +131,6 @@ class ArticleModel(Document):
     
     #ce search recherche uniquement dans le fichier json
     def search(self, searchKeys=False):
-        logger.critical('test')
         searchKeysFiltered = {}
 
         if searchKeys:
@@ -179,6 +186,7 @@ class ArticleModelMD():
     
     def check_fields(self, datas):
         if "name" not in datas or len(datas['name'].strip()) == 0:
+            logger.critical(datas['name'])
             raise ErrorExc(f"Veuillez définir un nom d'article.")
         
         # if "image" not in datas or len(datas['image'].strip()) == 0:
@@ -199,13 +207,14 @@ class ArticleModelMD():
 
     def create(self, datas):
         db = TableArticles()
+        logger.critical(datas)
         db.create(datas)
         if db.getLastId() < 1:
             raise ErrorExc("Échec de l'insertion en base de données.")
-        self._id = db.getLastId()
         return True, self._id
 
     def update(self, datas, id_article):
+        logger.critical(datas)
         self.check_fields(datas)
         db = TableArticles()
         db.update(id_article, datas)
@@ -217,9 +226,13 @@ class ArticleModelMD():
         db = TableArticles()
         filters = ""
         datas = db.search(filters)
-        return datas
-    
+        if datas:
+            return True, datas
+        return False, filters
+
     def get_article(self, id_article):
         db = TableArticles()
-        datas = db.search(id_article)
-        return datas
+        datas = db.get_by_id(id_article)
+        if datas:
+            return True, datas
+        return False, id_article
