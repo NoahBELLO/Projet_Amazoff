@@ -23,12 +23,13 @@ class TablePanier(Mysql):
     def create_script(self):
         return f"""
             CREATE TABLE `panier` (
+            `id_maria`   INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
             `id` VARCHAR(24) NOT NULL,
             `user_id` VARCHAR(24) NOT NULL,
             `articles` LONGTEXT,
             `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
             `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            PRIMARY KEY (`id`),
+            PRIMARY KEY (`id_maria`),
             UNIQUE KEY `uq_panier_id` (`id`),
             INDEX `idx_panier_user` (`user_id`)
             ) ENGINE=InnoDB

@@ -2,6 +2,7 @@ import os
 from datetime import datetime, timezone
 from flask import Blueprint, jsonify, request
 from loguru import logger
+from articles_python.articles_bdd import TableArticles
 from panier_python.panier_model import PanierModel, PanierModelMD
 from tools.customeException import ErrorExc
 from bson import ObjectId
@@ -57,12 +58,13 @@ def create_cart(user_id):
     response = {"ids": {}}
     logger.critical('route create')
     mongo_id = False
-   
+    id_maria = TableArticles().getLastId()
+
       # --- MongoDB ---
     if test_mongo():
         try:
             db = PanierModel()
-            err_mongo, mongo_id = db.create_cart(user_id)
+            err_mongo, mongo_id = db.create_cart(user_id, id_maria +1)
             if err_mongo:
                 response["ids"]["mongo"] = str(mongo_id)
             else:
@@ -79,7 +81,7 @@ def create_cart(user_id):
                 mongo_id = ObjectId()
                 logger.critical(f"[CREATE_CART] MongoId généré : {mongo_id}")
             
-            datas_maria = {"total": 0, "articles": [], "user_id": user_id, "id": mongo_id}
+            datas_maria = {"articles": [], "user_id": user_id, "id": mongo_id}
             db2 = PanierModelMD()
             err_maria, maria_id = db2.create_cart(datas_maria)
             if err_maria:

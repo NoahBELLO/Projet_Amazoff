@@ -20,6 +20,7 @@ from loguru import logger
 
 class PanierModel(Document): 
     user_id = StringField(required=True, unique=True) #user unique
+    id_maria = IntField(required=True)
     articles = ListField(required=False)
 
     meta = {'collection': 'panier', 'db_alias': 'paniers-db'}  # nom exact de la collection
@@ -28,6 +29,7 @@ class PanierModel(Document):
         """Convertir un document en dictionnaire"""
         return {
             "id": str(self.id), #l'id du panier
+            "id_maria": int(self.id_maria),
             "user_id": str(self.user_id), #l'id de l'user
             "articles": [str(article_id) for article_id in self.articles],  # convertir les ObjectId en chaînes
 
@@ -58,15 +60,14 @@ class PanierModel(Document):
         
         
     #à la création du compte créer un panier
-    def create_cart(self, user_id):
+    def create_cart(self, user_id, id_maria):
         if user_id:
             try:
                 is_unique = PanierModel.objects(user_id=user_id).first()
                 if is_unique:
                     raise ErrorExc("Un panier existe déjà pour cet utilisateur.")
-
                 
-                panier = PanierModel(user_id=user_id)
+                panier = PanierModel(user_id=user_id, id_maria=id_maria)
                 panier.save()
                 return True, str(panier.id) 
             except Exception as e:

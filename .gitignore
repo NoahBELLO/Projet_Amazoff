@@ -1370,3 +1370,5 @@ node_modules/whatwg-url/lib/URLSearchParams.js
 node_modules/whatwg-url/lib/utils.js
 node_modules/whatwg-url/lib/VoidFunction.js
 backend/src/modules/articles_python/cache/cached_articles.json
+backend/src/modules/articles_python/failed_articles_requests.log
+backend/src/modules/panier_python/failed_cart_requests.log
