@@ -7,7 +7,7 @@ from tools.customeException import ErrorExc
 from bson import ObjectId
 from tools.db_health import test_maria, test_mongo, disable_maria, disable_mongo
 
-LOG_FILE = os.path.join(os.path.dirname(__file__), 'failed_insert_cart.log')
+LOG_FILE = os.path.join(os.path.dirname(__file__), 'failed_cart_requests.log')
 bp = Blueprint("panier", __name__, url_prefix="/panier")
 
 def log_failure(target: str, datas: dict, error: Exception):
@@ -31,7 +31,7 @@ def get_single_article(user_id):
                 return jsonify({"error": not err_mongo, "rs": rs_mongo})
         except ErrorExc as e:
             disable_mongo()
-            logger.info('erreur mongo')
+            logger.info(f'erreur mongo {e}')
         
     if test_maria():
         try:
@@ -43,7 +43,7 @@ def get_single_article(user_id):
             return jsonify({"error": True, "rs": str(e)})
         except ErrorExc as e:
             disable_maria()
-            logger.info('erreur maria')
+            logger.info(f'erreur maria {e}')
         
 
 #création du panier
@@ -95,14 +95,44 @@ def create_cart(user_id):
 #route remove article
 @bp.route("/remove_from_cart/<string:user_id>", methods=["PATCH"])
 def delete_article_from_cart(user_id):
-    logger.critical(request.json)
-    try:
-        id_article = request.json 
-        db = PanierModel()
-        error = db.delete_article(id_article, user_id)
-        return jsonify({"error": not error})
-    except ErrorExc as e:
-        return jsonify({"error": True, "rs": str(e)})
+    logger.critical('route add_article')
+    response = {"ids": {}}
+    datas = request.json
+    id_article = datas.get('article_id')
+
+    # --- MongoDB ---
+    if test_mongo():
+        try:
+            db = PanierModel()
+            err_mongo, id_article_mongo = db.delete_article(id_article, user_id)
+            if err_mongo:
+                response["ids"]["mongo"] = str(id_article_mongo)
+            else:
+                raise RuntimeError("Erreur modification quantité panier Mongo")
+        except ErrorExc as e:
+            logger.warning(f"[REMOVE_FROM_CART] Échec MongoDB : {e}")
+            log_failure('MONGO_CART', {"user_id": user_id}, e)
+            disable_mongo()
+
+    # --- MariaDB ---
+    if test_maria():
+        try:            
+            db2 = PanierModelMD()
+            err_maria, id_article_maria = db2.delete_article(id_article, user_id)
+            if err_maria:
+                response["ids"]["mariadb"] = id_article_maria
+            else:
+                raise RuntimeError("Erreur modification quantité panier Maria")
+        except Exception as e:
+            logger.warning(f"[REMOVE_FROM_CART] Échec MariaDB : {e}")
+            log_failure('MARIADB_CART', {"user_id": user_id}, e)
+            disable_maria()
+
+    # Réponse 
+    if not response["ids"]:
+        return jsonify({"error": True, "message": "Aucun delete n’a fonctionné."})
+    return jsonify({'error': False, 'rs': response})
+
     
 #route add article
 @bp.route("/add_to_cart/<string:user_id>", methods=["PATCH"])
@@ -151,7 +181,7 @@ def add_article_from_cart(user_id):
 #route modify article
 @bp.route("/edit_cart/<string:user_id>", methods=["PATCH"])
 def update_article_from_cart(user_id):
-    logger.critical('route add_article')
+    logger.critical('route modify article')
     response = {"ids": {}}
     datas = request.json
     article_id = datas.get('article_id')

@@ -1,10 +1,10 @@
 from mongoengine import Document,  IntField, FloatField, ListField, StringField
 from bson import ObjectId
 from tools.customeException import ErrorExc
-from loguru import logger
 from articles_python.articles_model import ArticleModel
 from articles_python.articles_bdd import TableArticles
 from panier_python.panier_bdd import TablePanier
+from loguru import logger
 
 #liste des fields utiles:
 # URLField      pour les URL
@@ -78,7 +78,6 @@ class PanierModel(Document):
 
 
     def delete_article(self, article_to_delete, user_id):
-        #logger.critical(f"user_id: {user_id}, id_article: {id_article}")
         try:
             panier = PanierModel.objects(user_id=str(user_id)).first() #récup du panier
             if not panier:
@@ -89,10 +88,9 @@ class PanierModel(Document):
                     new_articles.append(article)
                     
             panier.articles = new_articles
-            logger.critical(panier.articles)
             panier.save()
 
-            return True
+            return True, article_to_delete
         except:
             raise ErrorExc("L'article non trouvé dans le panier")    
 
@@ -162,14 +160,28 @@ class PanierModelMD():
     def get_cart(self, user_id):
         try:
             db = TablePanier()
-            logger.critical(user_id)
             datas = db.get_cart(user_id)
             if datas:
                 return True, datas
         except Exception as e:
             raise ErrorExc(f"Erreur lors de la récupération du panier : {str(e)}")
         
-    #def delete_article(self, article_to_delete, user_id):
+    def delete_article(self, article_to_delete, user_id):
+        try:
+            db = TablePanier()
+            panier = db.get_cart(user_id)           
+            if not panier:
+                raise ErrorExc("Panier non trouvé")
+            new_articles = []
+            for article in panier['articles']:
+                if str(article['article_id']) != str(article_to_delete):
+                    new_articles.append(article)
+            
+            panier['articles'] = new_articles
+            db.update(id=panier['id'], datas=panier)         
+            return True, article_to_delete
+        except:
+            raise ErrorExc("Erreur lors de la suppression de l'article du panier")   
 
     def add_reduce_quantity(self, article_id, quantite, user_id, edit=False):
         try:
@@ -196,6 +208,8 @@ class PanierModelMD():
                         "quantite": float(quantite)
                     })
                 db.update(panier['id'], panier)
+                if not db.isValid():
+                    raise ErrorExc("Modification non sauvegardée en base de données.")   
 
             return True, article_id
         except ErrorExc as e:
@@ -214,9 +228,10 @@ class PanierModelMD():
         except Exception as e:
             raise ErrorExc(f"Erreur lors de la suppression du panier : {str(e)}")
    
+
+        
     def article_present_dans_panier(self, panier, article_id):
         for article_panier in panier['articles']:
             if article_panier['article_id'] == article_id:
                 return article_panier
         return None
-

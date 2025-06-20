@@ -9,7 +9,7 @@ from tools.db_health import test_mongo, test_maria, disable_mongo, disable_maria
 from bson import ObjectId
 
 
-LOG_FILE = os.path.join(os.path.dirname(__file__), 'failed_insert_articles.log')
+LOG_FILE = os.path.join(os.path.dirname(__file__), 'failed_articles_requests.log')
 bp = Blueprint("articles", __name__, url_prefix="/articles")
 
 
