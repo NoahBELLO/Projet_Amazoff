@@ -15,8 +15,10 @@ class TableArticles(Mysql):
         return self.update_auto(table=_table, id=id, datas=self.format_for_db(datas))      
 
     def delete(self, id):    
-        query = f"DELETE FROM {_table} WHERE id = {id}"
+        query = f"DELETE FROM {_table} WHERE {_table}.id_maria = {id}"
         rs = self.query(query)
+        logger.critical(rs)
+        logger.critical(query)
         return rs
     
     def create_script(self):

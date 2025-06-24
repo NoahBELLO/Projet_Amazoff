@@ -83,7 +83,6 @@ class ArticleModel(Document):
     def get_article(self, article_id):
         try:
             article = ArticleModel.objects(id=article_id).first() #.first pour récup le premier de la liste
-            logger.critical(article)
             if not article:
                 raise ErrorExc("Article non trouvé")
             avis = AvisModel.objects(article_id=article_id).first()#récupére les avis et les met dans un dict
@@ -211,7 +210,7 @@ class ArticleModelMD():
         db.create(datas)
         if db.getLastId() < 1:
             raise ErrorExc("Échec de l'insertion en base de données.")
-        return True, self._id
+        return True, db.getLastId()
 
     def update(self, datas, id_article):
         logger.critical(datas)
@@ -236,3 +235,11 @@ class ArticleModelMD():
         if datas:
             return True, datas
         return False, id_article
+    
+    def delete(self, id_article):
+        db = TableArticles()
+        db.delete(id_article)
+        logger.critical(f"delete {id_article}")
+        if not db.isValid():
+            raise ErrorExc("Échec de la suppression en base de données.")
+        return True, id_article
