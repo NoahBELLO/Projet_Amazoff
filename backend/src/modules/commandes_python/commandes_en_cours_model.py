@@ -82,6 +82,7 @@ class CommandesEnCoursModel(Document):
             datas['numero_commande'] = self.generate_unique_numero()
             commande = CommandesEnCoursModel(**datas)
             commande.save()
+            #implémenter ici les routes appelant le service notification pour signaler des stocks faibles
             return True, str(commande.id)
     
         except ErrorExc as e:

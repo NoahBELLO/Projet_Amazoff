@@ -41,11 +41,11 @@ bp = Blueprint("articles", __name__, url_prefix="/articles")
 # iregex – string field match by regex (case insensitive)
 # match – performs an $elemMatch so you can match an entire document within an array
 
-def log_failure(target: str, datas: dict, error: Exception):
+def log_failure(target: str, crud: str, datas: dict, error: Exception):
     timestamp = datetime.now(timezone.utc).isoformat()  
     with open(LOG_FILE, 'a', encoding='utf-8') as fichier:
         fichier.write(
-            f"{timestamp} | {target} INSERT FAILED | "
+            f"{timestamp} | {target} {crud} FAILED | "
             f"data={datas!r} | error={error}\n"
         )
 
@@ -54,7 +54,6 @@ def get_articles():
     try:
         # Récupère le chemin absolu du fichier cache
         cache_path = os.path.join(os.path.dirname(__file__), "cache", "cached_articles.json")
-        logger.critical("debug")
         with open(cache_path, "r", encoding="utf-8") as f:
             articles = json.load(f)
 
@@ -113,13 +112,13 @@ def create_article():
     id_mongo = ObjectId()
     id_maria = False
     logger.critical(f"mon id généré {id_mongo}")
+    crud_operation = "INSERT"
 
     if not (test_maria() and test_mongo(os.getenv("MONGO_URI_ARTICLES"))):
         return jsonify({"error": True, "message": "Les deux bases doivent être disponibles pour effectuer l'ajout."}), 503
 
 
     # MariaDB 
-    logger.critical('maria')
     try:
         datas_sql = datas
         datas_sql['id'] = str(id_mongo)
@@ -129,7 +128,7 @@ def create_article():
 
     except Exception as e:
         logger.warning(f"Échec MariaDB : {e}")
-        log_failure('MARIADB_ARTICLES', datas, e)
+        log_failure('MARIADB_ARTICLES', crud_operation, datas, e)
         return jsonify({"error": True, "message": "Échec de l'insertion dans MariaDB."})
 
     # MongoDB 
@@ -145,7 +144,7 @@ def create_article():
 
     except Exception as e:
         logger.warning(f"Échec MongoDB : {e}")
-        log_failure('MONGO', datas, e)
+        log_failure('MONGO', crud_operation, datas, e)
         ArticleModelMD().delete(id_maria)  
         return jsonify({"error": True, "message": "Échec de l'insertion dans MongoDB."})
     
@@ -156,14 +155,13 @@ def create_article():
 @bp.route("/patch/<string:id_article>", methods=["PATCH"])
 def patch_article(id_article):
     datas = request.json
-    logger.critical('route update')
+    crud_operation = "UPDATE"
 
     if not (test_maria() and test_mongo(os.getenv("MONGO_URI_ARTICLES"))):
         return jsonify({"error": True, "message": "Les deux bases doivent être disponibles pour effectuer l'ajout."}), 503
 
     # MongoDB 
     try:
-        logger.critical('mongo')
         ok, old_doc = ArticleModel().get_article(id_article)
         if not ok:
             raise ErrorExc("Mongo : document introuvable")
@@ -172,24 +170,21 @@ def patch_article(id_article):
         if not err_mongo:
             return jsonify({"error": True, "message": "Échec de l'update dans MongoDB."})
 
-    #cas erreur 500
     except Exception as e:
         logger.warning(f"[PATCH] Échec MongoDB pour id={id_article} : {e}")
-        log_failure('MONGO', {"id": id_article, **datas}, e)
+        log_failure('MONGO', crud_operation, {"id": id_article, **datas}, e)
         return jsonify({"error": True, "message": "Rollback Mongo, arrêt."})
         
     # MariaDB 
-    logger.critical('maria')
     try:
         err_maria, id_maria = ArticleModelMD().update(datas, id_article)
         if not err_maria:
             ArticleModel().update_data(old_doc, id_article)
             return jsonify({"error": True, "message": "Échec de l'insertion dans MariaDB."})
         
-    #cas erreur 500
     except Exception as e:
         logger.warning(f"Échec MariaDB : {e}")
-        log_failure('MARIADB', {"id": id_article, **datas}, e)
+        log_failure('MARIADB', crud_operation, {"id": id_article, **datas}, e)
         try:
             ArticleModel().update_data(old_doc, id_article)
         except Exception as re:
@@ -203,6 +198,7 @@ def patch_article(id_article):
 #route delete
 @bp.route("/delete/<string:id_article>", methods=["DELETE"])
 def delete_article(id_article):
+    crud_operation = "DELETE"
     if not (test_maria() and test_mongo(os.getenv("MONGO_URI_ARTICLES"))):
         return jsonify({"error": True, "message": "Les deux bases doivent être disponibles pour effectuer l'ajout."}), 503
 
@@ -220,7 +216,7 @@ def delete_article(id_article):
     #cas erreur 500
     except Exception as e:
         logger.warning(f"[DELETE] Échec MongoDB pour id={id_article} : {e}")
-        log_failure('MONGO', {"id": id_article}, e)
+        log_failure('MONGO', crud_operation, {"id": id_article}, e)
         return jsonify({"error": True, "message": "Rollback Mongo, arrêt."})
 
 
@@ -235,7 +231,7 @@ def delete_article(id_article):
     #cas erreur 500
     except Exception as e:
         logger.warning(f"Échec MariaDB : {e}")
-        log_failure('MARIADB', {"id": old_doc['id_maria']}, e)
+        log_failure('MARIADB', crud_operation,     {"id": old_doc['id_maria']}, e)
         try:
             ArticleModel().save_data(old_doc)
         except Exception as re:

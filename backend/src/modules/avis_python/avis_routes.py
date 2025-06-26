@@ -10,7 +10,7 @@ from panier_python.panier_model import PanierModel, PanierModelMD
 from tools.db_health import test_maria, test_mongo
 from tools.customeException import ErrorExc
 
-LOG_FILE = os.path.join(os.path.dirname(__file__), 'failed_insert_articles.log')
+LOG_FILE = os.path.join(os.path.dirname(__file__), 'failed_avis_request.log')
 bp = Blueprint("avis", __name__, url_prefix="/avis")
 
 

@@ -13,11 +13,11 @@ from bson import ObjectId
 LOG_FILE = os.path.join(os.path.dirname(__file__), 'failed_cart_requests.log')
 bp = Blueprint("panier", __name__, url_prefix="/panier")
 
-def log_failure(target: str, datas: dict, error: Exception):
+def log_failure(target: str, crud: str, datas: dict, error: Exception):
     timestamp = datetime.now(timezone.utc).isoformat()  
     with open(LOG_FILE, 'a', encoding='utf-8') as fichier:
         fichier.write(
-            f"{timestamp} | {target} INSERT FAILED | "
+            f"{timestamp} | {target} {crud} FAILED | "
             f"data={datas!r} | error={error}\n"
         )
 
@@ -54,6 +54,8 @@ def get_panier(user_id):
 def create_cart(user_id):
     id_mongo = ObjectId()
     maria_id = False
+    crud_operation = "INSERT"
+
     if not (test_maria() and test_mongo(os.getenv("MONGO_URI_PANIERS"))):
         return jsonify({"error": True, "message": "Les deux bases doivent être disponibles pour effectuer l'ajout."}), 503
     
@@ -66,7 +68,7 @@ def create_cart(user_id):
             return jsonify({"error": True, "message": "Échec de la création panier dans MariaDB."})
     except Exception as e:
         logger.warning(f"[CREATE_CART] Échec MariaDB : {e}")
-        log_failure('MARIADB_CART', {"user_id": user_id}, e)
+        log_failure('MARIADB_CART', crud_operation,  {"user_id": user_id}, e)
         return jsonify({"error": True, "message": "Rollback MariaDB, Mongo restauré."})
 
       # --- MongoDB ---
@@ -79,7 +81,7 @@ def create_cart(user_id):
 
     except ErrorExc as e:
         logger.warning(f"[CREATE_CART] Échec MongoDB : {e}")
-        log_failure('MONGO_CART', {"user_id": user_id}, e)
+        log_failure('MONGO_CART', crud_operation, {"user_id": user_id}, e)
         db2.delete_cart(user_id) 
         return jsonify({"error": True, "message": "Rollback Mongo, arrêt."})
 
@@ -92,6 +94,7 @@ def create_cart(user_id):
 def add_article_to_cart(user_id):
     datas = request.json or {}
     article_id = datas.get("article_id")
+    crud_operation ="PATCH REMOVE"
 
     if not (test_maria() and test_mongo(os.getenv("MONGO_URI_PANIERS"))):
         return jsonify({"error": True, "message": "Les deux bases doivent être disponibles pour effectuer l'ajout."}), 503
@@ -112,7 +115,7 @@ def add_article_to_cart(user_id):
         if not err_maria:
             raise RuntimeError("Erreur MariaDB")
     except Exception as e:
-        log_failure("MARIADB_CART", {"user": user_id, "article": article_id}, e)
+        log_failure("MARIADB_CART", crud_operation,{"user": user_id, "article": article_id}, e)
         return jsonify({"error": True, "message": f"Échec ajout Maria {e}"}), 500
 
     # test MongoDB
@@ -122,7 +125,7 @@ def add_article_to_cart(user_id):
             db2.update(old_cart['id_maria'], old_cart)
             raise RuntimeError("Mongo a renvoyé False")
     except Exception as e:
-        log_failure("MONGO_CART", {"user": user_id, "article": article_id}, e)
+        log_failure("MONGO_CART", crud_operation,{"user": user_id, "article": article_id}, e)
         db2.update(old_cart['id_maria'],  old_cart)
         return jsonify({"error": True, "message": "Échec ajout Mongo, Maria restauré"}), 500
 
@@ -136,6 +139,7 @@ def add_article_from_cart(user_id):
     datas = request.json
     article_id = datas.get('article_id')
     quantite = datas.get('quantite', 1)
+    crud_operation = "PATCH ADD"
 
     if not (test_maria() and test_mongo(os.getenv("MONGO_URI_PANIERS"))):
         return jsonify({"error": True, "message": "Les deux bases doivent être disponibles pour effectuer l'ajout."}), 503
@@ -156,7 +160,7 @@ def add_article_from_cart(user_id):
         if not err_maria:
             raise RuntimeError("Erreur MariaDB")
     except Exception as e:
-        log_failure('MARIADB_CART', {"user_id": user_id}, e)
+        log_failure('MARIADB_CART', crud_operation,{"user_id": user_id}, e)
         return jsonify({"error": True, "message": f"Échec ajout Maria {e}"}), 500
 
     # test MongoDB
@@ -168,7 +172,7 @@ def add_article_from_cart(user_id):
             db2.update(old_cart['id_maria'], old_cart)
             raise RuntimeError("Mongo a renvoyé False")
     except Exception as e:
-        log_failure("MONGO_CART", {"user": user_id, "article": article_id}, e)
+        log_failure("MONGO_CART", crud_operation, {"user": user_id, "article": article_id}, e)
         db2.update(old_cart['id_maria'],  old_cart)
         return jsonify({"error": True, "message": f"Échec ajout Mongo, Maria restauré {e}"}), 500
 
@@ -185,6 +189,7 @@ def update_article_from_cart(user_id):
     datas = request.json
     article_id = datas.get('article_id')
     quantite = datas.get('quantite', 1)
+    crud_operation = "PATCH EDIT"
 
     if not (test_maria() and test_mongo(os.getenv("MONGO_URI_PANIERS"))):
         return jsonify({"error": True, "message": "Les deux bases doivent être disponibles pour effectuer l'ajout."}), 503
@@ -204,7 +209,7 @@ def update_article_from_cart(user_id):
         if not err_maria:
             raise RuntimeError("Erreur MariaDB")
     except Exception as e:
-        log_failure('MARIADB_CART', {"user_id": user_id}, e)
+        log_failure('MARIADB_CART', crud_operation, {"user_id": user_id}, e)
         return jsonify({"error": True, "message": f"Échec ajout Maria {e}"}), 500
 
     # test MongoDB
@@ -214,7 +219,7 @@ def update_article_from_cart(user_id):
             db2.update(old_cart['id_maria'], old_cart)
             return jsonify({"error": not err_mongo})
     except Exception as e:
-            log_failure("MONGO_CART", {"user": user_id, "article": article_id}, e)
+            log_failure("MONGO_CART", crud_operation,{"user": user_id, "article": article_id}, e)
             db2.update(old_cart['id_maria'],  old_cart)
             return jsonify({"error": True, "message": f"Échec ajout Mongo, Maria restauré {e}"}), 500
 
@@ -226,6 +231,7 @@ def update_article_from_cart(user_id):
 #delete le panier
 @bp.route("/delete_cart/<string:user_id>", methods=["DELETE"])
 def delete_cart(user_id):
+    crud_operation = "DELETE CART"
     if not (test_maria() and test_mongo(os.getenv("MONGO_URI_PANIERS"))):
         return jsonify({"error": True, "message": "Les deux bases doivent être disponibles pour effectuer l'ajout."}), 503
     db = PanierModel()
@@ -242,6 +248,7 @@ def delete_cart(user_id):
     try:
         err_maria = db2.delete_cart(str(user_id)) 
         if not err_maria:
+            log_failure('MARIADB_CART', crud_operation, {"user_id": user_id}, e)
             return jsonify({"error": not err_maria})
     except ErrorExc as e:
         return jsonify({"error": True, "message": f"Échec suppression Maria {e}"}), 500
@@ -256,7 +263,7 @@ def delete_cart(user_id):
         
     except ErrorExc as e:
         db2.recreate_cart(old_cart['id_maria'],  old_cart)
-        log_failure("MONGO_CART", {"user": user_id}, e)
+        log_failure("MONGO_CART", crud_operation,{"user": user_id}, e)
         return jsonify({"error": True, "message": f"Échec suppression Mongo, Maria restauré {e}"}), 500
 
 
