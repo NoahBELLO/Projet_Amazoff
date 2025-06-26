@@ -3,7 +3,7 @@ from datetime import datetime, timezone
 from bson import ObjectId
 from flask import Blueprint, jsonify, request
 from loguru import logger
-from tools.db_health import disable_maria, disable_mongo, test_maria, test_mongo
+from tools.db_health import test_maria, test_mongo
 from commandes_python.commandes_en_cours_model import CommandesEnCoursModel
 from commandes_python.commandes_livrees_model import CommandesLivreesModel
 from tools.customeException import ErrorExc
@@ -50,7 +50,6 @@ def create_commande(user_id):
         except Exception as e:
             logger.warning(f"[CREATE_COMMANDE] Échec MongoDB : {e}")
             log_failure('MONGO_COMMANDE', {"user_id": user_id}, e)
-            disable_mongo()
 
     # --- MariaDB ---
     if test_maria():
@@ -69,7 +68,6 @@ def create_commande(user_id):
         except Exception as e:
             logger.warning(f"[CREATE_COMMANDE] Échec MariaDB : {e}")
             log_failure('MARIADB_COMMANDE', {"user_id": user_id}, e)
-            disable_maria()
 
     # Réponse 
     if not response["ids"]:

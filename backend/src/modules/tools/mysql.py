@@ -244,7 +244,7 @@ class Mysql():
 
         return self
     
-    def update_auto(self, table, datas, id=0, key = "id", where=False) :  
+    def update_auto(self, table, datas, id=0, key = "id_maria", where=False) :  
         
         """mise a jour d'une ligne en bdd suivant l'id"""
         self._last_id = 0

@@ -7,7 +7,7 @@ from avis_python.avis_model import AvisModel
 from articles_python.articles_model import ArticleModel
 from articles_python.articles_bdd import TableArticles
 from panier_python.panier_model import PanierModel, PanierModelMD
-from tools.db_health import disable_maria, disable_mongo, test_maria, test_mongo
+from tools.db_health import test_maria, test_mongo
 from tools.customeException import ErrorExc
 
 LOG_FILE = os.path.join(os.path.dirname(__file__), 'failed_insert_articles.log')
@@ -34,7 +34,7 @@ def rate_article():
     logger.critical(datas)
 
   # --- MongoDB ---
-    if test_mongo():
+    if test_mongo(os.getenv("MONGO_URI_AVIS")):
         try:
             db = AvisModel()
             err_mongo, mongo_id = db.rating_article(datas, id_maria + 1)
@@ -45,7 +45,6 @@ def rate_article():
         except ErrorExc as e:
             logger.warning(f"[CREATE_CART] Échec MongoDB : {e}")
             log_failure('MONGO_CART', {"user_id": datas['user_id']}, e)
-            disable_mongo()
 
 #  # --- MariaDB ---
 #     if test_maria():

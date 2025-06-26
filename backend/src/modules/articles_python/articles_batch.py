@@ -4,7 +4,7 @@ from mongoengine import connect, disconnect_all
 from loguru import logger
 from articles_python.articles_model import ArticleModel, ArticleModelMD
 from tools.customeException import ErrorExc
-from tools.db_health import test_mongo, test_maria, disable_maria, disable_mongo
+from tools.db_health import test_mongo, test_maria
 
 def run_batch_articles():
     if test_mongo():
@@ -14,7 +14,6 @@ def run_batch_articles():
             _, articles = db.get_all_articles()
             logger.critical(_)
             if not _ and len(articles) == 0:
-                disable_mongo()
                 raise ErrorExc("Liste articles vide")
         except ErrorExc as e:
             logger.error(f"Error Mongo {str(e)}")

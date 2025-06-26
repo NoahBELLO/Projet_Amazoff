@@ -38,15 +38,16 @@ class TablePanier(Mysql):
         """
     
     def format_for_db(self, datas):
+        logger.info(datas)
         if 'articles' in datas and isinstance(datas['articles'], list):
             datas['articles'] = json.dumps(datas['articles'])  
+            logger.critical(datas['articles'])
 
         if 'updatedAt' in datas:
             del(datas['updatedAt'])
         if 'createdAt' in datas:
             del(datas['createdAt'])
             
-        logger.critical(datas)
         return datas
 
     def format_from_db(self, datas):
@@ -65,4 +66,22 @@ class TablePanier(Mysql):
         rs = self.fetch(query)
         if rs:
             return self.format_from_db(rs[0])
+        return False
+    
+    def recreate_cart(self, id_maria, datas):
+        logger.critical(f" les datas {datas}")
+        query=f"""
+            INSERT INTO `panier` (
+                `id_maria`,
+                `id_mongo`,
+                `user_id`,
+                ) VALUES (
+                {id_maria},                           
+                {datas['id']},  
+                {datas['user_id']},  
+                0.0                          
+                );"""
+        rs = self.query(query)  
+        if rs:
+            return True
         return False
