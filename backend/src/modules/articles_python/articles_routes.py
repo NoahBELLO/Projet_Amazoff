@@ -80,27 +80,29 @@ def search_articles():
 #route get single article
 @bp.route("/<article_id>", methods=["GET"])
 def get_single_article(article_id):
-    if test_mongo(os.getenv("MONGO_URI_ARTICLES")):
-        try:
-            db = ArticleModel()
-            err_mongo, rs_mongo = db.get_article(article_id)
-            if not err_mongo:
-                raise ErrorExc("MongoDB n'a pas récupéré l'article")
-            return jsonify({"error": not err_mongo, "rs": rs_mongo})
-        except ErrorExc as e:
-            logger.info(f'erreur mongo {e}')
+    if not (test_maria() and test_mongo(os.getenv("MONGO_URI_ARTICLES"))):
+        return jsonify({"error": True, "message": "Les deux bases doivent être disponibles pour effectuer l'ajout."}), 503
+
+    try:
+        db = ArticleModel()
+        err_mongo, rs_mongo = db.get_article(article_id)
+        if not err_mongo:
+            raise ErrorExc("MongoDB n'a pas récupéré l'article")
+        return jsonify({"error": not err_mongo, "rs": rs_mongo})
+    except ErrorExc as e:
+        logger.info(f'erreur mongo {e}')
     
-    if not test_mongo(os.getenv("MONGO_URI_ARTICLES")) and test_maria():
-        try:
-            db2 = ArticleModelMD()
-            err_maria, rs_maria = db2.get_article(article_id)
-            if not err_maria:
-                raise ErrorExc("Maria n'a pas récupéré l'article")
-            return jsonify({"error": not err_maria, "rs": rs_maria})
-        except ErrorExc as e:
-            logger.info(f'erreur maria {e}')
-            return jsonify({"error": not err_maria, "message": str(e)})
-        
+
+    try:
+        db2 = ArticleModelMD()
+        err_maria, rs_maria = db2.get_article(article_id)
+        if not err_maria:
+            raise ErrorExc("Maria n'a pas récupéré l'article")
+        return jsonify({"error": not err_maria, "rs": rs_maria})
+    except ErrorExc as e:
+        logger.info(f'erreur maria {e}')
+        return jsonify({"error": not err_maria, "message": str(e)})
+    
 
          
 #route create
@@ -108,160 +110,137 @@ def get_single_article(article_id):
 def create_article():
     datas = request.json
     logger.critical('route create')
-    mongo_id = ObjectId()
-    maria_id = False
-    logger.critical(f"mon id généré {mongo_id}")
+    id_mongo = ObjectId()
+    id_maria = False
+    logger.critical(f"mon id généré {id_mongo}")
+
+    if not (test_maria() and test_mongo(os.getenv("MONGO_URI_ARTICLES"))):
+        return jsonify({"error": True, "message": "Les deux bases doivent être disponibles pour effectuer l'ajout."}), 503
+
 
     # MariaDB 
-    if test_maria():
-        logger.critical('maria')
-        try:
-            datas_sql = datas
-            datas_sql['id'] = str(mongo_id)
-            err_maria, maria_id = ArticleModelMD().create(datas_sql)
-            if not err_maria:
-              return jsonify({"error": True, "message": "Échec de l'insertion dans MariaDB."})
-
-        except Exception as e:
-            logger.warning(f"Échec MariaDB : {e}")
-            log_failure('MARIADB_ARTICLES', datas, e)
+    logger.critical('maria')
+    try:
+        datas_sql = datas
+        datas_sql['id'] = str(id_mongo)
+        err_maria, id_maria = ArticleModelMD().create(datas_sql)
+        if not err_maria:
             return jsonify({"error": True, "message": "Échec de l'insertion dans MariaDB."})
 
-    # MongoDB 
-    if test_mongo(os.getenv("MONGO_URI_ARTICLES")) and maria_id:
-        try:
-            logger.critical('mongo')
-            datas_mongo = datas
-            datas_mongo['id_maria'] = maria_id
-            datas_mongo['id'] = str(mongo_id) 
-            err_mongo, mongo_id = ArticleModel().save_data(datas_mongo)
-            if not err_mongo:
-                ArticleModelMD().delete(maria_id)  
-                return jsonify({"error": True, "message": "Échec de l'insertion dans MongoDB."})
+    except Exception as e:
+        logger.warning(f"Échec MariaDB : {e}")
+        log_failure('MARIADB_ARTICLES', datas, e)
+        return jsonify({"error": True, "message": "Échec de l'insertion dans MariaDB."})
 
-        except Exception as e:
-            logger.warning(f"Échec MongoDB : {e}")
-            log_failure('MONGO', datas, e)
-            ArticleModelMD().delete(maria_id)  
+    # MongoDB 
+    try:
+        logger.critical('mongo')
+        datas_mongo = datas
+        datas_mongo['id_maria'] = id_maria
+        datas_mongo['id'] = str(id_mongo) 
+        err_mongo, id_mongo = ArticleModel().save_data(datas_mongo)
+        if not err_mongo:
+            ArticleModelMD().delete(id_maria)  
             return jsonify({"error": True, "message": "Échec de l'insertion dans MongoDB."})
 
+    except Exception as e:
+        logger.warning(f"Échec MongoDB : {e}")
+        log_failure('MONGO', datas, e)
+        ArticleModelMD().delete(id_maria)  
+        return jsonify({"error": True, "message": "Échec de l'insertion dans MongoDB."})
+    
+    return jsonify({"error": False, 'rs': {"id_mongo": id_mongo, "id_maria": id_maria}})
 
-    elif maria_id:
-        ArticleModelMD().delete(maria_id)  
-    return jsonify({'error': False, 'rs': mongo_id})
 
 
 @bp.route("/patch/<string:id_article>", methods=["PATCH"])
 def patch_article(id_article):
     datas = request.json
     logger.critical('route update')
-    mongo_id = False
+
+    if not (test_maria() and test_mongo(os.getenv("MONGO_URI_ARTICLES"))):
+        return jsonify({"error": True, "message": "Les deux bases doivent être disponibles pour effectuer l'ajout."}), 503
 
     # MongoDB 
-    if test_mongo(os.getenv("MONGO_URI_ARTICLES")):
-        try:
-            logger.critical('mongo')
-            ok, old_doc = ArticleModel().get_article(id_article)
-            if not ok:
-                raise ErrorExc("Mongo : document introuvable")
-            
-            err_mongo, mongo_id = ArticleModel().update_data(datas, id_article)
-            if not err_mongo:
-                return jsonify({"error": True, "message": "Échec de l'update dans MongoDB."})
-
-        #cas erreur 500
-        except Exception as e:
-            logger.warning(f"[PATCH] Échec MongoDB pour id={id_article} : {e}")
-            log_failure('MONGO', {"id": id_article, **datas}, e)
-            return jsonify({"error": True, "message": "Rollback Mongo, arrêt."})
+    try:
+        logger.critical('mongo')
+        ok, old_doc = ArticleModel().get_article(id_article)
+        if not ok:
+            raise ErrorExc("Mongo : document introuvable")
         
-    #cas serveur hors ligne ou en CD
-    # else:
-    #     return jsonify({"error": True, "message": "MongoDB indisponible."})
+        err_mongo, id_mongo = ArticleModel().update_data(datas, id_article)
+        if not err_mongo:
+            return jsonify({"error": True, "message": "Échec de l'update dans MongoDB."})
 
+    #cas erreur 500
+    except Exception as e:
+        logger.warning(f"[PATCH] Échec MongoDB pour id={id_article} : {e}")
+        log_failure('MONGO', {"id": id_article, **datas}, e)
+        return jsonify({"error": True, "message": "Rollback Mongo, arrêt."})
+        
     # MariaDB 
-    if test_maria() and mongo_id:
-        logger.critical('maria')
-        try:
-            err_maria, maria_id = ArticleModelMD().update(datas, id_article)
-            if not err_maria:
-                ArticleModel().update_data(old_doc, id_article)
-                return jsonify({"error": True, "message": "Échec de l'insertion dans MariaDB."})
-            
-        #cas erreur 500
-        except Exception as e:
-            logger.warning(f"Échec MariaDB : {e}")
-            log_failure('MARIADB', {"id": id_article, **datas}, e)
-            try:
-                ArticleModel().update_data(old_doc, id_article)
-            except Exception as re:
-                logger.error(f"Rollback Mongo échoué: {re}")
-            return jsonify({"error": True, "message": "Rollback MariaDB, Mongo restauré."})
+    logger.critical('maria')
+    try:
+        err_maria, id_maria = ArticleModelMD().update(datas, id_article)
+        if not err_maria:
+            ArticleModel().update_data(old_doc, id_article)
+            return jsonify({"error": True, "message": "Échec de l'insertion dans MariaDB."})
         
-    #cas serveur hors ligne ou en CD
-    else:
-            try:
-                ArticleModel().update_data(old_doc, id_article)
-            except Exception as re:
-                logger.error(f"Rollback Mongo échoué: {re}")
-            return jsonify({"error": True, "message": "MariaDB indisponible, Mongo restauré."})
-    
+    #cas erreur 500
+    except Exception as e:
+        logger.warning(f"Échec MariaDB : {e}")
+        log_failure('MARIADB', {"id": id_article, **datas}, e)
+        try:
+            ArticleModel().update_data(old_doc, id_article)
+        except Exception as re:
+            logger.error(f"Rollback Mongo échoué: {re}")
+        return jsonify({"error": True, "message": "Rollback MariaDB, Mongo restauré."})
+        
     # Réponse
-    return jsonify({'error': False, 'rs': mongo_id})
+    return jsonify({"error": False, 'rs': {"id_mongo": id_mongo, "id_maria": id_maria}})
 
     
 #route delete
 @bp.route("/delete/<string:id_article>", methods=["DELETE"])
 def delete_article(id_article):
-     # MongoDB 
-    if test_mongo(os.getenv("MONGO_URI_ARTICLES")):
-        try:
-            logger.critical('mongo')
-            ok, old_doc = ArticleModel().get_article(id_article)
-            if not ok:
-                raise ErrorExc("Mongo : document introuvable")
-            
-            err_mongo = ArticleModel().delete_data(id_article)
-            if not err_mongo:
-                return jsonify({"error": True, "message": "Échec de l'update dans MongoDB."})
+    if not (test_maria() and test_mongo(os.getenv("MONGO_URI_ARTICLES"))):
+        return jsonify({"error": True, "message": "Les deux bases doivent être disponibles pour effectuer l'ajout."}), 503
 
-        #cas erreur 500
-        except Exception as e:
-            logger.warning(f"[DELETE] Échec MongoDB pour id={id_article} : {e}")
-            log_failure('MONGO', {"id": id_article}, e)
-            return jsonify({"error": True, "message": "Rollback Mongo, arrêt."})
+
+     # MongoDB 
+    try:
+        ok, old_doc = ArticleModel().get_article(id_article)
+        if not ok:
+            raise ErrorExc("Mongo : document introuvable")
         
-    #cas serveur hors ligne ou en CD
-    # else:
-    #     return jsonify({"error": True, "message": "MongoDB indisponible."})
-    
-    
+        err_mongo = ArticleModel().delete_data(id_article)
+        if not err_mongo:
+            return jsonify({"error": True, "message": "Échec de l'update dans MongoDB."})
+
+    #cas erreur 500
+    except Exception as e:
+        logger.warning(f"[DELETE] Échec MongoDB pour id={id_article} : {e}")
+        log_failure('MONGO', {"id": id_article}, e)
+        return jsonify({"error": True, "message": "Rollback Mongo, arrêt."})
+
+
     # MariaDB 
-    if test_maria():
-        logger.critical('maria')
-        try:
-            err_maria = ArticleModelMD().delete(old_doc['id_maria'])
-            if not err_maria:
-                ArticleModel().save_data(old_doc)
-                return jsonify({"error": True, "message": "Échec de la dans MariaDB."})
-            
-        #cas erreur 500
-        except Exception as e:
-            logger.warning(f"Échec MariaDB : {e}")
-            log_failure('MARIADB', {"id": old_doc['id_maria']}, e)
-            try:
-                ArticleModel().save_data(old_doc)
-            except Exception as re:
-                logger.error(f"Rollback Mongo échoué: {re}")
-            return jsonify({"error": True, "message": "Rollback MariaDB, Mongo restauré."})
+    logger.critical('maria')
+    try:
+        err_maria = ArticleModelMD().delete(old_doc['id_maria'])
+        if not err_maria:
+            ArticleModel().save_data(old_doc)
+            return jsonify({"error": True, "message": "Échec de la dans MariaDB."})
         
-    #cas serveur hors ligne ou en CD
-    else:
-            try:
-                ArticleModel().save_data(old_doc)
-            except Exception as re:
-                logger.error(f"Rollback Mongo échoué: {re}")
-            return jsonify({"error": True, "message": "MariaDB indisponible, Mongo restauré."})
-    
-    # Réponse
+    #cas erreur 500
+    except Exception as e:
+        logger.warning(f"Échec MariaDB : {e}")
+        log_failure('MARIADB', {"id": old_doc['id_maria']}, e)
+        try:
+            ArticleModel().save_data(old_doc)
+        except Exception as re:
+            logger.error(f"Rollback Mongo échoué: {re}")
+        return jsonify({"error": True, "message": "Rollback MariaDB, Mongo restauré."})
+        
+
     return jsonify({'error': False})
