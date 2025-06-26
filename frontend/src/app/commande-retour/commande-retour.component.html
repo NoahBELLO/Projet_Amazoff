@@ -1,0 +1,23 @@
+<div class="rating-modal-overlay" *ngIf="isModalOpen" (click)="closeModal()">
+  <div class="rating-modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>Retourner un article</h2>
+      <button class="close-button" (click)="closeModal()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <label for="reason">Raison du retour :</label>
+      <select id="reason" [(ngModel)]="selectedReason">
+        <option value="" disabled selected hidden>Choisissez une raison</option>
+        <option *ngFor="let reason of reasons" [value]="reason">{{ reason }}</option>
+      </select>
+    </div>
+
+    <div class="modal-footer">
+      <button class="cancel-button" (click)="closeModal()">Annuler</button>
+      <button class="submit-button" (click)="submitReturn()">Valider</button>
+    </div>
+  </div>
+</div>

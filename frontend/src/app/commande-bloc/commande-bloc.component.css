@@ -1,0 +1,151 @@
+/* CSS Bloc Commande */
+.bloc-commande {
+  width: 1000px;
+  margin-bottom: 30px;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  padding: 15px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* CSS Bloc Header */
+.bloc-header-commande {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 0;
+  border-bottom: 1px solid #ddd;
+}
+
+.mini-bloc-commande,
+.mini-bloc-total,
+.mini-bloc-numero-commande,
+.mini-bloc-livraison {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.mini-bloc-commande span,
+.mini-bloc-total span,
+.mini-bloc-numero-commande span,
+.mini-bloc-livraison span {
+  display: block;
+  font-size: 14px;
+  color: #333;
+}
+
+
+/* CSS Bloc Body */
+.bloc-body-commande {
+  display: flex;
+  flex-direction: row;
+  padding: 15px 0;
+  gap: 15px;
+  border-bottom: 1px solid #e0e0e0; 
+}
+
+.bloc-commande > div:last-child .bloc-body-commande {
+  border-bottom: none;
+}
+
+.mini-bloc-image,
+.mini-bloc-description,
+.mini-bloc-bouttons {
+  width: 100%;
+  padding-top: 5px;
+}
+
+.mini-bloc-image {
+  width: fit-content;
+}
+
+img {
+  width: 100px;
+  height: 115px;
+  object-fit: contain;
+  cursor: pointer;
+  border: 1px solid #eee;
+  border-radius: 8px;
+}
+
+/* Description */
+.mini-bloc-description {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 10px;
+}
+
+.nom-article {
+  font-size: 16px;
+  font-weight: bold;
+  color: #222;
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+
+.infos-article {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 16px;
+  font-size: 14px;
+  color: #444;
+}
+
+
+/* CSS Bloc Boutons */
+.mini-bloc-bouttons {
+  display: flex;
+  flex-direction: column;
+  width: 55%;
+  justify-content: center;
+}
+
+button {
+  width: 200px;
+  height: 32px;
+  border-radius: 50px;
+  margin: 6px 0;
+  border: none;
+  font-size: 14px;
+  transition: all 0.2s ease-in-out;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+/* Bouton : Suivre */
+#suivre {
+  background-color: #ffd814;
+  border: 1px solid #ffd814;
+}
+
+#suivre:hover {
+  background-color: #dfb50d;
+  border-color: #dfb50d;
+}
+
+/* Bouton : Problème */
+#probleme {
+  background-color: #ffa41c;
+  border: 1px solid #ffa41c;
+}
+
+#probleme:hover {
+  background-color: #fa8900;
+  border-color: #fa8900;
+}
+
+/* Bouton : Avis */
+#avis {
+  background-color: #b0eaf5;
+  border: 1px solid #b0eaf5;
+}
+
+#avis:hover {
+  background-color: #85def0;
+  color: #000;
+}
