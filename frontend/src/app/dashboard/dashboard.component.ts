@@ -15,17 +15,38 @@ import { Article, ResponseApi } from '../service/article.interface';
 })
 export class DashboardComponent implements OnInit{
   articles: Article[] = []; 
+  filteredArticles: Article[] = [];
+
 
   constructor(private articleService: ArticleService) {}
 
   ngOnInit() {
-    this.articleService.getArticles().subscribe(
-      (response: ResponseApi) => {
-        this.articles = response.rs;
+    this.onSearch("");
+
+    // this.articleService.getArticles().subscribe(
+    //   (response: ResponseApi) => {
+    //     this.articles = response.rs;
+    //   },
+    //   (error) => {
+    //     console.error('Erreur lors de la récupération des articles', error);
+    //   }
+    // );
+  }
+
+  onSearch(searchKeys: string) {
+    console.log('onSearch capté', searchKeys)
+    this.articleService.search(searchKeys).subscribe({
+      next: (response) => {
+        if (!response.error) {
+          this.filteredArticles = response.rs;
+        } else {
+          alert(response.error);
+        }
       },
-      (error) => {
-        console.error('Erreur lors de la récupération des articles', error);
+      error: (err) => {
+        console.error('Erreur lors de la recherche', err);
       }
-    );
+    });
   }
 }
+

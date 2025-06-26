@@ -20,12 +20,13 @@ export class ArticleService {
     return this.http.post<ResponseApi>(url, articleData);
   }
 
-  getArticles(): Observable<ResponseApi> {
-    const url = `${this.articleBaseUrl}/`;
-    return this.http.get<ResponseApi>(url);
-  }
+  // getArticles(): Observable<ResponseApi> {
+  //   const url = `${this.articleBaseUrl}/`;
+  //   return this.http.get<ResponseApi>(url);
+  // }
 
   getArticleByObjectId(id: string): Observable<ResponseApi> {
+    console.log(id)
     const url = `${this.articleBaseUrl}/${id}`;
     return this.http.get<ResponseApi>(url);
 
@@ -67,6 +68,17 @@ export class ArticleService {
       {
         article_id: ratingData.articleId,
         comments: ratingData.comments,
+      },
+      { headers: { 'Content-Type': 'application/json' } }
+    )
+  }
+
+  search(searchKeys: string): Observable<ResponseApi>{
+    const url = `${this.articleBaseUrl}/search`;
+    return this.http.post<ResponseApi>(
+      url,
+      {
+        q: searchKeys
       },
       { headers: { 'Content-Type': 'application/json' } }
     )

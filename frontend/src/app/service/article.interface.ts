@@ -17,7 +17,8 @@ export interface ResponseApi {
   rs?: any;
   }
   
-//interface de notation d'un article
+//@ todo flo refaire les réponses des avis pour coller avec les tables
+//interface de notation d'un article 
 export interface RatingData {
   articleId: string;
   comments: CommentData;

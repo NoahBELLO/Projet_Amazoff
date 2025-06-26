@@ -1,0 +1,21 @@
+.commande-section-title {
+  font-size: 24px;
+  font-weight: 600;
+  margin: 40px 0 20px;
+  padding: 10px;
+  padding-left: 15px;
+  border-left: 6px solid;
+  background: linear-gradient(to right, #f9f9f9, #ffffff);
+  color: #333;
+  border-radius: 4px;
+}
+
+/* Orange pour les commandes en cours */
+.commande-section-title.en-cours {
+  border-color: #ffa41c;
+}
+
+/* Vert pour les commandes livrées */
+.commande-section-title.livrees {
+  border-color: #4CAF50;
+}

@@ -1,0 +1,54 @@
+<div class="bloc-commande">
+  <div class="bloc-header-commande">
+    <div class="mini-bloc-commande">
+      <strong>Commande effectuée le :</strong><br>
+      <span>{{ commande.date_publication }}</span>
+    </div>
+    <div class="mini-bloc-total">
+      <strong>Total :</strong><br>
+      <span>{{ commande.total }} €</span>
+    </div>
+    <div class="mini-bloc-numero-commande">
+      <strong>N° de commande :</strong><br>
+      <span>{{ commande.numero_commande }}</span>
+    </div>
+    <div *ngIf="commande.date_livraison" class="mini-bloc-livraison">
+      <strong>Livrée le :</strong><br>
+      <span>{{ commande.date_livraison }}</span>
+    </div>
+  </div>
+
+
+  <div *ngFor="let article of commande.commandes" class="bloc-body-commande">
+    <div class="mini-bloc-image">
+      <img [routerLink]="['/article', article.article_id]" src="./assets/{{ article.image }}" alt="{{ article.name }}">
+    </div>
+    <div class="mini-bloc-description">
+      <div [routerLink]="['/article', article.article_id]" class="nom-article">{{ article.name }}</div>
+      <div class="infos-article">
+        <div><strong>Quantité :</strong> {{ article.quantite }}</div>
+        <div><strong>Prix unitaire :</strong> {{ article.prix }} €</div>
+        <div><strong>Réduction :</strong> {{ article.reduction }}%</div>
+        <div><strong>Sous-total :</strong> {{ article.sous_total }} €</div>
+      </div>
+    </div>
+    <div class="mini-bloc-bouttons">
+      <ng-container *ngIf="!isDelivered">
+        <button id="suivre">Suivre votre colis</button>
+        <button id="probleme">Problème avec la commande</button>
+      </ng-container>
+      <ng-container *ngIf="isDelivered">
+        <button id="retour" (click)="retourModal.openModal(article.article_id)">Retourner l'article</button>
+        <button id="receipt">Imprimer le reçu</button>
+      </ng-container>
+      <button id="avis" (click)="ratingModal.openModal(article.article_id)">Donner son avis sur le produit</button>
+    </div>
+
+  <app-commande-retour #retourModal [articleId]="article.article_id"></app-commande-retour>
+    <app-article-rating-modal #ratingModal *ngIf="article">
+    </app-article-rating-modal>
+
+  </div>
+</div>
+
+<!-- Modale d'évaluation -->
