@@ -1,0 +1,5 @@
+build/
+mongo-cxx-driver-r4.0.0/build/
+mongo-cxx-driver-r4.0.0/CMakeCache.txt
+mongo-cxx-driver-r4.0.0/CMakeFiles/
+mongo-cxx-driver-r4.0.0/install/
