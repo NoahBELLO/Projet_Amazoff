@@ -2,7 +2,7 @@ const express = require("express");
 // const connectDB = require("./config/db");
 const dotenv = require("dotenv").config();
 const app = express();
-const port = 5000;
+const port = 6001;
 const uri = process.env.MONGO_URI;
 
 const cors = require('cors');

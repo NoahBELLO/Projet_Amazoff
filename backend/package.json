@@ -11,9 +11,13 @@
   "description": "",
   "dependencies": {
     "cors": "^2.8.5",
+    "dot-env": "^0.0.1",
     "dotenv": "^16.4.5",
     "express": "^4.21.1",
+    "flask": "^0.2.10",
+    "flask-cors": "^0.0.1",
     "mongodb": "^6.10.0",
+    "mongoengine": "^1.0.8",
     "nodemon": "^3.1.9"
   }
 }

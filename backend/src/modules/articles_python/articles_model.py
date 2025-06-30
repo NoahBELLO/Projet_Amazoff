@@ -63,7 +63,9 @@ class ArticleModel(Document):
         #         raise ErrorExc(f"Veuillez définir une réduction valide (doit être un nombre).")
 
     def get_all_articles(self):
+        logger.critical('test1')
         articles = ArticleModel.objects()  # Récupérer tous les articles avec .objects
+        logger.critical('test2')
         articles_dict = []
         for article in articles:
             article = article.to_dict()
