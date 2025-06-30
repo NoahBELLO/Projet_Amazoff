@@ -7,17 +7,16 @@ from tools.customeException import ErrorExc
 from tools.db_health import test_mongo, test_maria
 
 def run_batch_articles():
-    if test_mongo():
+    if test_mongo(os.getenv("MONGO_URI_ARTICLES")):
         try:
             db = ArticleModel()
             logger.info("Batch Mongo lancé")
             _, articles = db.get_all_articles()
-            logger.critical(_)
             if not _ and len(articles) == 0:
                 raise ErrorExc("Liste articles vide")
         except ErrorExc as e:
             logger.error(f"Error Mongo {str(e)}")
-    if not test_mongo() and test_maria():
+    if not test_mongo(os.getenv("MONGO_URI_ARTICLES")) and test_maria():
             db2 = ArticleModelMD()
             logger.info('Batch Maria lancé')
             _, articles = db2.get_all_articles()

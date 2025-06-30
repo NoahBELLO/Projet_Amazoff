@@ -86,7 +86,6 @@ class ArticleModel(Document):
             if not article:
                 raise ErrorExc("Article non trouvé")
             avis = AvisModel.objects(article_id=article_id).first()#récupére les avis et les met dans un dict
-            logger.critical(avis)
             article = article.to_dict()
             if avis:
                 avis.to_dict()

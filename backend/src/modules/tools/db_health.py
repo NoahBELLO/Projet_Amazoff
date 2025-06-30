@@ -19,7 +19,7 @@ def test_mongo(uri: str = None) -> bool:
     #sinon, on ping véritablement
     uri = uri or os.getenv("MONGO_URI")
     try:
-        client = MongoClient(uri, serverSelectionTimeoutMS=500)
+        client = MongoClient(uri, serverSelectionTimeoutMS=1000)
         client.admin.command("ping")
         return True
     except Exception as e:

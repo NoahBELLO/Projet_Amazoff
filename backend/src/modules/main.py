@@ -124,30 +124,30 @@ def wait_for_mariadb_ready(timeout: int = 3, interval: float = 1.0):
 
 
 if __name__ == "__main__":
-    # # # # #  exécute le batch et le scheduler QUE dans le process enfant
-    # if os.environ.get("WERKZEUG_RUN_MAIN") == "true":
-    #     #test des BDD
-    #     mongo_ok = wait_for_mongo_ready(os.getenv("MONGO_URI_ARTICLES")) \
-    #             and wait_for_mongo_ready(os.getenv("MONGO_URI_AVIS"))
-    #     mysql_ok = wait_for_mariadb_ready()
+    # # # #  exécute le batch et le scheduler QUE dans le process enfant
+    if os.environ.get("WERKZEUG_RUN_MAIN") == "true":
+        #test des BDD
+        mongo_ok = wait_for_mongo_ready(os.getenv("MONGO_URI_ARTICLES")) \
+                and wait_for_mongo_ready(os.getenv("MONGO_URI_AVIS"))
+        mysql_ok = wait_for_mariadb_ready()
 
-    #     # un app_context pour que Mysql() voie app.config
-    #     with app.app_context():
-    #         if mongo_ok or mysql_ok:
-    #             try:
-    #                 run_batch_articles()
-    #                 logger.info("Batch initial exécuté.")
-    #             except Exception as e:
-    #                 logger.error(f"Erreur batch initial : {e}")
-    #         else:
-    #             logger.warning("Ni Mongo ni MariaDB ne sont prêts : batch initial sauté.")
+        # un app_context pour que Mysql() voie app.config
+        with app.app_context():
+            if mongo_ok or mysql_ok:
+                try:
+                    run_batch_articles()
+                    logger.info("Batch initial exécuté.")
+                except Exception as e:
+                    logger.error(f"Erreur batch initial : {e}")
+            else:
+                logger.warning("Ni Mongo ni MariaDB ne sont prêts : batch initial sauté.")
 
-    #     # démarrage du scheduler UNE FOIS puis toutes les 5 min
-    #     scheduler = BackgroundScheduler(timezone='Europe/Paris')
-    #     scheduler.add_job(run_batch_articles,
-    #                       trigger='interval',
-    #                       minutes=5,
-    #                       id='batch_articles')
-    #     scheduler.start()
+        # démarrage du scheduler UNE FOIS puis toutes les 5 min
+        scheduler = BackgroundScheduler(timezone='Europe/Paris')
+        scheduler.add_job(run_batch_articles,
+                          trigger='interval',
+                          minutes=5,
+                          id='batch_articles')
+        scheduler.start()
 
     app.run(host="0.0.0.0", port=6001, debug=True)
