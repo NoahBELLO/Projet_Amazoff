@@ -18,7 +18,7 @@ app.use(express.urlencoded({ extended: true }));
 
 db()
 // app.use(authMiddleware);
-app.use("/user", userRoutes);
+app.use("/users", userRoutes);
 
 // Middleware pour gérer les erreurs 500 (erreurs serveur)
 app.use(

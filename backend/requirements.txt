@@ -1,4 +1,0 @@
-flask
-mongoengine
-flask-cors
-loguru

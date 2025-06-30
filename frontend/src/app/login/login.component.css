@@ -1,12 +1,12 @@
-body {
+/* body {
   margin: 0;
   font-family: Arial, sans-serif;
   background: #FFFFFF;
   color: #000000;
-}
+} */
 
 /* Header */
-header {
+/* header {
   padding: 20px;
 }
 
@@ -20,10 +20,10 @@ header .brand p {
   margin: 5px 0 0 0;
   font-size: 1rem;
   color: #3e3e3e;
-}
+} */
 
 /* Conteneur pour le logo */
-.logo-container {
+/* .logo-container {
   text-align: center;
   margin: 20px 0;
 }
@@ -31,10 +31,10 @@ header .brand p {
 .logo-bag {
   width: 260px;
   max-width: 100%;
-}
+} */
 
 /* Container principal centré */
-.login-container {
+/* .login-container {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -42,12 +42,12 @@ header .brand p {
   flex: 1;
   text-align: center;
   padding: 0 20px;
-  margin-bottom: 40px;
+  margin-bottom: 40px; */
   /* Ajout d'espace sous le formulaire */
-}
+/* } */
 
 /* Formulaire de connexion */
-.login-form {
+/* .login-form {
   width: 300px;
   max-width: 90%;
   margin: 0 auto;
@@ -78,20 +78,20 @@ header .brand p {
 .form-group input:focus {
   outline: none;
   box-shadow: 0 0 8px rgba(249, 249, 249, 0.5);
-}
+} */
 
 /* Icône dans les champs pill */
-.pill .icon {
+/* .pill .icon {
   position: absolute;
   left: 14px;
   top: 50%;
   transform: translateY(-50%);
   color: #ffffff;
   font-size: 1.2rem;
-}
+} */
 
 /* Bouton Connexion */
-button[type="submit"] {
+/* button[type="submit"] {
   width: 100%;
   padding: 14px 0;
   background: #fdbd5a;
@@ -115,10 +115,10 @@ button[type="submit"]:hover {
 button[type="submit"]:focus {
   outline: none;
   box-shadow: 0 0 8px rgba(253, 189, 90, 0.5);
-}
+} */
 
 /* Liens sous le formulaire */
-.footer-links {
+/* .footer-links {
   display: flex;
   justify-content: space-between;
   margin-top: 20px;
@@ -135,10 +135,10 @@ button[type="submit"]:focus {
 .footer-links a:hover {
   text-decoration: underline;
   color: #000;
-}
+} */
 
 /* Adaptation sur mobile */
-@media (max-width: 480px) {
+/* @media (max-width: 480px) {
   header {
     padding: 10px;
   }
@@ -160,4 +160,100 @@ button[type="submit"]:focus {
     max-width: 100%;
     padding: 0 10px;
   }
+} */
+
+.login-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 20px;
+}
+
+.nomLabel {
+    font-size: 24px;
+    color: #00ffcc;
+    font-weight: bold;
+    margin-bottom: 20px;
+    margin-right: 10px;
+}
+
+.controls {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+select {
+    background: black;
+    color: #0ff;
+    border: 2px solid #00ffcc;
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 8px;
+}
+
+.view-container {
+    padding: 20px;
+    border: 2px dashed #00ffcc;
+    box-shadow: 0 0 10px #0077ff;
+    width: 80%;
+}
+
+/* Boutons */
+button {
+    background: linear-gradient(90deg, #00ffcc, #0077ff);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    text-transform: uppercase;
+    border-radius: 8px;
+    box-shadow: 0 0 10px #00ffcc, 0 0 20px #0077ff;
+    transition: all 0.3s ease-in-out;
+    cursor: pointer;
+}
+
+button:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 15px #00ffcc, 0 0 30px #0077ff;
+}
+
+#connexion {
+    position: relative;
+    left: -98%;
+}
+
+#inscription {
+    position: relative;
+    right: -98%;
+}
+
+p {
+    font-size: 18px;
+    color: white;
+    margin: 8px 0;
+    padding: 5px 15px;
+    background: rgba(0, 255, 204, 0.2);
+    border-radius: 5px;
+    box-shadow: 0 0 5px #0077ff;
+}
+
+h2 {
+    font-size: 26px;
+    color: #00ffcc;
+    font-weight: bold;
+    margin-bottom: 15px;
+    text-shadow: 0 0 5px #0077ff;
+}
+
+.socialConnexion{
+    width: 30%;
+    height: 30%;
+}
+
+#google{
+    width: 30px;
+    height: 30px;
 }

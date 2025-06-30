@@ -1,66 +1,203 @@
 services:
-  # frontend_react:
-  #   container_name: frontend_react
-  #   build:
-  #     context: ./FrontEnd
-  #   volumes:
-  #     - ./FrontEnd:/usr/src/app
-  #   ports:
-  #     - 5173:5173
-  #   networks:
-  #     - reseauApplication
-
-  microservice_authentification:
-    container_name: microservice_authentification
-    build:
-      context: ../backend/src/modules/authentification
-    volumes:
-      - ../backend/src/modules/authentification:/usr/src/app
-    ports:
-      - 3001:3001
-    networks:
-      - reseauApplication
-    command: ["sh", "./install.sh"]
-
-  microservice_role:
-    container_name: microservice_role 
-    build:
-      context: ../backend/src/modules/roles
-    volumes:
-      - ../backend/src/modules/roles:/usr/src/app
-    ports:
-      - 3002:3002
-    networks:
-      - reseauApplication
-    command: ["sh", "./install.sh"]
-
-  microservice_user:
-    container_name: microservice_user 
-    build:
-      context: ../backend/src/modules/users
-    volumes:
-      - ../backend/src/modules/users:/usr/src/app
-    ports:
-      - 3003:3003
-    networks:
-      - reseauApplication
-    command: ["sh", "./install.sh"]
-
   nginx:
     container_name: nginx-container
     image: nginx:latest
+    restart: always
     ports:
-      - "5000:5000"
+      - "3001:3001"
     volumes:
       - ./conf.d:/etc/nginx/conf.d
     networks:
-      - reseauApplication
+      - reseau_projet
     depends_on:
-      - microservice_user 
-      - microservice_role 
       - microservice_authentification
+      - microservice_role
+      - microservice_user
+      # - microservice_magasin
+      # - microservice_notifications
+      # - microservice_payment_mode
+      # - microservice_articles
+      # - microservice_avis
+      # - microservice_commandes
+      # - microservice_paniers
+
+  frontend:
+    container_name: frontend
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "4200:4200"
+    volumes:
+      - ../frontend:/usr/src/app
+    networks:
+      - reseau_projet
+
+  microservice_authentification:
+    # container_name: microservice_authentification
+    build:
+      context: ../backend/src/modules/authentification
+    # restart: always
+    volumes:
+      - ../backend/src/modules/authentification:/usr/src/app
+    # ports:
+    #   - 5001:5001
+    networks:
+      - reseau_projet
+    deploy:
+      replicas: 2
+    # command: ["sh", "./install.sh"]
+    healthcheck:
+      test:
+        ["CMD", "wget", "-qO-", "http://localhost:5001/authentification/health"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+
+  microservice_role:
+    # container_name: microservice_role
+    build:
+      context: ../backend/src/modules/roles
+    restart: always
+    volumes:
+      - ../backend/src/modules/roles:/usr/src/app
+    # ports:
+    #   - 5002:5002
+    networks:
+      - reseau_projet
+    deploy:
+      replicas: 2
+    # command: ["sh", "./install.sh"]
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:5002/roles/health"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+
+  microservice_user:
+    # container_name: microservice_user
+    build:
+      context: ../backend/src/modules/users
+    restart: always
+    volumes:
+      - ../backend/src/modules/users:/usr/src/app
+    # ports:
+    #   - 5003:5003
+    networks:
+      - reseau_projet
+    deploy:
+      replicas: 2
+    # command: ["sh", "./install.sh"]
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:5003/users/health"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+
+  # microservice_articles:
+  #   container_name: microservice_articles
+  #   build:
+  #     context: ../backend/src/modules/articles_python
+  #   # restart: always
+  #   environment:
+  #     - PYTHONPATH=/usr/src/app
+  #   env_file:
+  #     - ../backend/src/modules/articles_python/.env
+  #   volumes:
+  #     - ../backend/src/modules/articles_python:/usr/src/app
+  #   ports:
+  #     - "6001:6001"
+  #   networks:
+  #     - reseau_projet
+
+  # microservice_avis:
+  #   container_name: microservice_avis
+  #   build:
+  #     context: ../backend/src/modules/avis_python
+  #   # restart: always
+  #   environment:
+  #     - PYTHONPATH=/usr/src/app
+  #   env_file:
+  #     - ../backend/src/modules/avis_python/.env
+  #   volumes:
+  #     - ../backend/src/modules/avis_python:/usr/src/app
+  #   ports:
+  #     - "6002:6002"
+  #   networks:
+  #     - reseau_projet
+
+  # microservice_commandes:
+  #   container_name: microservice_commandes
+  #   build:
+  #     context: ../backend/src/modules/commandes_python
+  #   # restart: always
+  #   environment:
+  #     - PYTHONPATH=/usr/src/app
+  #   env_file:
+  #     - ../backend/src/modules/commandes_python/.env
+  #   volumes:
+  #     - ../backend/src/modules/commandes_python:/usr/src/app
+  #   ports:
+  #     - "6003:6003"
+  #   networks:
+  #     - reseau_projet
+
+  # microservice_paniers:
+  #   container_name: microservice_paniers
+  #   build:
+  #     context: ../backend/src/modules/panier_python
+  #   # restart: always
+  #   environment:
+  #     - PYTHONPATH=/usr/src/app
+  #   env_file:
+  #     - ../backend/src/modules/panier_python/.env
+  #   volumes:
+  #     - ../backend/src/modules/panier_python:/usr/src/app
+  #   ports:
+  #     - "6004:6004"
+  #   networks:
+  #     - reseau_projet
+
+  # microservice_magasin:
+  #   container_name: microservice_magasin
+  #   build:
+  #     context: ../backend/src/modules/magasin_cpp/magasin_cpp
+  #     # dockerfile: Dockerfile
+  #   ports:
+  #     - "7001:7001"
+  #   networks:
+  #     - reseau_projet
+  #   env_file:
+  #     - ../backend/src/modules/magasin_cpp/magasin_cpp/.env
+
+  # microservice_notifications:
+  #   container_name: microservice_notifications
+  #   build:
+  #     context: ../backend/src/modules/notifications_node
+  #   restart: always
+  #   volumes:
+  #     - ../backend/src/modules/notifications_node:/usr/src/app
+  #   ports:
+  #     - 7002:7002
+  #   networks:
+  #     - reseau_projet
+  #   command: ["sh", "./install.sh"]
+
+  # microservice_payment_mode:
+  #   container_name: microservice_payment_mode
+  #   build:
+  #     context: ../backend/src/modules/payment_mode_node
+  #   restart: always
+  #   volumes:
+  #     - ../backend/src/modules/payment_mode_node:/usr/src/app
+  #   ports:
+  #     - 7003:7003
+  #   networks:
+  #     - reseau_projet
+  #   command: ["sh", "./install.sh"]
 
 networks:
-  reseauApplication:
+  reseau_projet:
     driver: bridge
     external: true
