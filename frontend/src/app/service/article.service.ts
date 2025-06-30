@@ -7,7 +7,6 @@ import { Article, RatingData, ResponseApi } from './article.interface';
   providedIn: 'root'
 })
 export class ArticleService {
-
   private articleBaseUrl = 'http://localhost:6001/articles';
   private avisBaseUrl = 'http://localhost:6001/avis';
 

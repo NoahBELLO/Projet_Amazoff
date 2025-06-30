@@ -1,7 +1,7 @@
 import { NgClass, NgFor } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
 import { ArticleService } from '../service/article.service';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, ParamMap, RouterLink } from '@angular/router';
 import { Article } from '../service/article.interface';
 
 @Component({
@@ -18,21 +18,34 @@ export class ArticlePageComponentComponent implements OnInit {
   filteredArticles: Article[] = [];
 
   constructor(
+    private route: ActivatedRoute,
     protected articleService: ArticleService) {}
 
-    ngOnInit() {
-      this.articleService.search(this.searchKeys).subscribe({
-      next: (response) => {
-        if (!response.error) {
-          this.filteredArticles = response.rs;
+  ngOnInit() {
+      this.route.queryParamMap.subscribe((params: ParamMap) => {
+        const q = params.get('q')?.trim();
+        if (q) {
+          // vérifie si c'est une recherche ou une actualisation
+          
+          this.articleService.search(q).subscribe({
+            next: res => this.articles = res.rs,
+            error: err => console.error(err)
+          });
         } else {
-          alert(response.error);
-        }
-      },
-      error: (err) => {
-        console.error('Erreur lors de la recherche', err);
+          this.articleService.search(this.searchKeys).subscribe({
+          next: (response) => {
+            if (!response.error) {
+              this.articles = response.rs;
+            } else {
+              alert(response.error);
+            }
+          },
+          error: (err) => {
+            console.error('Erreur lors de la recherche', err);
+          }
+        });
       }
-    });
+      });
       // this.articleService.getArticles().subscribe({
       //   next: (response) => {
       //     if (response.error == false) {
@@ -48,7 +61,7 @@ export class ArticlePageComponentComponent implements OnInit {
       //   }  
       // });
     }
-  }
+}
   
 
 

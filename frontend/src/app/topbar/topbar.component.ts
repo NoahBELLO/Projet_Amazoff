@@ -55,14 +55,18 @@ export class TopbarComponent {
 
   recherche_article() {
     this.searchEvent.emit(this.searchQuery);
-    // this.articleService.search(this.searchQuery).subscribe({
-    //   next: (response) => {
-    //     console.log(response)
-    //   },
-    //   error: (err) => {
-    //     console.error('Erreur lors du chargement du panier', err);
-    //   }
-    // });
+    this.articleService.search(this.searchQuery).subscribe({
+      next: (response) => {
+        // navigue vers /dashboard en mettant la recherche
+        this.router.navigate(['/dashboard'], {
+          queryParams: { q: this.searchQuery }
+        });
+        console.log(response)
+      },
+      error: (err) => {
+        console.error('Erreur lors du chargement du panier', err);
+      }
+    });
   }
 
 }
