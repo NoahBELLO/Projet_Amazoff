@@ -85,12 +85,25 @@ class ArticleModel(Document):
             article = ArticleModel.objects(id=article_id).first() #.first pour récup le premier de la liste
             if not article:
                 raise ErrorExc("Article non trouvé")
-            avis = AvisModel.objects(article_id=article_id).first()#récupére les avis et les met dans un dict
+            
             article = article.to_dict()
-            if avis:
-                avis.to_dict()
-                article['avis'] = avis['comments'] #la liste des commentaires
-                article['stars'] = avis['stars'] #la notation
+            avis_docs = AvisModel.objects(article_id=article_id)#récupére les avis et les met dans un dict
+
+            étoiles_totales = 0.0
+            article_avis = []
+            for a in avis_docs:
+                avis_dict = a.to_dict()
+                article_avis.append(avis_dict)
+                étoiles_totales += avis_dict.get("stars", 0.0)
+
+            if article_avis:
+                moyenne = étoiles_totales / len(article_avis)
+            else:
+                moyenne = 0.0
+
+            article["avis"] = article_avis
+            article["stars"] = moyenne
+            logger.critical(article)
             return True, article
         except:
             #cas où mongo est down
@@ -231,6 +244,12 @@ class ArticleModelMD():
     def get_article(self, id_article):
         db = TableArticles()
         datas = db.get_by_id(id_article)
+        note = 0
+        #ajout de sa note
+        if datas['avis'] is not None and len(datas['avis']) > 0:
+            for elem in datas['avis']:
+                note += elem['stars']
+            datas['stars'] = note / len(datas['avis'])
         if datas:
             return True, datas
         return False, id_article

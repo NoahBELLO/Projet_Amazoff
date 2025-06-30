@@ -21,15 +21,13 @@ export interface ResponseApi {
 //interface de notation d'un article 
 export interface RatingData {
   articleId: string;
-  comments: CommentData;
+  comment: string;
+  id_maria?: number,
+  stars: number,
+  user_id?: string
+  date_publication?: string,
+  fname?: string,
+  name?: string,
+
 }
 
-//l'objet notation d'un utilisateur
-export interface CommentData {
-  comment: string;
-  stars: number;
-  user_id?: string | null;
-  fname?: string | null;
-  name?: string | null;
-  date_publication?: Date;
-}

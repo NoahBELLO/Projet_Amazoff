@@ -3,7 +3,7 @@ from datetime import datetime, timezone
 from bson import ObjectId
 from flask import Blueprint, jsonify, request
 from loguru import logger
-from avis_python.avis_model import AvisModel
+from avis_python.avis_model import AvisModel, AvisModelMD
 from articles_python.articles_model import ArticleModel
 from articles_python.articles_bdd import TableArticles
 from panier_python.panier_model import PanierModel, PanierModelMD
@@ -14,69 +14,55 @@ LOG_FILE = os.path.join(os.path.dirname(__file__), 'failed_avis_request.log')
 bp = Blueprint("avis", __name__, url_prefix="/avis")
 
 
-def log_failure(target: str, datas: dict, error: Exception):
+def log_failure(target: str, crud: str, datas: dict, error: Exception):
     timestamp = datetime.now(timezone.utc).isoformat()  
     with open(LOG_FILE, 'a', encoding='utf-8') as fichier:
         fichier.write(
-            f"{timestamp} | {target} INSERT FAILED | "
+            f"{timestamp} | {target} {crud} FAILED | "
             f"data={datas!r} | error={error}\n"
         )
 
-
-#route patch
-@bp.route("/rating_article", methods=["PATCH"])
+#route create avis
+@bp.route("/rating_article", methods=["POST"])
 def rate_article():
-    response = {"ids": {}}
-    logger.critical('route create avis')
     datas = request.json
-    mongo_id = False
-    id_maria = TableArticles().getLastId()
-    logger.critical(datas)
+    id_mongo = ObjectId()
+    id_maria = False
+    crud_operation = "INSERT"
+
+    if not (test_maria() and test_mongo(os.getenv("MONGO_URI_AVIS"))):
+        return jsonify({"error": True, "message": "Les deux bases doivent être disponibles pour effectuer l'ajout."}), 503
+
+# --- MariaDB ---
+    try:
+        datas_sql = datas
+        datas_sql['id'] = str(id_mongo)
+        err_maria, id_maria = AvisModelMD().rating_article(datas_sql)
+        if not err_maria:
+            return jsonify({"error": True, "message": "Échec de l'insertion dans MariaDB."})
+
+    except Exception as e:
+        logger.warning(f"Échec MariaDB : {e}")
+        log_failure('MARIADB_ARTICLES', crud_operation, datas, e)
+        return jsonify({"error": True, "message": "Échec de l'insertion dans MariaDB."})
+
 
   # --- MongoDB ---
-    if test_mongo(os.getenv("MONGO_URI_AVIS")):
-        try:
-            db = AvisModel()
-            err_mongo, mongo_id = db.rating_article(datas, id_maria + 1)
-            if err_mongo:
-                response["ids"]["mongo"] = str(mongo_id)
-            else:
-                raise RuntimeError("Erreur lors de la création du panier sur MongoDB")
-        except ErrorExc as e:
-            logger.warning(f"[CREATE_CART] Échec MongoDB : {e}")
-            log_failure('MONGO_CART', {"user_id": datas['user_id']}, e)
-
-#  # --- MariaDB ---
-#     if test_maria():
-#         try:
-#             if not mongo_id:
-#                 mongo_id = ObjectId()
-#                 logger.critical(f"[CREATE_CART] MongoId généré : {mongo_id}")
-            
-#             datas_maria = {"articles": [], "user_id": user_id, "id": mongo_id}
-#             db2 = PanierModelMD()
-#             err_maria, maria_id = db2.rating_article(datas_maria)
-#             if err_maria:
-#                 response["ids"]["mariadb"] = maria_id
-#             else:
-#                 raise RuntimeError("Erreur lors de la création du panier sur MariaDB")
-#         except Exception as e:
-#             logger.warning(f"[CREATE_CART] Échec MariaDB : {e}")
-#             log_failure('MARIADB_CART', {"user_id": user_id}, e)
-#             disable_maria()
-
-    # Réponse 
-    if not response["ids"]:
-        return jsonify({"error": True, "message": "Aucun insert n’a fonctionné."})
-    return jsonify({'error': False, 'rs': response})
-    
-    
     try:
-        datas = request.json
         db = AvisModel()
-        
-        error = db.rating_article(datas)
-        return jsonify({"error": not error})
-    except ErrorExc as e:
-        return jsonify({"error": True, "rs": str(e)})
+        datas_mongo = datas
+        datas_mongo['id'] = str(id_mongo) 
+        datas_mongo['id_maria'] = id_maria
 
+        err_mongo, id_mongo = db.rating_article(datas)
+        if not err_mongo:
+            AvisModel().delete(id_maria)  
+            return jsonify({"error": True, "message": "Échec de l'insertion dans MongoDB."})
+
+    except Exception as e:
+        logger.warning(f"Échec MongoDB : {e}")
+        log_failure('MONGO', crud_operation, datas, e)
+        AvisModel().delete(id_maria)  
+        return jsonify({"error": True, "message": "Échec de l'insertion dans MongoDB."})
+
+    return jsonify({"error": False, 'rs': {"id_mongo": id_mongo, "id_maria": id_maria}})

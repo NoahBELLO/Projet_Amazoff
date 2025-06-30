@@ -26,8 +26,8 @@ class TableAvis(Mysql):
         return f"""
             CREATE TABLE IF NOT EXISTS `avis` (
             `id_maria`        INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
-            `id`        CHAR(24)        NOT NULL COMMENT 'ObjectId MongoDB du review',
-            `article_id`      CHAR(24)        NOT NULL COMMENT 'ObjectId MongoDB de l’article',
+            `id`        CHAR(24)        NOT NULL',
+            `article_id`      CHAR(24)        NOT NULL,
             `comment`         LONGTEXT        NULL,
             `name`            VARCHAR(50)     NOT NULL,
             `fname`           VARCHAR(50)     NOT NULL,
@@ -53,7 +53,6 @@ class TableAvis(Mysql):
         return datas
 
     def search(self, filters, limit=100):        
-            logger.critical(filters)
             where = ""
             if filters :
                 where_str = ""

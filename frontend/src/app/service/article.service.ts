@@ -61,13 +61,15 @@ export class ArticleService {
   ratingArticle(ratingData: RatingData): Observable<ResponseApi>{
     const userId = '67371b2d1ed69fcb550f15e5';
     const url = `${this.avisBaseUrl}/rating_article`;
-    ratingData.comments.user_id = userId;
+    ratingData.user_id = userId
 
-    return this.http.patch<ResponseApi>(
+    return this.http.post<ResponseApi>(
       url,
       {
         article_id: ratingData.articleId,
-        comments: ratingData.comments,
+        comment: ratingData.comment,
+        stars: ratingData.stars,
+        user_id: ratingData.user_id
       },
       { headers: { 'Content-Type': 'application/json' } }
     )

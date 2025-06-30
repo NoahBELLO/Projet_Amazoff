@@ -36,7 +36,6 @@ class PanierModel(Document):
         }
     
     def get_cart(self, user_id):
-        logger.critical("get_cart mongo")
         try:
             panier_bdd = PanierModel.objects(user_id=str(user_id)).first()
             if not panier_bdd:
@@ -87,10 +86,7 @@ class PanierModel(Document):
                 if str(article['article_id']) != str(article_to_delete):
                     new_articles.append(article)
                 continue
-            logger.critical(new_articles)
             panier.articles = new_articles
-            logger.critical(panier.articles)
-            logger.critical(panier)
             panier.save()
 
             return True, article_to_delete
@@ -98,9 +94,6 @@ class PanierModel(Document):
         #     raise ErrorExc("Article non trouvé dans le panier")    
 
     def add_reduce_quantity(self, article_id, quantite, user_id, edit=False):
-        logger.critical((article_id))
-        logger.critical((quantite))
-        logger.critical((user_id))
         try:
             article = ArticleModel.objects(id=article_id).first()
             if not article or article.stock < float(quantite):#vérif des stocks dispo
@@ -130,9 +123,7 @@ class PanierModel(Document):
             if not user_id:
                 raise ErrorExc("ID utilisateur invalide")
 
-            logger.critical('test')
             result = PanierModel.objects(user_id=user_id).delete()
-            logger.critical(result)
             if result == 0:
                 raise ErrorExc("Aucun panier trouvé pour cet utilisateur.")
 
@@ -141,7 +132,6 @@ class PanierModel(Document):
             raise ErrorExc(f"Erreur lors de la suppression du panier : {str(e)}")
     
     def update_cart(self, user_id, panier_data):
-        logger.critical("restauration du panier mongo")
         try:
             panier = PanierModel.objects(user_id=str(user_id).first())
             if not panier:
@@ -246,7 +236,6 @@ class PanierModelMD():
                 elif article_trouve  and edit == True:
                     article_trouve['quantite'] = float(quantite)
                
-                logger.critical(f"panier: {panier}")
                 db.update(panier['id_maria'], panier)
                 if not db.isValid():
                     raise ErrorExc("Modification non sauvegardée en base de données.")   

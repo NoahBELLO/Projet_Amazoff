@@ -107,7 +107,6 @@ def wait_for_mariadb_ready(timeout: int = 3, interval: float = 1.0):
         'database': os.getenv('DB_LOCAL_NAME'),
         'port':     int(os.getenv('DB_LOCAL_PORT', 33066)),
     }
-    logger.debug(f"→ Connexion MariaDB avec params : {params!r}")
     logger.info("Vérification de la connexion MariaDB…")
     start = time.time()
     while time.time() - start < timeout:

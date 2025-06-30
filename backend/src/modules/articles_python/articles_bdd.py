@@ -1,7 +1,9 @@
+import json
 from loguru import logger
 from tools.mysql import Mysql
 
 _table = "article"
+_table_avis = "avis"
 
 class TableArticles(Mysql):
     
@@ -42,9 +44,13 @@ class TableArticles(Mysql):
     def format_for_db(self, datas):
         if 'image' in datas and datas['image'] is None:
             del datas['image']
+
         return datas
     
     def format_from_db(self, datas):
+        if 'avis' in datas:
+            datas['avis'] = json.loads(datas['avis']) 
+
         return datas
 
     def search(self, filters, limit=100):        
@@ -89,10 +95,40 @@ class TableArticles(Mysql):
             return rs
     
     def get_by_id(self, id_article):
-        query = f"""
-                SELECT {_table}.id_maria, {_table}.id, {_table}.name, {_table}.prix, {_table}.image, {_table}.reduction, {_table}.description, {_table}.stock    
-                FROM {_table}              
-                WHERE {_table}.id = "{id_article}"
+        query =  f"""
+            SELECT
+            {_table}.id_maria, {_table}.id,  {_table}.name, {_table}.prix, {_table}.image, {_table}.reduction, {_table}.description, {_table}.stock,
+            CONCAT(
+                '[',
+                GROUP_CONCAT(
+                CONCAT(
+                    '{{"avis_id_maria":', {_table_avis}.id_maria,
+                    ',"comment":"',   REPLACE({_table_avis}.comment, '"', '\\\\"'),
+                    '","name":"',      {_table_avis}.name,
+                    '","fname":"',     {_table_avis}.fname,
+                    '","stars":',      {_table_avis}.stars,
+                    ',"date_publication":"', {_table_avis}.date_publication,
+                    '"}}'
+                )
+                SEPARATOR ','
+                ),
+                ']'
+            ) AS avis
+            FROM {_table}
+            LEFT JOIN {_table_avis}
+            ON {_table}.id = {_table_avis}.article_id
+            WHERE {_table}.id = '{id_article}'
+            GROUP BY
+            {_table}.id_maria,
+            {_table}.id,
+            {_table}.name,
+            {_table}.prix,
+            {_table}.image,
+            {_table}.reduction,
+            {_table}.description,
+            {_table}.stock
+            ;
             """
+
         rs = self.fetch(query)
         return self.format_from_db(rs[0])
