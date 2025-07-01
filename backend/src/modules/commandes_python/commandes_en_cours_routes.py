@@ -80,6 +80,7 @@ def create_commande(user_id):
 def commande_livrees(numero_commande):
     logger.critical("route commande livrées")
     db_en_cours = CommandesEnCoursModel()
+    #@model
     db_livrees = CommandesLivreesModel()
     try:
         error, commande, user_id = db_en_cours.delete(numero_commande) 

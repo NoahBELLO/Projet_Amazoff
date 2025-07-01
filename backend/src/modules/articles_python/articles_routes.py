@@ -4,7 +4,6 @@ from flask import Blueprint, jsonify, request, json
 from loguru import logger
 from articles_python.articles_model import ArticleModel
 from articles_python.articles_model import ArticleModelMD
-from articles_python.articles_bdd import TableArticles
 from tools.customeException import ErrorExc
 from tools.db_health import test_mongo, test_maria
 from bson import ObjectId

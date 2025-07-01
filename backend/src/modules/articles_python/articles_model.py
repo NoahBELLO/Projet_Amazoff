@@ -70,6 +70,7 @@ class ArticleModel(Document):
         for article in articles:
             article = article.to_dict()
             try:
+                #@model
                 avis = AvisModel.objects(article_id=str(article['id'])).first()
                 if avis:
                     avis = avis.to_dict()
@@ -89,6 +90,7 @@ class ArticleModel(Document):
                 raise ErrorExc("Article non trouvé")
             
             article = article.to_dict()
+            #@model
             avis_docs = AvisModel.objects(article_id=article_id)#récupére les avis et les met dans un dict
 
             étoiles_totales = 0.0

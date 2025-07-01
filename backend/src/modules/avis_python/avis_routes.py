@@ -4,9 +4,6 @@ from bson import ObjectId
 from flask import Blueprint, jsonify, request
 from loguru import logger
 from avis_python.avis_model import AvisModel, AvisModelMD
-from articles_python.articles_model import ArticleModel
-from articles_python.articles_bdd import TableArticles
-from panier_python.panier_model import PanierModel, PanierModelMD
 from tools.db_health import test_maria, test_mongo
 from tools.customeException import ErrorExc
 

@@ -43,6 +43,7 @@ class PanierModel(Document):
 
             panier_user = []
             for article in panier_bdd.articles:
+                #@model
                 article_magasin = ArticleModel.objects(id=article['article_id']).first()
 
                 if article_magasin:
@@ -95,6 +96,7 @@ class PanierModel(Document):
 
     def add_reduce_quantity(self, article_id, quantite, user_id, edit=False):
         try:
+            #@model
             article = ArticleModel.objects(id=article_id).first()
             if not article or article.stock < float(quantite):#vérif des stocks dispo
                 raise ErrorExc ("Stock insuffisant")
@@ -174,6 +176,7 @@ class PanierModelMD():
             if not panier_bdd:
                 raise ErrorExc("Aucun panier trouvé pour cet utilisateur")
             panier_user = []
+            #@model
             db_articles = TableArticles()
             for article in panier_bdd['articles']:
                 article_magasin = db_articles.get_by_id(article['article_id'])
@@ -217,6 +220,7 @@ class PanierModelMD():
     def add_reduce_quantity(self, article_id, quantite, user_id, edit=False):
         try:
             #vérif de l'article et du stock
+            #@model
             db_article = TableArticles()
             article = db_article.get_by_id(article_id)
             if not article or article['stock'] < float(quantite):

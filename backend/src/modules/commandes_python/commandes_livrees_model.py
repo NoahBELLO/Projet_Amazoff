@@ -2,8 +2,6 @@ from mongoengine import Document,  IntField, FloatField, ListField, StringField,
 from bson import ObjectId
 from tools.customeException import ErrorExc
 from loguru import logger
-from user_python.user_model import UserModel
-import time
 
 
 class CommandesLivreesModel(Document): 

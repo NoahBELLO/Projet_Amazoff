@@ -58,6 +58,7 @@ export class ArticleService {
   }
 
   ratingArticle(ratingData: RatingData): Observable<ResponseApi>{
+    //@dur
     const userId = '67371b2d1ed69fcb550f15e5';
     const url = `${this.avisBaseUrl}/rating_article`;
     ratingData.user_id = userId
