@@ -7,6 +7,7 @@ import { UserAccountPageComponent } from './user-account-page/user-account-page.
 import { ArticleCreatePageComponent } from './article-create-page/article-create-page.component';
 import { PanierVueComponent } from './panier-vue/panier-vue.component';
 import { ArticleRatingModalComponent } from './article-rating-modal/article-rating-modal.component';
+import { CommandesVueComponent } from './commandes-vue/commandes-vue.component';
 //import { PageNotFoundComponent} from './page-not-found-component/page-not-found-component.component'
 
 
@@ -24,8 +25,8 @@ export const routes: Routes = [
   { path: 'article/:id', component: ArticleVueComponent },
   { path: 'rating', component: ArticleRatingModalComponent },
   { path: 'user-account/Article', component: ArticleCreatePageComponent},
+  { path: 'user-account/Commandes', component: CommandesVueComponent },
         // { path: 'magasin', component: MagasinPageComponent },
-        // { path: 'commandes', component: CommandesPageComponent },
         // { path: 'parametres', component: ParametresPageComponent },
 
   { path: 'register', component: ModaleInscriptionComponent},

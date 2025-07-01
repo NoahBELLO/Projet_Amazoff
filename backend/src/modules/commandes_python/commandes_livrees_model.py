@@ -13,6 +13,8 @@ class CommandesLivreesModel(Document):
     paiement = StringField(required=True)
     date_publication = StringField(required=True)
     date_livraison = StringField(required=True)
+    numero_commande = IntField(required=True, unique=True)
+
 
     meta = {'collection': 'commandes_livrees', 'db_alias': 'commandes-db'}
 
@@ -23,6 +25,9 @@ class CommandesLivreesModel(Document):
             "commandes": self.commandes,
             "total": self.total,
             "paiement": self.paiement,
+            "date_publication": self.date_publication,
+            "date_livraison": self.date_livraison,
+            "numero_commande": self.numero_commande
         }
     
     def get_commande(self, user_id):

@@ -3,5 +3,7 @@ mongoengine
 flask-cors
 dot-env
 APScheduler
+mariadb
+pytest
 dotenv
 loguru

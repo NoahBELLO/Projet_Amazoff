@@ -30,7 +30,6 @@ export class ArticleVueComponent implements OnInit {
   stocks: number[] = [];
   selectedQuantity: number = 1;
   selectedRating: number = 0;
-  isRatingSelected: boolean = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -45,6 +44,7 @@ export class ArticleVueComponent implements OnInit {
     if (id) {
       this.articleService.getArticleByObjectId(id).subscribe({
         next: (response) => {
+          console.log(response)
           this.article = response.rs;
           this.stocks = this.articleService.getStock(this.article.stock);
           this.stars = this.articleService.starsArray(this.article.stars);
