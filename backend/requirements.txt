@@ -1,0 +1,8 @@
+flask
+mongoengine
+flask-cors
+loguru
+dot-env
+APScheduler
+mariadb
+pytest

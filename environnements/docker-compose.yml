@@ -38,7 +38,7 @@ services:
     # container_name: microservice_authentification
     build:
       context: ../backend/src/modules/authentification
-    # restart: always
+    restart: always
     volumes:
       - ../backend/src/modules/authentification:/usr/src/app
     # ports:
@@ -47,7 +47,6 @@ services:
       - reseau_projet
     deploy:
       replicas: 2
-    # command: ["sh", "./install.sh"]
     healthcheck:
       test:
         ["CMD", "wget", "-qO-", "http://localhost:5001/authentification/health"]
@@ -68,7 +67,6 @@ services:
       - reseau_projet
     deploy:
       replicas: 2
-    # command: ["sh", "./install.sh"]
     healthcheck:
       test: ["CMD", "wget", "-qO-", "http://localhost:5002/roles/health"]
       interval: 10s
@@ -88,7 +86,6 @@ services:
       - reseau_projet
     deploy:
       replicas: 2
-    # command: ["sh", "./install.sh"]
     healthcheck:
       test: ["CMD", "wget", "-qO-", "http://localhost:5003/users/health"]
       interval: 10s
