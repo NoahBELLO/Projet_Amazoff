@@ -9,7 +9,7 @@ import axios from 'axios';
 interface UtilisateurCréation {
     name: string; fname: string;
     email: string; login: string;
-    role: ObjectId[]; salt: string;
+    role: ObjectId[]; salt: string; adress: string;
 }
 
 interface Utilisateur {
@@ -167,7 +167,7 @@ class UserController {
                 throw new Error("Erreur lors de la création du grain de sel");
             }
 
-            let newUtilisateur: UtilisateurCréation = { name, fname, email, login, role, salt };
+            let newUtilisateur: UtilisateurCréation = { name, fname, adress, email, login, role, salt };
             if (!newUtilisateur) {
                 throw new Error("Information manquant");
             }
@@ -185,6 +185,7 @@ class UserController {
             res.status(201).json({ salt: salt, _id: user.insertedId, role: role });
         }
         catch (err) {
+            console.error("Erreur création utilisateur :", err);
             res.status(500).json({ message: "Aucun utilisateur crée" });
         }
     }

@@ -11,37 +11,16 @@ import mariadb
 from flask_cors import CORS
 
 # vos modules
-from articles_python.src.articles_routes import bp as articles_bp
-from panier_python.src.panier_routes    import bp as panier_bp
-from avis_python.src.avis_routes        import bp as avis_bp
-from commandes_python.src.commandes_routes import bp as commandes_bp
-from articles_python.src.articles_batch import run_batch_articles
+from src.articles_routes import bp as articles_bp
+from src.articles_batch import run_batch_articles
 
 load_dotenv()
 app = Flask(__name__)
 
 app.register_blueprint(articles_bp)
-app.register_blueprint(panier_bp)
-app.register_blueprint(avis_bp)
-app.register_blueprint(commandes_bp)
 
 CORS(app, resources={
     r"/articles/*": {
-        "origins": os.getenv("CORS_ORIGINS", "*"),
-        "methods": ["GET", "POST", "PUT", "PATCH", "DELETE"],
-        "allow_headers": ["Content-Type", "Authorization"]
-    },
-    r"/panier/*": {
-        "origins": os.getenv("CORS_ORIGINS", "*"),
-        "methods": ["GET", "POST", "PUT", "PATCH", "DELETE"],
-        "allow_headers": ["Content-Type", "Authorization"]
-    },
-    r"/avis/*": {
-        "origins": os.getenv("CORS_ORIGINS", "*"),
-        "methods": ["GET", "POST", "PUT", "PATCH", "DELETE"],
-        "allow_headers": ["Content-Type", "Authorization"]
-    },
-    r"/commandes/*": {
         "origins": os.getenv("CORS_ORIGINS", "*"),
         "methods": ["GET", "POST", "PUT", "PATCH", "DELETE"],
         "allow_headers": ["Content-Type", "Authorization"]
@@ -57,26 +36,6 @@ def init_db_connections():
             serverSelectionTimeoutMS=5000,  # 5 s max pour trouver un serveur
             connectTimeoutMS=5000,          # 5 s max pour établir la connexion TCP
             socketTimeoutMS=5000     )
-    connect(db="Paniers",  host=os.getenv("MONGO_URI_PANIERS"),  
-            alias='paniers-db',
-            serverSelectionTimeoutMS=5000,  
-            connectTimeoutMS=5000,         
-            socketTimeoutMS=5000  )
-    connect(db="Avis",     host=os.getenv("MONGO_URI_AVIS"),     
-            alias='avis-db',
-            serverSelectionTimeoutMS=5000,  
-            connectTimeoutMS=5000,          
-            socketTimeoutMS=5000  )
-    connect(db="Utilisateurs", host=os.getenv("MONGO_URI_USERS"),   
-            alias='users-db',
-            serverSelectionTimeoutMS=5000, 
-            connectTimeoutMS=5000,          
-            socketTimeoutMS=5000  )
-    connect(db="Commandes",    host=os.getenv("MONGO_URI_COMMANDES"), 
-            alias='commandes-db',
-            serverSelectionTimeoutMS=5000,  
-            connectTimeoutMS=5000,         
-            socketTimeoutMS=5000  )
     app.config.from_object(DevelopmentConfig())
 
 init_db_connections()
@@ -126,8 +85,7 @@ if __name__ == "__main__":
     # # # #  exécute le batch et le scheduler QUE dans le process enfant
     if os.environ.get("WERKZEUG_RUN_MAIN") == "true":
         #test des BDD
-        mongo_ok = wait_for_mongo_ready(os.getenv("MONGO_URI_ARTICLES")) \
-                and wait_for_mongo_ready(os.getenv("MONGO_URI_AVIS"))
+        mongo_ok = wait_for_mongo_ready(os.getenv("MONGO_URI_ARTICLES"))
         mysql_ok = wait_for_mariadb_ready()
 
         # un app_context pour que Mysql() voie app.config

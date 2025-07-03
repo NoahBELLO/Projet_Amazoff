@@ -1,0 +1,10 @@
+flask
+mongoengine
+flask-cors
+loguru
+# dot-env
+python-dotenv
+APScheduler
+mariadb
+pytest
+requests

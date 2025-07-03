@@ -13,13 +13,13 @@ services:
       - microservice_authentification
       - microservice_role
       - microservice_user
-      # - microservice_magasin
-      # - microservice_notifications
+      - microservice_articles
+      - microservice_avis
+      - microservice_commandes
+      - microservice_paniers
+      - microservice_magasin
+      - microservice_notifications
       # - microservice_payment_mode
-      # - microservice_articles
-      # - microservice_avis
-      # - microservice_commandes
-      # - microservice_paniers
 
   frontend:
     container_name: frontend
@@ -92,107 +92,131 @@ services:
       timeout: 3s
       retries: 3
 
-  # microservice_articles:
-  #   container_name: microservice_articles
-  #   build:
-  #     context: ../backend/src/modules/articles_python
-  #   # restart: always
-  #   environment:
-  #     - PYTHONPATH=/usr/src/app
-  #   env_file:
-  #     - ../backend/src/modules/articles_python/.env
-  #   volumes:
-  #     - ../backend/src/modules/articles_python:/usr/src/app
-  #   ports:
-  #     - "6001:6001"
-  #   networks:
-  #     - reseau_projet
+  microservice_articles:
+    # container_name: microservice_articles
+    build:
+      context: ../backend/src/modules/articles_python
+    restart: always
+    environment:
+      - PYTHONPATH=/usr/src/app:/usr/src/app/src
+    env_file:
+      - ../backend/src/modules/articles_python/.env
+    volumes:
+      - ../backend/src/modules/articles_python:/usr/src/app
+    # ports:
+    #   - "6001:6001"
+    networks:
+      - reseau_projet
+    deploy:
+      replicas: 2
 
-  # microservice_avis:
-  #   container_name: microservice_avis
-  #   build:
-  #     context: ../backend/src/modules/avis_python
-  #   # restart: always
-  #   environment:
-  #     - PYTHONPATH=/usr/src/app
-  #   env_file:
-  #     - ../backend/src/modules/avis_python/.env
-  #   volumes:
-  #     - ../backend/src/modules/avis_python:/usr/src/app
-  #   ports:
-  #     - "6002:6002"
-  #   networks:
-  #     - reseau_projet
+  microservice_avis:
+    # container_name: microservice_avis
+    build:
+      context: ../backend/src/modules/avis_python
+    restart: always
+    environment:
+      - PYTHONPATH=/usr/src/app:/usr/src/app/src
+    env_file:
+      - ../backend/src/modules/avis_python/.env
+    volumes:
+      - ../backend/src/modules/avis_python:/usr/src/app
+    # ports:
+    #   - "6002:6002"
+    networks:
+      - reseau_projet
+    deploy:
+      replicas: 2
 
-  # microservice_commandes:
-  #   container_name: microservice_commandes
-  #   build:
-  #     context: ../backend/src/modules/commandes_python
-  #   # restart: always
-  #   environment:
-  #     - PYTHONPATH=/usr/src/app
-  #   env_file:
-  #     - ../backend/src/modules/commandes_python/.env
-  #   volumes:
-  #     - ../backend/src/modules/commandes_python:/usr/src/app
-  #   ports:
-  #     - "6003:6003"
-  #   networks:
-  #     - reseau_projet
+  microservice_commandes:
+    # container_name: microservice_commandes
+    build:
+      context: ../backend/src/modules/commandes_python
+    restart: always
+    environment:
+      - PYTHONPATH=/usr/src/app:/usr/src/app/src
+    env_file:
+      - ../backend/src/modules/commandes_python/.env
+    volumes:
+      - ../backend/src/modules/commandes_python:/usr/src/app
+    # ports:
+    #   - "6003:6003"
+    networks:
+      - reseau_projet
+    deploy:
+      replicas: 2
 
-  # microservice_paniers:
-  #   container_name: microservice_paniers
-  #   build:
-  #     context: ../backend/src/modules/panier_python
-  #   # restart: always
-  #   environment:
-  #     - PYTHONPATH=/usr/src/app
-  #   env_file:
-  #     - ../backend/src/modules/panier_python/.env
-  #   volumes:
-  #     - ../backend/src/modules/panier_python:/usr/src/app
-  #   ports:
-  #     - "6004:6004"
-  #   networks:
-  #     - reseau_projet
+  microservice_paniers:
+    # container_name: microservice_paniers
+    build:
+      context: ../backend/src/modules/panier_python
+    restart: always
+    environment:
+      - PYTHONPATH=/usr/src/app:/usr/src/app/src
+    env_file:
+      - ../backend/src/modules/panier_python/.env
+    volumes:
+      - ../backend/src/modules/panier_python:/usr/src/app
+    # ports:
+    #   - "6004:6004"
+    networks:
+      - reseau_projet
+    deploy:
+      replicas: 2
 
-  # microservice_magasin:
-  #   container_name: microservice_magasin
-  #   build:
-  #     context: ../backend/src/modules/magasin_cpp/magasin_cpp
-  #     # dockerfile: Dockerfile
-  #   ports:
-  #     - "7001:7001"
-  #   networks:
-  #     - reseau_projet
-  #   env_file:
-  #     - ../backend/src/modules/magasin_cpp/magasin_cpp/.env
+  microservice_magasin:
+    # container_name: microservice_magasin
+    build:
+      context: ../backend/src/modules/magasin_cpp/magasin_cpp
+    restart: always
+    # ports:
+    #   - "7001:7001"
+    networks:
+      - reseau_projet
+    env_file:
+      - ../backend/src/modules/magasin_cpp/magasin_cpp/.env
+    deploy:
+      replicas: 2
 
-  # microservice_notifications:
-  #   container_name: microservice_notifications
-  #   build:
-  #     context: ../backend/src/modules/notifications_node
-  #   restart: always
-  #   volumes:
-  #     - ../backend/src/modules/notifications_node:/usr/src/app
-  #   ports:
-  #     - 7002:7002
-  #   networks:
-  #     - reseau_projet
-  #   command: ["sh", "./install.sh"]
+  microservice_notifications:
+    # container_name: microservice_notifications
+    build:
+      context: ../backend/src/modules/notifications_node
+    restart: always
+    volumes:
+      - ../backend/src/modules/notifications_node:/usr/src/app
+    # ports:
+    #   - 7002:7002
+    networks:
+      - reseau_projet
+    command: ["sh", "./install.sh"]
+    deploy:
+      replicas: 2
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:7002/notifications/health"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
 
   # microservice_payment_mode:
-  #   container_name: microservice_payment_mode
+  #   # container_name: microservice_payment_mode
   #   build:
   #     context: ../backend/src/modules/payment_mode_node
   #   restart: always
   #   volumes:
   #     - ../backend/src/modules/payment_mode_node:/usr/src/app
-  #   ports:
-  #     - 7003:7003
+  #   # ports:
+  #   #   - 7003:7003
   #   networks:
   #     - reseau_projet
   #   command: ["sh", "./install.sh"]
+  #   deploy:
+  #     replicas: 2
+  #   healthcheck:
+  #     test: ["CMD", "wget", "-qO-", "http://localhost:7003/paymentMode/health"]
+  #     interval: 10s
+  #     timeout: 3s
+  #     retries: 3
 
 networks:
   reseau_projet:

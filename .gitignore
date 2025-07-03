@@ -4,6 +4,7 @@ venv
 *.env
 **/.env
 **/node_modules/
+*package-lock.json
 **/package-lock.json
 **/default.conf
 **/cached_articles.json
