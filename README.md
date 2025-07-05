@@ -158,7 +158,7 @@ Projet_Amazoff/
 
 - Noah BELLO (Collaborateur)
 - Florian Potier-Clemente (Collaborateur)
-- Widad MAS
+- Widad MASGHAR (Collaborateur)
 
 ---
 
