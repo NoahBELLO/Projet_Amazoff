@@ -11,11 +11,11 @@ import mariadb
 from flask_cors import CORS
 
 # vos modules
-from articles_python.articles_routes import bp as articles_bp
-from panier_python.panier_routes    import bp as panier_bp
-from avis_python.avis_routes        import bp as avis_bp
-from commandes_python.commandes_routes import bp as commandes_bp
-from articles_python.articles_batch import run_batch_articles
+from articles_python.src.articles_routes import bp as articles_bp
+from panier_python.src.panier_routes    import bp as panier_bp
+from avis_python.src.avis_routes        import bp as avis_bp
+from commandes_python.src.commandes_routes import bp as commandes_bp
+from articles_python.src.articles_batch import run_batch_articles
 
 load_dotenv()
 app = Flask(__name__)
@@ -107,7 +107,6 @@ def wait_for_mariadb_ready(timeout: int = 3, interval: float = 1.0):
         'database': os.getenv('DB_LOCAL_NAME'),
         'port':     int(os.getenv('DB_LOCAL_PORT', 33066)),
     }
-    logger.debug(f"→ Connexion MariaDB avec params : {params!r}")
     logger.info("Vérification de la connexion MariaDB…")
     start = time.time()
     while time.time() - start < timeout:
@@ -124,30 +123,30 @@ def wait_for_mariadb_ready(timeout: int = 3, interval: float = 1.0):
 
 
 if __name__ == "__main__":
-    # # # # #  exécute le batch et le scheduler QUE dans le process enfant
-    # if os.environ.get("WERKZEUG_RUN_MAIN") == "true":
-    #     #test des BDD
-    #     mongo_ok = wait_for_mongo_ready(os.getenv("MONGO_URI_ARTICLES")) \
-    #             and wait_for_mongo_ready(os.getenv("MONGO_URI_AVIS"))
-    #     mysql_ok = wait_for_mariadb_ready()
+    # # # #  exécute le batch et le scheduler QUE dans le process enfant
+    if os.environ.get("WERKZEUG_RUN_MAIN") == "true":
+        #test des BDD
+        mongo_ok = wait_for_mongo_ready(os.getenv("MONGO_URI_ARTICLES")) \
+                and wait_for_mongo_ready(os.getenv("MONGO_URI_AVIS"))
+        mysql_ok = wait_for_mariadb_ready()
 
-    #     # un app_context pour que Mysql() voie app.config
-    #     with app.app_context():
-    #         if mongo_ok or mysql_ok:
-    #             try:
-    #                 run_batch_articles()
-    #                 logger.info("Batch initial exécuté.")
-    #             except Exception as e:
-    #                 logger.error(f"Erreur batch initial : {e}")
-    #         else:
-    #             logger.warning("Ni Mongo ni MariaDB ne sont prêts : batch initial sauté.")
+        # un app_context pour que Mysql() voie app.config
+        with app.app_context():
+            if mongo_ok or mysql_ok:
+                try:
+                    run_batch_articles()
+                    logger.info("Batch initial exécuté.")
+                except Exception as e:
+                    logger.error(f"Erreur batch initial : {e}")
+            else:
+                logger.warning("Ni Mongo ni MariaDB ne sont prêts : batch initial sauté.")
 
-    #     # démarrage du scheduler UNE FOIS puis toutes les 5 min
-    #     scheduler = BackgroundScheduler(timezone='Europe/Paris')
-    #     scheduler.add_job(run_batch_articles,
-    #                       trigger='interval',
-    #                       minutes=5,
-    #                       id='batch_articles')
-    #     scheduler.start()
+        # démarrage du scheduler UNE FOIS puis toutes les 5 min
+        scheduler = BackgroundScheduler(timezone='Europe/Paris')
+        scheduler.add_job(run_batch_articles,
+                          trigger='interval',
+                          minutes=5,
+                          id='batch_articles')
+        scheduler.start()
 
     app.run(host="0.0.0.0", port=6001, debug=True)

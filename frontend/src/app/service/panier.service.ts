@@ -23,6 +23,7 @@ export class PanierService {
 
   // Méthode simplifiée pour récupérer le panier
   getPanierUser(): Observable<any> {
+    //@dur
     const userId = '67371b2d1ed69fcb550f15e5';
     const url = `${this.baseUrl}/${userId}`;
 
@@ -56,6 +57,7 @@ export class PanierService {
 
   //fonction de suppression d'un article du panier
   removeArticleFromCart(articleId: string): Observable<ResponseApi> {
+    //@dur
     const userId = '67371b2d1ed69fcb550f15e5';
     const url = `${this.baseUrl}/remove_from_cart/${userId}`;
 
@@ -68,6 +70,7 @@ export class PanierService {
 
   //fonction d'ajout d'un article au panier
   addArticleToCart(articleId: string, quantite: number): Observable<ResponseApi> {
+    //@dur
     const userId = '67371b2d1ed69fcb550f15e5';
     const url = `${this.baseUrl}/add_to_cart/${userId}`;
 
@@ -83,6 +86,7 @@ export class PanierService {
 
   //fonction de modification de la quantité d'un article dans un panier
   updateQuantiteUtilisateur(article: Article): Observable<ResponseApi> {
+    //@dur
     const userId = '67371b2d1ed69fcb550f15e5';
     const url = `${this.baseUrl}/edit_cart/${userId}`;
 

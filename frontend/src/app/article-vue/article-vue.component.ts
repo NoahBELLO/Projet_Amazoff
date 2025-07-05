@@ -6,7 +6,7 @@ import { CommonModule, NgClass, NgFor, NgIf } from '@angular/common';
 import { PanierService } from '../service/panier.service';
 import { FormsModule } from '@angular/forms'; //pour les soucis de ngmodel
 import { ArticleRatingModalComponent } from '../article-rating-modal/article-rating-modal.component';
-import { CommentData } from '../service/article.interface';
+import { RatingData } from '../service/article.interface';
 
 @Component({
   selector: 'app-article-vue',
@@ -26,7 +26,7 @@ export class ArticleVueComponent implements OnInit {
   //instancier les retours des fonctions
   article: any;
   stars: string[] = [];
-  avis: CommentData[] = [];
+  avis: RatingData[] = [];
   stocks: number[] = [];
   selectedQuantity: number = 1;
   selectedRating: number = 0;

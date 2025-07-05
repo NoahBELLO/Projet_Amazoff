@@ -2,10 +2,16 @@
 # Étape 1 : builder avec g++, CMake, Mongo driver
 FROM ubuntu:22.04 AS builder
 
-EXPOSE 3001
+EXPOSE 7001
 
 RUN apt-get update && apt-get install -y cmake git libsasl2-dev libsnappy-dev zlib1g-dev libssl-dev libcurl4-openssl-dev \
     libboost-all-dev build-essential pkg-config libasio-dev
+
+# Installation CPR (bibliothèque C++ pour les requetes HTTP)
+# RUN git clone https://github.com/libcpr/cpr.git /tmp/cpr && \
+#     cd /tmp/cpr && mkdir build && cd build && \
+#     cmake .. -DBUILD_SHARED_LIBS=OFF -DCMAKE_USE_OPENSSL=ON && \
+#     make && make install
 
 WORKDIR /app
 

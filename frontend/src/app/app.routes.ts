@@ -9,7 +9,8 @@ import { PanierVueComponent } from './panier-vue/panier-vue.component';
 import { ArticleRatingModalComponent } from './article-rating-modal/article-rating-modal.component';
 import { CommandesVueComponent } from './commandes-vue/commandes-vue.component';
 //import { PageNotFoundComponent} from './page-not-found-component/page-not-found-component.component'
-
+import { AuthGuard } from './guards/auth.guard';
+import { NoAuthGuard } from './guards/noauth.guard';
 
 export const routes: Routes = [
   // Route par défaut, redirige vers /login

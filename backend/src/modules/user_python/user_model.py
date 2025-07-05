@@ -9,7 +9,7 @@ class UserModel(Document):
     name = StringField(required=False)
 
     #strict ignorera les autres champs non spécifiés dans le modèle
-    meta = {'collection': 'Users' , 'db_alias': 'users-db', 'strict': False}
+    meta = {'collection': 'utilisateurs' , 'db_alias': 'users-db', 'strict': False}
 
     def to_dict(self):
         """Convertir un document en dictionnaire"""

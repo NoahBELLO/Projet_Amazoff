@@ -42,10 +42,8 @@ export class ArticleRatingModalComponent {
 
     const ratingData: RatingData = {
       articleId: this.articleId,
-      comments: {
-        comment: this.comment,
-        stars: this.selectedRating,
-      }
+      comment: this.comment,
+      stars: this.selectedRating,      
     };
     console.log(this.articleId)
     console.log('Évaluation soumise:', ratingData);

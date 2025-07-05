@@ -7,7 +7,7 @@ const cors = require("cors");
 const notificationRoutes = require("./src/notificationRoutes");
 
 const app = express();
-const port = process.env.PORT || 6003;
+const port = process.env.PORT || 7002;
 const mongoUri = process.env.MONGO_URI_NOTIFICATIONS;
 
 // Middleware
