@@ -78,9 +78,8 @@ class ArticleModel(Document):
                 #     article['avis'] = avis.get('comments', [])
                 #     article['stars'] = avis.get('stars', 0)
                 #@docker (code docker)
-                avis_url = "http://nginx-container:3001/avis/" + str(article['id'])
+                avis_url = os.getenv("URL_AVIS_DOCKER") + str(article['id'])
                 avisResponse = requests.get(avis_url)
-                logger.critical(avisResponse)
                 if avisResponse.ok:
                     avis_data = avisResponse.json()
                     article['avis'] = avis_data.get('rs', [])
@@ -117,7 +116,7 @@ class ArticleModel(Document):
             # article["avis"] = article_avis
             # article["stars"] = moyenne
             #@docker (code docker)
-            avis_url = f"http://nginx-container:3001/avis/{article_id}"
+            avis_url = os.getenv("URL_AVIS_DOCKER") + str(article_id)
             try:
                 avis_response = requests.get(avis_url)
                 if avis_response.ok:

@@ -12,6 +12,8 @@ router.get('/login/:login', userController.getUserByLogin);
 router.get('/filtrer/email/:email', userController.getUserByEmailFiltrer);
 router.get('/filtrer/login/:login', userController.getUserByLoginFiltrer);
 router.get('/filtrer/id/:id', userController.getUserByIdFiltrer);
+router.get('/avis_filtrer/id/:id', userController.getUserByIdFiltrerAvisPython);
+router.get('/commandes_filtrer/id/:id', userController.getUserByIdFiltrerCommandesPython);
 
 // POST
 router.post('/', userController.createUser);

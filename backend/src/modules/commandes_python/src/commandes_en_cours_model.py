@@ -6,6 +6,7 @@ from loguru import logger
 import time
 import random
 import requests
+import os
 
 
 class CommandesEnCoursModel(Document): 
@@ -78,8 +79,8 @@ class CommandesEnCoursModel(Document):
             # user = UserModel.objects(id=user_id).first().to_dict()
             # if user == None:
             #     raise ErrorExc("Utilisateur inconnu")
-            #docker (code docker)
-            user_url = f"http://nginx-container:3001/utilisateurs/{user_id}"
+            #@docker (code docker)
+            user_url = os.getenv("URL_USER_DOCKER") + f"commandes_filtrer/id/{user_id}"
             user_response = requests.get(user_url)
             if user_response.ok:
                 user = user_response.json().get('rs', {})

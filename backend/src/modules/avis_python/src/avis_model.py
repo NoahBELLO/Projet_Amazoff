@@ -6,6 +6,7 @@ from tools.customeException import ErrorExc
 from loguru import logger
 # from user_python.user_model import UserModel #@model (code serveur)
 import requests
+import os
 
 
 class AvisModel(Document): 
@@ -64,10 +65,10 @@ class AvisModel(Document):
             #     user = user.to_dict()
             #     logger.debug(user)
             #@docker (code docker)
-            user_url = f"http://nginx-container:3001/utilisateurs/{_user_id}"
+            user_url = os.getenv("URL_USER_DOCKER") + f"avis_filtrer/id/{_user_id}"
             user_response = requests.get(user_url)
             if user_response.ok:
-                user = user_response.json().get('rs', {})
+                user = user_response.json()
             else:
                 raise ErrorExc("Utilisateur inconnu")
 
@@ -131,10 +132,10 @@ class AvisModelMD():
                 # else:
                 #     user = user.to_dict()
                 #@docker (code docker)
-                user_url = f"http://nginx-container:3001/utilisateurs/{_user_id}"
+                user_url = os.getenv("URL_USER_DOCKER") + f"avis_filtrer/id/{_user_id}"
                 user_response = requests.get(user_url)
                 if user_response.ok:
-                    user = user_response.json().get('rs', {})
+                    user = user_response.json()
                 else:
                     raise ErrorExc("Utilisateur inconnu")
 

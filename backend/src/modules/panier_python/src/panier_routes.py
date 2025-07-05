@@ -8,7 +8,7 @@ from tools.customeException import ErrorExc
 from bson import ObjectId
 
 LOG_FILE = os.path.join(os.path.dirname(__file__), 'failed_cart_requests.log')
-bp = Blueprint("panier", __name__, url_prefix="/panier")
+bp = Blueprint("paniers", __name__, url_prefix="/paniers")
 
 def log_failure(target: str, crud: str, datas: dict, error: Exception):
     timestamp = datetime.now(timezone.utc).isoformat()  
@@ -266,4 +266,8 @@ def delete_cart(user_id):
 
     else:
         return jsonify({"error": False, "message": "Panier supprimé avec succès"})
-    
+
+#@docker (code docker)
+@bp.route("/health", methods=["GET"])
+def health():
+    return {"status": "ok"}, 200

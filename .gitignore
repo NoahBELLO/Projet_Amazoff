@@ -6,6 +6,9 @@ venv
 **/node_modules/
 *package-lock.json
 **/package-lock.json
-**/default.conf
+**/default_1.conf
+**/default_2.conf
 **/cached_articles.json
 **/failed_articles_requests.log
+**/failed_avis_request.log
+**/failed_cart_requests.log

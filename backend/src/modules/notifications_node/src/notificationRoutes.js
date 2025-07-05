@@ -19,6 +19,8 @@ router.get('/', (req, res) => {
   res.send('Microservice Notifications OK');
 });
 
+router.get('/health', (req, res) => { res.status(200).send('OK'); });
+
 // Créer une notification
 router.post('/create-notif', createNotification);
 

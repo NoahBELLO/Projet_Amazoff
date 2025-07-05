@@ -19,7 +19,7 @@ app = Flask(__name__)
 app.register_blueprint(panier_bp)
 
 CORS(app, resources={
-    r"/panier/*": {
+    r"/paniers/*": {
         "origins": os.getenv("CORS_ORIGINS", "*"),
         "methods": ["GET", "POST", "PUT", "PATCH", "DELETE"],
         "allow_headers": ["Content-Type", "Authorization"]

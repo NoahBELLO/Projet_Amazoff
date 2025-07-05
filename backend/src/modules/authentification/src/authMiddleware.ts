@@ -22,6 +22,18 @@ declare module 'express-serve-static-core' {
     }
 }
 
+async function verificationUrl(urls: string[]): Promise<string> {
+    for (const url of urls) {
+        try {
+            await axios.get(`${url}health`, { timeout: 3000 });
+            return url;
+        } catch (e) {
+
+        }
+    }
+    return "";
+}
+
 async function authMiddleware(req: Request, res: Response, next: NextFunction) {
     const { tokenAccess, tokenRefresh }: Record<string, string> = req.cookies;
     req.auth = null;
@@ -42,7 +54,18 @@ async function authMiddleware(req: Request, res: Response, next: NextFunction) {
             return;
         }
 
-        let response = await axios.get(`${process.env.USER_URL}filtrer/id/${goodRefreshToken.userId}`);
+        const nginx_urls: string[] = [
+            process.env.USER_URL_NGINX_1 as string,
+            process.env.USER_URL_NGINX_2 as string
+        ].filter(Boolean);
+
+        const urlValide = await verificationUrl(nginx_urls);
+        if (!urlValide) {
+            res.status(500).json({ message: "Aucune URL valide trouvée" });
+            return;
+        }
+
+        let response = await axios.get(`${urlValide}filtrer/id/${goodRefreshToken.userId}`);
         if (!response || !response.data) {
             res.status(401).json({ message: "Utilisateur introuvable pour refresh" });
             return;
@@ -92,7 +115,7 @@ async function authMiddleware(req: Request, res: Response, next: NextFunction) {
         res.status(401).json({ message: "Token d'accès invalide" });
         return;
     }
-    
+
     let tokenBDD = await TokenModel.collection.findOne({ userId: new ObjectId(goodAccessToken.userId) });
     if (!tokenBDD) {
         res.status(401).json({ message: "Token non trouvé en base" });

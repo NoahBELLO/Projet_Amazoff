@@ -7,6 +7,7 @@ from tools.customeException import ErrorExc
 from panier_bdd import TablePanier
 from loguru import logger
 import requests
+import os
 
 #liste des fields utiles:
 # URLField      pour les URL
@@ -55,7 +56,7 @@ class PanierModel(Document):
                 #     article_magasin_dict['quantite_utilisateur'] = article['quantite']
                 #     panier_user.append(article_magasin_dict)  
                 #@docker (code docker)
-                article_url = f"http://nginx-container:3001/articles/{article['article_id']}"
+                article_url = os.getenv("URL_ARTICLE_DOCKER") + str(article['article_id'])
                 article_response = requests.get(article_url)
                 if article_response.ok:
                     article_magasin_dict = article_response.json().get('rs', {})
@@ -112,12 +113,12 @@ class PanierModel(Document):
             # if not article or article.stock < float(quantite):#vérif des stocks dispo
             #     raise ErrorExc ("Stock insuffisant")
             #@docker (code docker)
-            article_url = f"http://nginx-container:3001/articles/{article_id}"
+            article_url = os.getenv("URL_ARTICLE_DOCKER") + str(article_id)
             article_response = requests.get(article_url)
             if not article_response.ok:
                 raise ErrorExc("Article introuvable")
             article = article_response.json().get('rs', {})
-            if not article or article.stock < float(quantite):#vérif des stocks dispo
+            if not article or article.get('stock', 0) < float(quantite):#vérif des stocks dispo
                 raise ErrorExc ("Stock insuffisant")
             panier = PanierModel.objects(user_id=str(user_id)).first() #récup du panier
 
@@ -201,7 +202,7 @@ class PanierModelMD():
                 #@model (code serveur)
                 # article_magasin = db_articles.get_by_id(article['article_id'])
                 #@docker (code docker)
-                article_url = f"http://nginx-container:3001/articles/{article['article_id']}"
+                article_url = os.getenv("URL_ARTICLE_DOCKER") + str(article['article_id'])
                 response = requests.get(article_url)
                 if not response.ok:
                     raise ErrorExc(f"Impossible de récupérer l'article {article['article_id']}")
@@ -249,8 +250,8 @@ class PanierModelMD():
             #@model (code serveur)
             # db_article = TableArticles()
             # article = db_article.get_by_id(article_id)
-            #docker (code docker)
-            article_url = f"http://nginx-container:3001/articles/{article['article_id']}"
+            #@docker (code docker)
+            article_url = os.getenv("URL_ARTICLE_DOCKER") + str(article_id)
             response = requests.get(article_url)
             if not response.ok:
                 raise ErrorExc(f"Impossible de récupérer l'article {article['article_id']}")

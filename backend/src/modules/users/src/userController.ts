@@ -18,6 +18,18 @@ interface Utilisateur {
     role: ObjectId; password: string;
 }
 
+async function verificationUrl(urls: string[]): Promise<string> {
+    for (const url of urls) {
+        try {
+            await axios.get(`${url}health`, { timeout: 3000 });
+            return url;
+        } catch (e) {
+
+        }
+    }
+    return "";
+}
+
 class UserController {
     async getAllUsers(req: Request, res: Response): Promise<void> {
         try {
@@ -59,6 +71,42 @@ class UserController {
             }
 
             let user = await UserModel.collection.findOne({ _id: new ObjectId(id) }, { projection: { _id: 1, role: 1, salt: 1, password: 1 } });
+            if (!user) {
+                throw new Error("Utilisateur non trouvée");
+            }
+            res.status(201).json(user);
+        }
+        catch (err) {
+            res.status(500).json({ message: "Aucun utilisateur trouver" });
+        }
+    }
+
+    async getUserByIdFiltrerAvisPython(req: Request, res: Response): Promise<void> {
+        try {
+            let { id } = req.params;
+            if (!id) {
+                throw new Error("ID manquant");
+            }
+
+            let user = await UserModel.collection.findOne({ _id: new ObjectId(id) }, { projection: { name: 1, fname: 1 } });
+            if (!user) {
+                throw new Error("Utilisateur non trouvée");
+            }
+            res.status(201).json(user);
+        }
+        catch (err) {
+            res.status(500).json({ message: "Aucun utilisateur trouver" });
+        }
+    }
+
+    async getUserByIdFiltrerCommandesPython(req: Request, res: Response): Promise<void> {
+        try {
+            let { id } = req.params;
+            if (!id) {
+                throw new Error("ID manquant");
+            }
+
+            let user = await UserModel.collection.findOne({ _id: new ObjectId(id) }, { projection: { _id: 1 } });
             if (!user) {
                 throw new Error("Utilisateur non trouvée");
             }
@@ -144,7 +192,18 @@ class UserController {
 
     async createUser(req: Request, res: Response): Promise<void> {
         try {
-            const response = await axios.get(`${process.env.ROLE_URL}name/client`);
+            const nginx_urls_role: string[] = [
+                process.env.ROLE_URL_NGINX_1 as string,
+                process.env.ROLE_URL_NGINX_2 as string
+            ].filter(Boolean);
+
+            const urlValideRole = await verificationUrl(nginx_urls_role);
+            if (!urlValideRole) {
+                res.status(500).json({ message: "Aucune URL valide trouvée" });
+                return;
+            }
+
+            const response = await axios.get(`${urlValideRole}name/client`);
             if (!response || !response.data) {
                 throw new Error("Erreur lors de la récupération du rôle par défaut");
             }
@@ -177,10 +236,21 @@ class UserController {
                 throw new Error("Utilisateur non crée");
             }
 
-            // const response = await axios.post(`${process.env.PANIER_URL}`, user.insertedId);
-            // if (!response || !response.data) {
-            //     throw new Error("Erreur lors de la récupération du user par défaut");
-            // }
+            const nginx_urls_paniers: string[] = [
+                process.env.PANIER_URL_NGINX_1 as string,
+                process.env.PANIER_URL_NGINX_2 as string
+            ].filter(Boolean);
+
+            const urlValidePaniers = await verificationUrl(nginx_urls_paniers);
+            if (!urlValidePaniers) {
+                res.status(500).json({ message: "Aucune URL valide trouvée" });
+                return;
+            }
+
+            const responsePanier = await axios.post(`${urlValidePaniers}create_cart/${user.insertedId}`);
+            if (!responsePanier || !responsePanier.data) {
+                throw new Error("Erreur lors de la création du panier par défaut");
+            }
 
             res.status(201).json({ salt: salt, _id: user.insertedId, role: role });
         }
