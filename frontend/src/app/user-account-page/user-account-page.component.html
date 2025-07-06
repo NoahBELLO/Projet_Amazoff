@@ -2,7 +2,8 @@
 <div class="sections">
     <div *ngFor="let section of sections">
         <div class="section" [routerLink]="[section.label]">
-            <h3 >{{ section.label }}</h3>
+            <h3>{{ section.label }}</h3>
             <label> {{ section.description }}</label>
         </div>
+    </div>
 </div>

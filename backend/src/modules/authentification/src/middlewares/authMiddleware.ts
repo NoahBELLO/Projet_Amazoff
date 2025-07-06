@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
-import Outils from "./authOutils";
+import Outils from "../authOutils";
 import { ObjectId } from "mongodb";
-import { TokenModel } from "./tokenModel";
+import { TokenModel } from "../tokenModel";
 import axios from "axios";
 
 interface PayloadAccess {

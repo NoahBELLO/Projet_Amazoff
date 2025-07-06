@@ -7,11 +7,14 @@ class RoleController {
         try {
             let roles = await RoleModel.collection.find({}).toArray();
             if (!roles) {
-                throw new Error("Liste des rôles non trouvée");
+                res.status(404).json({ message: "Liste des rôles non trouvée" });
+                return;
             }
-            res.status(201).json(roles);
+
+            res.status(200).json(roles);
         }
         catch (err) {
+            console.error("Erreur lors de la récupération des rôles :", err);
             res.status(500).json({ message: "Aucun rôle trouvé" });
         }
     }
@@ -20,16 +23,20 @@ class RoleController {
         try {
             let { name } = req.params;
             if (!name) {
-                throw new Error("Nom manquant");
+                res.status(404).json({ message: "Nom manquant" });
+                return;
             }
 
             let role = await RoleModel.collection.findOne({ name: name });
             if (!role) {
-                throw new Error("Rôle non trouvé");
+                res.status(404).json({ message: "Rôle non trouvé" });
+                return;
             }
-            res.status(201).json(role);
+
+            res.status(200).json(role);
         }
         catch (err) {
+            console.error("Erreur lors de la récupération du rôle par nom :", err);
             res.status(500).json({ message: "Aucun rôle trouvé" });
         }
     }
@@ -38,16 +45,20 @@ class RoleController {
         try {
             let { id } = req.params;
             if (!id) {
-                throw new Error("ID manquant");
+                res.status(404).json({ message: "ID manquant" });
+                return;
             }
 
             let role = await RoleModel.collection.findOne({ _id: new ObjectId(id) });
             if (!role) {
-                throw new Error("Rôle non trouvé");
+                res.status(404).json({ message: "Rôle non trouvé" });
+                return;
             }
-            res.status(201).json(role);
+
+            res.status(200).json(role);
         }
         catch (err) {
+            console.error("Erreur lors de la récupération du rôle par ID :", err);
             res.status(500).json({ message: "Aucun rôle trouvé" });
         }
     }
@@ -56,23 +67,26 @@ class RoleController {
         try {
             const { name } = req.body;
             if (!name) {
-                throw new Error("Information manquant");
+                res.status(404).json({ message: "Information manquant" });
+                return;
             }
 
             const existingRole = await RoleModel.collection.findOne({ name: name });
             if (existingRole) {
-                res.status(400).json({ message: "Le rôle existe déjà" });
+                res.status(404).json({ message: "Le rôle existe déjà" });
                 return;
             }
 
             let role = await RoleModel.collection.insertOne({ name });
             if (!role) {
-                throw new Error("Rôle non créé");
+                res.status(404).json({ message: "Rôle non créé" });
+                return;
             }
 
-            res.status(201).json({ message: "Rôle créé avec succès" });
+            res.status(200).json({ message: "Rôle créé avec succès" });
         }
         catch (err) {
+            console.error("Erreur lors de la création du rôle :", err);
             res.status(500).json({ message: "Aucun rôle créé" });
         }
     }
@@ -83,7 +97,8 @@ class RoleController {
             const { name } = req.body;
 
             if (!id || !name) {
-                throw new Error("Information manquant");
+                res.status(404).json({ message: "Information manquant" });
+                return;
             }
 
             const result = await RoleModel.collection.updateOne(
@@ -92,12 +107,14 @@ class RoleController {
             );
 
             if (result.modifiedCount === 0) {
-                throw new Error("Aucun rôle mis à jour");
+                res.status(404).json({ message: "Aucun rôle mis à jour" });
+                return;
             }
 
             res.status(200).json({ message: "Rôle mis à jour avec succès" });
         }
         catch (err) {
+            console.error("Erreur lors de la mise à jour du rôle par ID :", err);
             res.status(500).json({ message: "Aucun rôle mis à jour" });
         }
     }
@@ -108,7 +125,8 @@ class RoleController {
             const { newName } = req.body;
 
             if (!name || !newName) {
-                throw new Error("Information manquant");
+                res.status(404).json({ message: "Information manquant" });
+                return;
             }
 
             const result = await RoleModel.collection.updateOne(
@@ -117,12 +135,14 @@ class RoleController {
             );
 
             if (result.modifiedCount === 0) {
-                throw new Error("Aucun rôle mis à jour");
+                res.status(404).json({ message: "Aucun rôle mis à jour" });
+                return;
             }
 
             res.status(200).json({ message: "Rôle mis à jour avec succès" });
         }
         catch (err) {
+            console.error("Erreur lors de la mise à jour du rôle par nom :", err);
             res.status(500).json({ message: "Aucun rôle mis à jour" });
         }
     }
@@ -131,17 +151,20 @@ class RoleController {
         try {
             const { id } = req.params;
             if (!id) {
-                throw new Error("Information manquant");
+                res.status(404).json({ message: "Information manquant" });
+                return;
             }
 
             const result = await RoleModel.collection.deleteOne({ _id: new ObjectId(id) });
             if (result.deletedCount === 0) {
-                throw new Error("Aucun rôle supprimé");
+                res.status(404).json({ message: "Aucun rôle supprimé" });
+                return;
             }
 
             res.status(200).json({ message: "Rôle supprimé avec succès" });
         }
         catch (err) {
+            console.error("Erreur lors de la suppression du rôle par ID :", err);
             res.status(500).json({ message: "Aucun rôle supprimé" });
         }
     }
@@ -150,17 +173,20 @@ class RoleController {
         try {
             const { name } = req.params;
             if (!name) {
-                throw new Error("Information manquant");
+                res.status(404).json({ message: "Information manquant" });
+                return;
             }
 
             const result = await RoleModel.collection.deleteOne({ name: name });
             if (result.deletedCount === 0) {
-                throw new Error("Aucun rôle supprimé");
+                res.status(404).json({ message: "Aucun rôle supprimé" });
+                return;
             }
 
             res.status(200).json({ message: "Rôle supprimé avec succès" });
         }
         catch (err) {
+            console.error("Erreur lors de la suppression du rôle par nom :", err);
             res.status(500).json({ message: "Aucun rôle supprimé" });
         }
     }
@@ -170,33 +196,33 @@ class RoleController {
             const roles: string[] = req.body.roles;
 
             if (!Array.isArray(roles) || !roles) {
-                res.status(400).json({ error: 'roleIds must be an array' });
+                res.status(404).json({ error: 'roleIds must be an array' });
                 return;
             }
 
             const objectIds: ObjectId[] = roles.map(id => new ObjectId(id));
             if (!objectIds) {
-                res.status(400).json({ error: 'roleIds must be an array' });
+                res.status(404).json({ error: 'roleIds must be an array' });
                 return;
             }
 
             const rolesBDD = await RoleModel.collection.find({ _id: { $in: objectIds } }).project({ name: 1 }).toArray();
             if (!rolesBDD) {
-                res.status(400).json({ error: 'roleIds must be an array' });
+                res.status(404).json({ error: 'roleIds must be an array' });
                 return;
             }
 
             const nameRoles: string[] = rolesBDD.map(r => r.name);
             if (!nameRoles) {
-                res.status(400).json({ error: 'roleIds must be an array' });
+                res.status(404).json({ error: 'roleIds must be an array' });
                 return;
             }
 
-            res.status(201).json({ nameRoles: nameRoles });
+            res.status(200).json({ nameRoles: nameRoles });
         }
         catch (err) {
+            console.error("Erreur lors de la conversion des rôles :", err);
             res.status(500).json({ error: 'Erreur serveur' });
-            return
         }
     }
 }

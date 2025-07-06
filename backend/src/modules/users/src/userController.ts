@@ -36,12 +36,15 @@ class UserController {
             let users = await UserModel.collection.find({}).toArray();
 
             if (!users) {
-                throw new Error("Liste utilisateur non trouvée");
+                res.status(404).json({ message: "Liste utilisateur non trouvée" });
+                return;
             }
-            res.status(201).json(users);
+
+            res.status(200).json(users);
         }
         catch (err) {
-            res.status(500).json({ message: "Aucun utilisateur trouver" });
+            console.error("Erreur lors de la récupération des utilisateurs:", err);
+            res.status(500).json({ message: "Aucun utilisateur trouvé" });
         }
     }
 
@@ -49,17 +52,43 @@ class UserController {
         try {
             let { id } = req.params;
             if (!id) {
-                throw new Error("ID manquant");
+                res.status(404).json({ message: "ID manquant" });
+                return;
             }
 
             let user = await UserModel.collection.findOne({ _id: new ObjectId(id) });
             if (!user) {
-                throw new Error("Utilisateur non trouvée");
+                res.status(404).json({ message: "Utilisateur non trouvé" });
+                return;
             }
-            res.status(201).json(user);
+
+            res.status(200).json(user);
         }
         catch (err) {
-            res.status(500).json({ message: "Aucun utilisateur trouver" });
+            console.error("Erreur lors de la récupération de l'utilisateur:", err);
+            res.status(500).json({ message: "Aucun utilisateur trouvé" });
+        }
+    }
+
+    async getUserInfo(req: Request, res: Response): Promise<void> {
+        try {
+            let { id } = req.params;
+            if (!id) {
+                res.status(404).json({ message: "ID manquant" });
+                return;
+            }
+
+            let user = await UserModel.collection.findOne({ _id: new ObjectId(id) }, { projection: { _id: 0, name: 1, fname: 1 } });
+            if (!user) {
+                res.status(404).json({ message: "Utilisateur non trouvé" });
+                return;
+            }
+
+            res.status(200).json(user);
+        }
+        catch (err) {
+            console.error("Erreur lors de la récupération de l'utilisateur:", err);
+            res.status(500).json({ message: "Aucun utilisateur trouvé" });
         }
     }
 
@@ -67,17 +96,21 @@ class UserController {
         try {
             let { id } = req.params;
             if (!id) {
-                throw new Error("ID manquant");
+                res.status(404).json({ message: "ID manquant" });
+                return;
             }
 
             let user = await UserModel.collection.findOne({ _id: new ObjectId(id) }, { projection: { _id: 1, role: 1, salt: 1, password: 1 } });
             if (!user) {
-                throw new Error("Utilisateur non trouvée");
+                res.status(404).json({ message: "Utilisateur non trouvé" });
+                return;
             }
-            res.status(201).json(user);
+
+            res.status(200).json(user);
         }
         catch (err) {
-            res.status(500).json({ message: "Aucun utilisateur trouver" });
+            console.error("Erreur lors de la récupération de l'utilisateur:", err);
+            res.status(500).json({ message: "Aucun utilisateur trouvé" });
         }
     }
 
@@ -85,17 +118,21 @@ class UserController {
         try {
             let { id } = req.params;
             if (!id) {
-                throw new Error("ID manquant");
+                res.status(404).json({ message: "ID manquant" });
+                return;
             }
 
             let user = await UserModel.collection.findOne({ _id: new ObjectId(id) }, { projection: { name: 1, fname: 1 } });
             if (!user) {
-                throw new Error("Utilisateur non trouvée");
+                res.status(404).json({ message: "Utilisateur non trouvé" });
+                return;
             }
-            res.status(201).json(user);
+
+            res.status(200).json(user);
         }
         catch (err) {
-            res.status(500).json({ message: "Aucun utilisateur trouver" });
+            console.error("Erreur lors de la récupération de l'utilisateur:", err);
+            res.status(500).json({ message: "Aucun utilisateur trouvé" });
         }
     }
 
@@ -103,17 +140,21 @@ class UserController {
         try {
             let { id } = req.params;
             if (!id) {
-                throw new Error("ID manquant");
+                res.status(404).json({ message: "ID manquant" });
+                return;
             }
 
             let user = await UserModel.collection.findOne({ _id: new ObjectId(id) }, { projection: { _id: 1 } });
             if (!user) {
-                throw new Error("Utilisateur non trouvée");
+                res.status(404).json({ message: "Utilisateur non trouvé" });
+                return;
             }
-            res.status(201).json(user);
+
+            res.status(200).json(user);
         }
         catch (err) {
-            res.status(500).json({ message: "Aucun utilisateur trouver" });
+            console.error("Erreur lors de la récupération de l'utilisateur:", err);
+            res.status(500).json({ message: "Aucun utilisateur trouvé" });
         }
     }
 
@@ -121,17 +162,21 @@ class UserController {
         try {
             let { email } = req.params;
             if (!email) {
-                throw new Error("Email manquant");
+                res.status(404).json({ message: "Email manquant" });
+                return;
             }
 
             let user = await UserModel.collection.findOne({ email: email });
             if (!user) {
-                throw new Error("Utilisateur non trouvée");
+                res.status(404).json({ message: "Utilisateur non trouvé" });
+                return;
             }
-            res.status(201).json(user);
+
+            res.status(200).json(user);
         }
         catch (err) {
-            res.status(500).json({ message: "Aucun utilisateur trouver" });
+            console.error("Erreur lors de la récupération de l'utilisateur:", err);
+            res.status(500).json({ message: "Aucun utilisateur trouvé" });
         }
     }
 
@@ -139,7 +184,8 @@ class UserController {
         try {
             let { email } = req.params;
             if (!email) {
-                throw new Error("Email manquant");
+                res.status(404).json({ message: "Email manquant" });
+                return;
             }
 
             let user = await UserModel.collection.findOne({ email: email }, { projection: { _id: 1, role: 1, salt: 1, password: 1 } });
@@ -147,10 +193,12 @@ class UserController {
                 res.status(404).json({ message: "Utilisateur non trouvé" });
                 return;
             }
-            res.status(201).json(user);
+
+            res.status(200).json(user);
         }
         catch (err) {
-            res.status(500).json({ message: "Aucun utilisateur trouver" });
+            console.error("Erreur lors de la récupération de l'utilisateur:", err);
+            res.status(500).json({ message: "Aucun utilisateur trouvé" });
         }
     }
 
@@ -158,17 +206,21 @@ class UserController {
         try {
             let { login } = req.params;
             if (!login) {
-                throw new Error("Login manquant");
+                res.status(404).json({ message: "Login manquant" });
+                return;
             }
 
             let user = await UserModel.collection.findOne({ login: login });
             if (!user) {
-                throw new Error("Utilisateur non trouvée");
+                res.status(404).json({ message: "Utilisateur non trouvé" });
+                return;
             }
-            res.status(201).json(user);
+
+            res.status(200).json(user);
         }
         catch (err) {
-            res.status(500).json({ message: "Aucun utilisateur trouver" });
+            console.error("Erreur lors de la récupération de l'utilisateur:", err);
+            res.status(500).json({ message: "Aucun utilisateur trouvé" });
         }
     }
 
@@ -176,17 +228,21 @@ class UserController {
         try {
             let { login } = req.params;
             if (!login) {
-                throw new Error("Login manquant");
+                res.status(404).json({ message: "Login manquant" });
+                return;
             }
 
             let user = await UserModel.collection.findOne({ login: login }, { projection: { _id: 1, role: 1, salt: 1, password: 1 } });
             if (!user) {
-                throw new Error("Utilisateur non trouvée");
+                res.status(404).json({ message: "Utilisateur non trouvé" });
+                return;
             }
-            res.status(201).json(user);
+
+            res.status(200).json(user);
         }
         catch (err) {
-            res.status(500).json({ message: "Aucun utilisateur trouver" });
+            console.error("Erreur lors de la récupération de l'utilisateur:", err);
+            res.status(404).json({ message: "Aucun utilisateur trouvé" });
         }
     }
 
@@ -199,41 +255,47 @@ class UserController {
 
             const urlValideRole = await verificationUrl(nginx_urls_role);
             if (!urlValideRole) {
-                res.status(500).json({ message: "Aucune URL valide trouvée" });
+                res.status(404).json({ message: "Aucune URL valide trouvée" });
                 return;
             }
 
             const response = await axios.get(`${urlValideRole}name/client`);
             if (!response || !response.data) {
-                throw new Error("Erreur lors de la récupération du rôle par défaut");
+                res.status(404).json({ message: "Erreur lors de la récupération du rôle par défaut" });
+                return;
             }
 
             const role = [new ObjectId(response.data._id)];
             const { name, fname, adress, email, login } = req.body;
             if (!name || !fname || !adress || !email || !login) {
-                throw new Error("Information manquant");
+                res.status(404).json({ message: "Information manquante" });
+                return;
             }
 
             const existingUser = await UserModel.collection.findOne({ email: email });
             const existingUser2 = await UserModel.collection.findOne({ login: login });
             if (existingUser || existingUser2) {
-                throw new Error("Le user existe déjà");
+                res.status(404).json({ message: "Le user existe déjà" });
+                return;
             }
 
             let nombreCaractererAleatoire: number = Math.floor(Math.random() * 20) + 1;
             const salt: string = UserOutils.createGrainDeSel(nombreCaractererAleatoire);
             if (!salt) {
-                throw new Error("Erreur lors de la création du grain de sel");
+                res.status(404).json({ message: "Erreur lors de la création du grain de sel" });
+                return;
             }
 
             let newUtilisateur: UtilisateurCréation = { name, fname, adress, email, login, role, salt };
             if (!newUtilisateur) {
-                throw new Error("Information manquant");
+                res.status(404).json({ message: "Information manquante" });
+                return;
             }
 
             let user = await UserModel.collection.insertOne(newUtilisateur);
             if (!user || !user.insertedId) {
-                throw new Error("Utilisateur non crée");
+                res.status(404).json({ message: "Utilisateur non crée" });
+                return;
             }
 
             const nginx_urls_paniers: string[] = [
@@ -243,16 +305,17 @@ class UserController {
 
             const urlValidePaniers = await verificationUrl(nginx_urls_paniers);
             if (!urlValidePaniers) {
-                res.status(500).json({ message: "Aucune URL valide trouvée" });
+                res.status(404).json({ message: "Aucune URL valide trouvée" });
                 return;
             }
 
             const responsePanier = await axios.post(`${urlValidePaniers}create_cart/${user.insertedId}`);
             if (!responsePanier || !responsePanier.data) {
-                throw new Error("Erreur lors de la création du panier par défaut");
+                res.status(404).json({ message: "Erreur lors de la création du panier par défaut" });
+                return;
             }
 
-            res.status(201).json({ salt: salt, _id: user.insertedId, role: role });
+            res.status(200).json({ salt: salt, _id: user.insertedId, role: role });
         }
         catch (err) {
             console.error("Erreur création utilisateur :", err);
@@ -262,14 +325,16 @@ class UserController {
 
     async updateUserRegister(req: Request, res: Response): Promise<void> {
         try {
-            const { email, salt, motDePasse, /* mdpHasher */ } = req.body;
+            const { email, salt, motDePasse } = req.body;
             if (!email || !salt || !motDePasse) {
-                throw new Error("Information manquant");
+                res.status(404).json({ message: "Information manquante" });
+                return;
             }
 
             const passwordHasher = crypto.createHash('sha256').update(motDePasse + process.env.PEPPER + salt).digest('hex');
             if (!passwordHasher) {
-                throw new Error("Erreur lors de la création du hash du mot de passe");
+                res.status(404).json({ message: "Erreur lors de la création du hash du mot de passe" });
+                return;
             }
 
             const result = await UserModel.collection.updateOne(
@@ -277,12 +342,14 @@ class UserController {
                 { $set: { password: passwordHasher } }
             );
             if (result.modifiedCount === 0) {
-                throw new Error("Aucun utilisateur mis à jour");
+                res.status(404).json({ message: "Aucun utilisateur mis à jour" });
+                return;
             }
 
-            res.status(201).json({ message: "Utilisateur mis à jour" });
+            res.status(200).json({ message: "Utilisateur mis à jour" });
         }
         catch (err) {
+            console.error("Erreur lors de la mise à jour de l'utilisateur :", err);
             res.status(500).json({ message: "Aucun utilisateur mis à jour" });
         }
     }
@@ -291,25 +358,29 @@ class UserController {
         try {
             // Récupérer le mot de passe hasher en FrontEnd
             const { id } = req.params;
-            const { name, fname, email, login, role, motDePasse /*, mdpHasher */ } = req.body;
+            const { name, fname, email, login, role, motDePasse } = req.body;
             if (!id || !name || !fname || !email || !login || !role || !motDePasse) {
-                throw new Error("Information manquant");
+                res.status(404).json({ message: "Information manquante" });
+                return;
             }
 
             const user = await UserModel.collection.findOne({ _id: new ObjectId(id) });
             if (!user) {
-                throw new Error("Utilisateur non trouvée");
+                res.status(404).json({ message: "Utilisateur non trouvée" });
+                return;
             }
 
             // Hasher le mot de passe en FrontEnd
             const passwordHasher = crypto.createHash('sha256').update(motDePasse + user.salt).digest('hex');
             if (!passwordHasher) {
-                throw new Error("Erreur lors de la création du hash du mot de passe");
+                res.status(404).json({ message: "Erreur lors de la création du hash du mot de passe" });
+                return;
             }
 
             let updateUtilisateur = { name, fname, email, login, role, password: passwordHasher };
             if (!updateUtilisateur) {
-                throw new Error("Information manquant");
+                res.status(404).json({ message: "Information manquante" });
+                return;
             }
 
             const result = await UserModel.collection.updateOne(
@@ -317,12 +388,14 @@ class UserController {
                 { $set: updateUtilisateur }
             );
             if (result.modifiedCount === 0) {
-                throw new Error("Aucun utilisateur mis à jour");
+                res.status(404).json({ message: "Aucun utilisateur mis à jour" });
+                return;
             }
 
-            res.status(201).json({ message: "Utilisateur mis à jour" });
+            res.status(200).json({ message: "Utilisateur mis à jour" });
         }
         catch (err) {
+            console.error("Erreur lors de la mise à jour de l'utilisateur :", err);
             res.status(500).json({ message: "Aucun utilisateur mis à jour" });
         }
     }
@@ -333,23 +406,27 @@ class UserController {
             const { email } = req.params;
             const { name, fname, login, newEmail, role, motDePasse /*, mdpHasher */ } = req.body;
             if (!name || !fname || !email || !newEmail || !login || !role || !motDePasse) {
-                throw new Error("Information manquant");
+                res.status(404).json({ message: "Information manquante" });
+                return;
             }
 
             const user = await UserModel.collection.findOne({ email: email });
             if (!user) {
-                throw new Error("Utilisateur non trouvée");
+                res.status(404).json({ message: "Utilisateur non trouvée" });
+                return;
             }
 
             // Hasher le mot de passe en FrontEnd
             const passwordHasher = crypto.createHash('sha256').update(motDePasse + user.salt).digest('hex');
             if (!passwordHasher) {
-                throw new Error("Erreur lors de la création du hash du mot de passe");
+                res.status(404).json({ message: "Erreur lors de la création du hash du mot de passe" });
+                return;
             }
 
             let updateUtilisateur: Utilisateur = { name, fname, email: newEmail, login, role, password: passwordHasher };
             if (!updateUtilisateur) {
-                throw new Error("Information manquant");
+                res.status(404).json({ message: "Information manquante" });
+                return;
             }
 
             const result = await UserModel.collection.updateOne(
@@ -357,12 +434,14 @@ class UserController {
                 { $set: updateUtilisateur }
             );
             if (result.modifiedCount === 0) {
-                throw new Error("Aucun utilisateur mis à jour");
+                res.status(404).json({ message: "Aucun utilisateur mis à jour" });
+                return;
             }
 
-            res.status(201).json({ message: "Utilisateur mis à jour" });
+            res.status(200).json({ message: "Utilisateur mis à jour" });
         }
         catch (err) {
+            console.error("Erreur lors de la mise à jour de l'utilisateur :", err);
             res.status(500).json({ message: "Aucun utilisateur mis à jour" });
         }
     }
@@ -373,23 +452,27 @@ class UserController {
             const { login } = req.params;
             const { name, fname, newLogin, email, role, motDePasse /*, mdpHasher */ } = req.body;
             if (!name || !fname || !email || !newLogin || !login || !role || !motDePasse) {
-                throw new Error("Information manquant");
+                res.status(404).json({ message: "Information manquante" });
+                return;
             }
 
             const user = await UserModel.collection.findOne({ login: login });
             if (!user) {
-                throw new Error("Utilisateur non trouvée");
+                res.status(404).json({ message: "Utilisateur non trouvée" });
+                return;
             }
 
             // Hasher le mot de passe en FrontEnd
             const passwordHasher = crypto.createHash('sha256').update(motDePasse + user.salt).digest('hex');
             if (!passwordHasher) {
-                throw new Error("Erreur lors de la création du hash du mot de passe");
+                res.status(404).json({ message: "Erreur lors de la création du hash du mot de passe" });
+                return;
             }
 
             let updateUtilisateur: Utilisateur = { name, fname, email, login: newLogin, role, password: passwordHasher };
             if (!updateUtilisateur) {
-                throw new Error("Information manquant");
+                res.status(404).json({ message: "Information manquante" });
+                return;
             }
 
             const result = await UserModel.collection.updateOne(
@@ -397,12 +480,14 @@ class UserController {
                 { $set: updateUtilisateur }
             );
             if (result.modifiedCount === 0) {
-                throw new Error("Aucun utilisateur mis à jour");
+                res.status(404).json({ message: "Aucun utilisateur mis à jour" });
+                return;
             }
 
-            res.status(201).json({ message: "Utilisateur mis à jour" });
+            res.status(200).json({ message: "Utilisateur mis à jour" });
         }
         catch (err) {
+            console.error("Erreur lors de la mise à jour de l'utilisateur :", err);
             res.status(500).json({ message: "Aucun utilisateur mis à jour" });
         }
     }
@@ -411,18 +496,38 @@ class UserController {
         try {
             const { id } = req.params;
             if (!id) {
-                throw new Error("Information manquant");
+                res.status(404).json({ message: "Information manquante" });
+                return;
             }
 
             const result = await UserModel.collection.deleteOne({ _id: new ObjectId(id) });
             if (result.deletedCount === 0) {
-                throw new Error("Aucun rôle supprimé");
+                res.status(404).json({ message: "Aucun rôle supprimé" });
+                return;
             }
 
-            res.status(200).json({ message: "Rôle supprimé avec succès" });
+            const nginx_urls: string[] = [
+                process.env.PANIER_URL_NGINX_1 as string,
+                process.env.PANIER_URL_NGINX_2 as string
+            ].filter(Boolean);
+
+            const urlValide = await verificationUrl(nginx_urls);
+            if (!urlValide) {
+                res.status(404).json({ message: "Aucune URL valide trouvée" });
+                return;
+            }
+
+            const response = await axios.delete(`${urlValide}delete_cart/${id}`);
+            if (!response || !response.data) {
+                res.status(404).json({ message: "Erreur lors de la suppression du panier" });
+                return;
+            }
+
+            res.status(200).json({ message: "User supprimé avec succès" });
         }
         catch (err) {
-            res.status(500).json({ message: "Aucun rôle supprimé" });
+            console.error("Erreur lors de la suppression de l'utilisateur :", err);
+            res.status(500).json({ message: "Aucun utilisateur supprimé" });
         }
     }
 
@@ -430,18 +535,44 @@ class UserController {
         try {
             const { email } = req.params;
             if (!email) {
-                throw new Error("Information manquant");
+                res.status(404).json({ message: "Information manquante" });
+                return;
+            }
+
+            const user = await UserModel.collection.findOne({ email: email }, { projection: { _id: 1 } });
+            if (!user) {
+                res.status(404).json({ message: "Utilisateur non trouvé" });
+                return;
             }
 
             const result = await UserModel.collection.deleteOne({ email: email });
             if (result.deletedCount === 0) {
-                throw new Error("Aucun rôle supprimé");
+                res.status(404).json({ message: "Aucun utilisateur supprimé" });
+                return;
             }
 
-            res.status(200).json({ message: "Rôle supprimé avec succès" });
+            const nginx_urls: string[] = [
+                process.env.PANIER_URL_NGINX_1 as string,
+                process.env.PANIER_URL_NGINX_2 as string
+            ].filter(Boolean);
+
+            const urlValide = await verificationUrl(nginx_urls);
+            if (!urlValide) {
+                res.status(404).json({ message: "Aucune URL valide trouvée" });
+                return;
+            }
+
+            const response = await axios.delete(`${urlValide}delete_cart/${user._id}`);
+            if (!response || !response.data) {
+                res.status(404).json({ message: "Erreur lors de la suppression du panier" });
+                return;
+            }
+
+            res.status(200).json({ message: "Utilisateur supprimé avec succès" });
         }
         catch (err) {
-            res.status(500).json({ message: "Aucun rôle supprimé" });
+            console.error("Erreur lors de la suppression de l'utilisateur :", err);
+            res.status(500).json({ message: "Aucun utilisateur supprimé" });
         }
     }
 
@@ -449,19 +580,46 @@ class UserController {
         try {
             const { login } = req.params;
             if (!login) {
-                throw new Error("Information manquant");
+                res.status(404).json({ message: "Information manquante" });
+                return;
+            }
+
+            const user = await UserModel.collection.findOne({ login: login }, { projection: { _id: 1 } });
+            if (!user) {
+                res.status(404).json({ message: "Utilisateur non trouvé" });
+                return;
             }
 
             const result = await UserModel.collection.deleteOne({ login: login });
             if (result.deletedCount === 0) {
-                throw new Error("Aucun rôle supprimé");
+                res.status(404).json({ message: "Aucun utilisateur supprimé" });
+                return;
             }
 
-            res.status(200).json({ message: "Rôle supprimé avec succès" });
+            const nginx_urls: string[] = [
+                process.env.PANIER_URL_NGINX_1 as string,
+                process.env.PANIER_URL_NGINX_2 as string
+            ].filter(Boolean);
+
+            const urlValide = await verificationUrl(nginx_urls);
+            if (!urlValide) {
+                res.status(404).json({ message: "Aucune URL valide trouvée" });
+                return;
+            }
+
+            const response = await axios.delete(`${urlValide}delete_cart/${user._id}`);
+            if (!response || !response.data) {
+                res.status(404).json({ message: "Erreur lors de la suppression du panier" });
+                return;
+            }
+
+            res.status(200).json({ message: "Utilisateur supprimé avec succès" });
         }
         catch (err) {
-            res.status(500).json({ message: "Aucun rôle supprimé" });
+            console.error("Erreur lors de la suppression de l'utilisateur :", err);
+            res.status(500).json({ message: "Aucun utilisateur supprimé" });
         }
     }
 }
+
 export default UserController;

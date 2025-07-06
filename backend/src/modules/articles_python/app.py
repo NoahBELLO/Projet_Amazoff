@@ -8,7 +8,7 @@ from tools.mysql import Mysql
 from apscheduler.schedulers.background import BackgroundScheduler
 from pymongo import MongoClient
 import mariadb
-from flask_cors import CORS
+# from flask_cors import CORS #@model (code serveur)
 
 # vos modules
 from src.articles_routes import bp as articles_bp
@@ -19,13 +19,14 @@ app = Flask(__name__)
 
 app.register_blueprint(articles_bp)
 
-CORS(app, resources={
-    r"/articles/*": {
-        "origins": os.getenv("CORS_ORIGINS", "*"),
-        "methods": ["GET", "POST", "PUT", "PATCH", "DELETE"],
-        "allow_headers": ["Content-Type", "Authorization"]
-    }
-})
+ #@model (code serveur)
+# CORS(app, resources={
+#     r"/articles/*": {
+#         "origins": os.getenv("CORS_ORIGINS", "*"),
+#         "methods": ["GET", "POST", "PUT", "PATCH", "DELETE"],
+#         "allow_headers": ["Content-Type", "Authorization"]
+#     }
+# })
 
 
 def init_db_connections():

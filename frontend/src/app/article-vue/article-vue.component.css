@@ -159,22 +159,26 @@ button {
     background-color: #fa8900;
     border-color: #fa8900;
 }
-.rate{
-    display:flex;
+
+.rate {
+    display: flex;
     justify-content: center;
-    max-width: 300px;margin-top: 50px;
+    max-width: 300px;
+    margin-top: 50px;
 }
-.boutton_rate{
+
+.boutton_rate {
     background-color: #b0eaf5;
     justify-content: center;
     border: 1px solid #ddd;
     cursor: pointer;
     transition: all 0.2s;
 }
+
 .boutton_rate:hover {
     background-color: #85def0;
-        color: #000;
-  }
+    color: #000;
+}
 
 /* CSS pour les avis */
 .bloc_commentaires {

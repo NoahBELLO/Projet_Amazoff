@@ -1,7 +1,7 @@
 <app-topbar></app-topbar>
 <div class="présentation_article" *ngIf="article">
     <div class="article-image-container" *ngIf="article">
-        <img [src]="'./assets/' + (article.image || 'default.jpg')" alt="{{ article.name || 'Article' }}"
+        <img [src]="'assets/' + (article.image || 'default.jpg')" alt="{{ article.name || 'Article' }}"
             class="article-image">
         <div *ngIf="article.reduction > 0" class="discount-badge">-{{ article.reduction }}%</div>
     </div>

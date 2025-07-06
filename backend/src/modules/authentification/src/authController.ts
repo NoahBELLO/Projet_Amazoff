@@ -52,7 +52,8 @@ class AuthController {
         try {
             const { name, fname, adress, email, login, motDePasse } = req.body;
             if (!name || !fname || !adress || !email || !login || !motDePasse) {
-                throw new Error("Information manquant");
+                res.status(404).json({ message: "Information manquant" });
+                return;
             }
 
             const nginx_urls: string[] = [
@@ -62,40 +63,46 @@ class AuthController {
 
             const urlValide = await verificationUrl(nginx_urls);
             if (!urlValide) {
-                res.status(500).json({ message: "Aucune URL valide trouvée" });
+                res.status(404).json({ message: "Aucune URL valide trouvée" });
                 return;
             }
 
             const newUtilisateur: Register = { name, fname, adress, email, login };
             const response = await axios.post(`${urlValide}`, newUtilisateur);
             if (!response || !response.data) {
-                throw new Error("Erreur lors de la récupération du user par défaut");
+                res.status(404).json({ message: "Erreur lors de la récupération du user par défaut" });
+                return;
             }
 
             const updateUserRegister: UpdateRegister = { email, salt: response.data.salt, motDePasse };
             if (!updateUserRegister) {
-                throw new Error("Information manquant");
+                res.status(404).json({ message: "Information manquant" });
+                return;
             }
 
             const updateResponse = await axios.put(`${urlValide}`, updateUserRegister);
             if (!updateResponse || !updateResponse.data) {
-                throw new Error("Erreur lors de la récupération du rôle par défaut");
+                res.status(404).json({ message: "Erreur lors de la récupération du rôle par défaut" });
+                return;
             }
 
             const { issuedAt, deviceFingerprint } = Outils.createData(req);
             if (!issuedAt || !deviceFingerprint) {
-                throw new Error("Erreur lors de la création des données de token");
+                res.status(404).json({ message: "Erreur lors de la création des données de token" });
+                return;
             }
 
             const expiresInAccess: number = Outils.createExpiresIn();
             if (!expiresInAccess) {
-                throw new Error("Erreur lors de la création de l'expiration de l'accès");
+                res.status(404).json({ message: "Erreur lors de la création de l'expiration de l'accès" });
+                return;
             }
 
             const data: string = `${response.data._id}${response.data.role}${issuedAt}${expiresInAccess}${deviceFingerprint}`;
             const { nonce, proofOfWork } = Outils.createNonce(data);
             if (!nonce || !proofOfWork) {
-                throw new Error("Erreur lors de la création des données de nonce et proofOfWork");
+                res.status(404).json({ message: "Erreur lors de la création des données de nonce et proofOfWork" });
+                return;
             }
 
             const payloadAccess: PayloadAccess = {
@@ -106,118 +113,13 @@ class AuthController {
 
             const tokenAccess: string = Outils.generateToken(payloadAccess);
             if (!tokenAccess) {
-                throw new Error("Erreur lors de la création du token");
-            }
-
-            const expiresInRefresh: number = Outils.createExpiresIn(false);
-            if (!expiresInRefresh) {
-                throw new Error("Erreur lors de la création de l'expiration du rafraichissement");
-            }
-
-            const payloadRefresh: PayloadRefresh = {
-                userId: new ObjectId(response.data._id), issuedAt,
-                expiresIn: expiresInRefresh, deviceFingerprint
-            };
-
-            const tokenRefresh: string = Outils.generateToken(payloadRefresh);
-            if (!tokenRefresh) {
-                throw new Error("Erreur lors de la création du token");
-            }
-
-            const tokenObjet: Tokens = { tokenAccess: `Bearer ${tokenAccess}`, tokenRefresh }
-            if (!tokenObjet) {
-                throw new Error("Erreur lors de la création du token dans la base de données");
-            }
-
-            const tokenExisteBDD = await TokenModel.collection.updateOne(
-                { userId: new ObjectId(response.data._id) },
-                { $set: tokenObjet }, { upsert: true }
-            );
-            if (!(tokenExisteBDD.modifiedCount === 1 || tokenExisteBDD.upsertedCount === 1)) {
-                throw new Error("Erreur lors de la création ou modification du token dans la base de données");
-            }
-
-            res.cookie("tokenAccess", `Bearer ${tokenAccess}`, { httpOnly: true, secure: true, sameSite: "strict" });
-            res.cookie("tokenRefresh", tokenRefresh, { httpOnly: true, secure: true, sameSite: "strict" });
-            res.status(201).json({ message: "Compte créé" });
-        }
-        catch (err) {
-            console.error("Erreur register :", err);
-            res.status(500).json({ message: "Aucun compte créé" });
-        }
-    }
-
-    async login(req: Request, res: Response): Promise<void> {
-        try {
-            let { identifiant, motDePasse } = req.body;
-            if (!identifiant || !motDePasse) {
-                res.status(500).json({ message: "Information manquant" });
-                return;
-            }
-
-            const nginx_urls: string[] = [
-                process.env.USER_URL_NGINX_1 as string,
-                process.env.USER_URL_NGINX_2 as string
-            ].filter(Boolean);
-
-            const urlValide = await verificationUrl(nginx_urls);
-            if (!urlValide) {
-                res.status(500).json({ message: "Aucune URL valide trouvée" });
-                return;
-            }
-
-            let response;
-            if (identifiant.includes("@")) {
-                response = await axios.get(`${urlValide}filtrer/email/${identifiant}`);
-            } else {
-                response = await axios.get(`${urlValide}filtrer/login/${identifiant}`);
-            }
-            if (!response || !response.data) {
-                res.status(500).json({ message: "Information manquant" });
-                return;
-            }
-
-            const compareMdpHasher = crypto.createHash('sha256').update(motDePasse + process.env.PEPPER + response.data.salt).digest('hex');
-            if (compareMdpHasher !== response.data.password) {
-                res.status(500).json({ message: "Mauvais mot de passe" });
-                return;
-            }
-
-            const { issuedAt, deviceFingerprint } = Outils.createData(req);
-            if (!issuedAt || !deviceFingerprint) {
-                res.status(500).json({ message: "Erreur lors de la création des données de token" });
-                return;
-            }
-
-            const expiresInAccess: number = Outils.createExpiresIn();
-            if (!expiresInAccess) {
-                res.status(500).json({ message: "Erreur lors de la création de l'expiration de l'accès" });
-                return;
-            }
-
-            const data: string = `${response.data._id}${response.data.role}${issuedAt}${expiresInAccess}${deviceFingerprint}`;
-            const { nonce, proofOfWork } = Outils.createNonce(data);
-            if (!nonce || !proofOfWork) {
-                res.status(500).json({ message: "Erreur lors de la création des données de nonce et proofOfWork" });
-                return;
-            }
-
-            const payloadAccess: PayloadAccess = {
-                userId: new ObjectId(response.data._id), role: response.data.role,
-                issuedAt, expiresIn: expiresInAccess, nonce, proofOfWork,
-                scope: ['read', 'write'], issuer: "authServer",
-                deviceFingerprint
-            }
-
-            const tokenAccess: string = Outils.generateToken(payloadAccess);
-            if (!tokenAccess) {
-                res.status(500).json({ message: "Erreur lors de la création du token" });
+                res.status(404).json({ message: "Erreur lors de la création du token" });
                 return;
             }
 
             const expiresInRefresh: number = Outils.createExpiresIn(false);
             if (!expiresInRefresh) {
-                res.status(500).json({ message: "Erreur lors de la création de l'expiration du rafraichissement" });
+                res.status(404).json({ message: "Erreur lors de la création de l'expiration du rafraichissement" });
                 return;
             }
 
@@ -228,13 +130,13 @@ class AuthController {
 
             const tokenRefresh: string = Outils.generateToken(payloadRefresh);
             if (!tokenRefresh) {
-                res.status(500).json({ message: "Erreur lors de la création du token" });
+                res.status(404).json({ message: "Erreur lors de la création du token" });
                 return;
             }
 
             const tokenObjet: Tokens = { tokenAccess: `Bearer ${tokenAccess}`, tokenRefresh }
             if (!tokenObjet) {
-                res.status(500).json({ message: "Erreur lors de la création du token dans la base de données" });
+                res.status(404).json({ message: "Erreur lors de la création du token dans la base de données" });
                 return;
             }
 
@@ -249,7 +151,117 @@ class AuthController {
 
             res.cookie("tokenAccess", `Bearer ${tokenAccess}`, { httpOnly: true, secure: true, sameSite: "strict" });
             res.cookie("tokenRefresh", tokenRefresh, { httpOnly: true, secure: true, sameSite: "strict" });
-            res.status(201).json({ message: "Utilisateur connectée" });
+            res.status(200).json({ message: "Compte créé" });
+        }
+        catch (err) {
+            console.error("Erreur register :", err);
+            res.status(500).json({ message: "Aucun compte créé" });
+        }
+    }
+
+    async login(req: Request, res: Response): Promise<void> {
+        try {
+            let { identifiant, motDePasse } = req.body;
+            if (!identifiant || !motDePasse) {
+                res.status(404).json({ message: "Information manquant" });
+                return;
+            }
+
+            const nginx_urls: string[] = [
+                process.env.USER_URL_NGINX_1 as string,
+                process.env.USER_URL_NGINX_2 as string
+            ].filter(Boolean);
+
+            const urlValide = await verificationUrl(nginx_urls);
+            if (!urlValide) {
+                res.status(404).json({ message: "Aucune URL valide trouvée" });
+                return;
+            }
+
+            let response;
+            if (identifiant.includes("@")) {
+                response = await axios.get(`${urlValide}filtrer/email/${identifiant}`);
+            } else {
+                response = await axios.get(`${urlValide}filtrer/login/${identifiant}`);
+            }
+            if (!response || !response.data) {
+                res.status(404).json({ message: "Information manquant" });
+                return;
+            }
+
+            const compareMdpHasher = crypto.createHash('sha256').update(motDePasse + process.env.PEPPER + response.data.salt).digest('hex');
+            if (compareMdpHasher !== response.data.password) {
+                res.status(404).json({ message: "Mauvais mot de passe" });
+                return;
+            }
+
+            const { issuedAt, deviceFingerprint } = Outils.createData(req);
+            if (!issuedAt || !deviceFingerprint) {
+                res.status(404).json({ message: "Erreur lors de la création des données de token" });
+                return;
+            }
+
+            const expiresInAccess: number = Outils.createExpiresIn();
+            if (!expiresInAccess) {
+                res.status(404).json({ message: "Erreur lors de la création de l'expiration de l'accès" });
+                return;
+            }
+
+            const data: string = `${response.data._id}${response.data.role}${issuedAt}${expiresInAccess}${deviceFingerprint}`;
+            const { nonce, proofOfWork } = Outils.createNonce(data);
+            if (!nonce || !proofOfWork) {
+                res.status(404).json({ message: "Erreur lors de la création des données de nonce et proofOfWork" });
+                return;
+            }
+
+            const payloadAccess: PayloadAccess = {
+                userId: new ObjectId(response.data._id), role: response.data.role,
+                issuedAt, expiresIn: expiresInAccess, nonce, proofOfWork,
+                scope: ['read', 'write'], issuer: "authServer",
+                deviceFingerprint
+            }
+
+            const tokenAccess: string = Outils.generateToken(payloadAccess);
+            if (!tokenAccess) {
+                res.status(404).json({ message: "Erreur lors de la création du token" });
+                return;
+            }
+
+            const expiresInRefresh: number = Outils.createExpiresIn(false);
+            if (!expiresInRefresh) {
+                res.status(404).json({ message: "Erreur lors de la création de l'expiration du rafraichissement" });
+                return;
+            }
+
+            const payloadRefresh: PayloadRefresh = {
+                userId: new ObjectId(response.data._id), issuedAt,
+                expiresIn: expiresInRefresh, deviceFingerprint
+            };
+
+            const tokenRefresh: string = Outils.generateToken(payloadRefresh);
+            if (!tokenRefresh) {
+                res.status(404).json({ message: "Erreur lors de la création du token" });
+                return;
+            }
+
+            const tokenObjet: Tokens = { tokenAccess: `Bearer ${tokenAccess}`, tokenRefresh }
+            if (!tokenObjet) {
+                res.status(404).json({ message: "Erreur lors de la création du token dans la base de données" });
+                return;
+            }
+
+            const tokenExisteBDD = await TokenModel.collection.updateOne(
+                { userId: new ObjectId(response.data._id) },
+                { $set: tokenObjet }, { upsert: true }
+            );
+            if (!(tokenExisteBDD.modifiedCount === 1 || tokenExisteBDD.upsertedCount === 1)) {
+                res.status(404).json({ message: "Erreur lors de la création ou modification du token dans la base de données" });
+                return;
+            }
+
+            res.cookie("tokenAccess", `Bearer ${tokenAccess}`, { httpOnly: true, secure: true, sameSite: "strict" });
+            res.cookie("tokenRefresh", tokenRefresh, { httpOnly: true, secure: true, sameSite: "strict" });
+            res.status(200).json({ message: "Utilisateur connectée" });
         }
         catch (err) {
             console.error("Erreur login :", err);
@@ -261,7 +273,7 @@ class AuthController {
         try {
             const { tokenAccess, tokenRefresh }: Record<string, string> = req.cookies;
             if (!tokenAccess || !tokenRefresh) {
-                res.status(401).json({ message: "Token(s) manquant(s)" });
+                res.status(404).json({ message: "Token(s) manquant(s)" });
                 return;
             }
 
@@ -269,13 +281,14 @@ class AuthController {
 
             const goodAccessToken = Outils.verifyAccessToken(tokenAccess, deviceFingerprintTest);
             if (!goodAccessToken) {
-                res.status(401).json({ message: "AccessToken invalide ou expiré" });
+                res.status(404).json({ message: "AccessToken invalide ou expiré" });
                 return;
             }
 
             const result = await TokenModel.collection.deleteOne({ userId: new ObjectId(goodAccessToken.userId) });
             if (result.deletedCount === 0) {
-                throw new Error("Aucun token supprimé");
+                res.status(404).json({ message: "Aucun token supprimé" });
+                return;
             }
 
             res.clearCookie("tokenAccess");
@@ -283,6 +296,7 @@ class AuthController {
             res.status(200).json({ message: "Déconnecté" });
         }
         catch (err) {
+            console.error("Erreur logout :", err);
             res.status(500).json({ message: "Aucun token supprimé" });
         }
     }
@@ -291,21 +305,22 @@ class AuthController {
         try {
             const tokenRefresh: string | undefined = req.cookies.tokenRefresh;
             if (!tokenRefresh) {
-                res.status(401).json({ message: "Token de rafraîchissement manquant" });
+                res.status(404).json({ message: "Token de rafraîchissement manquant" });
                 return;
             }
 
             const { issuedAt, deviceFingerprint } = Outils.createData(req);
             if (!issuedAt || !deviceFingerprint) {
-                res.status(500).json({ message: "Erreur lors de la création des données de token" });
+                res.status(404).json({ message: "Erreur lors de la création des données de token" });
                 return;
             }
 
             const payloadRefresh = Outils.verifyRefreshToken(tokenRefresh, deviceFingerprint);
             if (!payloadRefresh) {
-                res.status(401).json({ message: "Token de rafraîchissement invalide" });
+                res.status(404).json({ message: "Token de rafraîchissement invalide" });
                 return;
             }
+
             const nginx_urls: string[] = [
                 process.env.USER_URL_NGINX_1 as string,
                 process.env.USER_URL_NGINX_2 as string
@@ -313,7 +328,7 @@ class AuthController {
 
             const urlValide = await verificationUrl(nginx_urls);
             if (!urlValide) {
-                res.status(500).json({ message: "Aucune URL valide trouvée" });
+                res.status(404).json({ message: "Aucune URL valide trouvée" });
                 return;
             }
 
@@ -327,7 +342,7 @@ class AuthController {
             const data = `${payloadRefresh.userId}${response.data.role}${issuedAt}${expiresInAccess}${deviceFingerprint}`;
             const { nonce, proofOfWork } = Outils.createNonce(data);
             if (!nonce || !proofOfWork) {
-                res.status(500).json({ message: "Erreur lors de la création des données de nonce et proofOfWork" });
+                res.status(404).json({ message: "Erreur lors de la création des données de nonce et proofOfWork" });
                 return;
             }
 
@@ -340,7 +355,7 @@ class AuthController {
 
             const tokenAccess = Outils.generateToken(payloadAccess);
             if (!tokenAccess) {
-                res.status(500).json({ message: "Erreur lors de la création du token d'accès" });
+                res.status(404).json({ message: "Erreur lors de la création du token d'accès" });
                 return;
             }
 
@@ -349,7 +364,7 @@ class AuthController {
                 { $set: { tokenAccess: `Bearer ${tokenAccess}` } }
             );
             if (updateResult.modifiedCount !== 1) {
-                res.status(401).json({ message: "Erreur lors de la mise à jour du token d'accès" });
+                res.status(404).json({ message: "Erreur lors de la mise à jour du token d'accès" });
                 return;
             }
 
@@ -357,14 +372,16 @@ class AuthController {
             res.status(200).json({ message: "Token d'accès renouvelé" });
 
         } catch (err) {
-            res.status(401).json({ message: "Impossible de renouveler le token" });
+            console.error("Erreur lors du rafraîchissement du token :", err);
+            res.status(500).json({ message: "Impossible de renouveler le token" });
         }
     }
 
     async googleAuth(req: Request, res: Response): Promise<void> {
         try {
             if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_REDIRECT_URI) {
-                throw new Error("Missing Google OAuth config");
+                res.status(404).json({ message: "Configuration OAuth Google manquante" });
+                return;
             }
 
             const redirectUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${process.env.GOOGLE_CLIENT_ID}` +
@@ -372,7 +389,8 @@ class AuthController {
 
             res.redirect(redirectUrl);
         } catch (err) {
-            res.status(401).json({ message: "Redirection échouée" });
+            console.error("Erreur dans googleAuth :", err);
+            res.status(500).json({ message: "Redirection échouée" });
         }
     }
 
@@ -380,7 +398,8 @@ class AuthController {
         try {
             const { code } = req.query;
             if (!code) {
-                throw new Error("Authorization code manquant");
+                res.status(404).json({ message: "Authorization code manquant" });
+                return;
             }
 
             const tokenResponse = await axios.post('https://oauth2.googleapis.com/token', null, {
@@ -393,7 +412,8 @@ class AuthController {
 
             const { access_token } = tokenResponse.data;
             if (!access_token) {
-                throw new Error("Erreur lors de l'obtention du token d'accès");
+                res.status(404).json({ message: "Token d'accès manquant" });
+                return;
             }
 
             const userInfoResponse = await axios.get("https://www.googleapis.com/oauth2/v2/userinfo", {
@@ -402,8 +422,10 @@ class AuthController {
 
             const userInfo = userInfoResponse.data;
             if (!userInfo) {
-                throw new Error("Erreur lors de la récupération des informations utilisateur");
+                res.status(404).json({ message: "Informations utilisateur manquantes" });
+                return;
             }
+
             const nginx_urls: string[] = [
                 process.env.USER_URL_NGINX_1 as string,
                 process.env.USER_URL_NGINX_2 as string
@@ -411,7 +433,7 @@ class AuthController {
 
             const urlValide = await verificationUrl(nginx_urls);
             if (!urlValide) {
-                res.status(500).json({ message: "Aucune URL valide trouvée" });
+                res.status(404).json({ message: "Aucune URL valide trouvée" });
                 return;
             }
 
@@ -424,7 +446,8 @@ class AuthController {
                     user = null;
                 } else {
                     console.error("Erreur lors de la recherche user:", err);
-                    throw err;
+                    res.status(500).json({ message: "Erreur lors de la recherche de l'utilisateur" });
+                    return;
                 }
             }
             if (!user) {
@@ -435,18 +458,21 @@ class AuthController {
 
             const { issuedAt, deviceFingerprint } = Outils.createData(req);
             if (!issuedAt || !deviceFingerprint) {
-                throw new Error("Erreur lors de la création des données de token");
+                res.status(404).json({ message: "Erreur lors de la création des données de token" });
+                return;
             }
 
             const expiresInAccess: number = Outils.createExpiresIn();
             if (!expiresInAccess) {
-                throw new Error("Erreur lors de la création de l'expiration de l'accès");
+                res.status(404).json({ message: "Erreur lors de la création de l'expiration de l'accès" });
+                return;
             }
 
             const data: string = `${user._id}${user.role}${issuedAt}${expiresInAccess}${deviceFingerprint}`;
             const { nonce, proofOfWork } = Outils.createNonce(data);
             if (!nonce || !proofOfWork) {
-                throw new Error("Erreur lors de la création des données de nonce et proofOfWork");
+                res.status(404).json({ message: "Erreur lors de la création des données de nonce et proofOfWork" });
+                return;
             }
 
             const payloadAccess: PayloadAccess = {
@@ -458,12 +484,14 @@ class AuthController {
 
             const tokenAccess: string = Outils.generateToken(payloadAccess);
             if (!tokenAccess) {
-                throw new Error("Erreur lors de la création du token");
+                res.status(404).json({ message: "Erreur lors de la création du token" });
+                return;
             }
 
             const expiresInRefresh: number = Outils.createExpiresIn(false);
             if (!expiresInRefresh) {
-                throw new Error("Erreur lors de la création de l'expiration du rafraichissement");
+                res.status(404).json({ message: "Erreur lors de la création de l'expiration du rafraichissement" });
+                return;
             }
 
             const payloadRefresh: PayloadRefresh = {
@@ -473,12 +501,14 @@ class AuthController {
 
             const tokenRefresh: string = Outils.generateToken(payloadRefresh);
             if (!tokenRefresh) {
-                throw new Error("Erreur lors de la création du token");
+                res.status(404).json({ message: "Erreur lors de la création du token" });
+                return;
             }
 
             const tokenObjet: Tokens = { tokenAccess: `Bearer ${tokenAccess}`, tokenRefresh }
             if (!tokenObjet) {
-                throw new Error("Erreur lors de la création du token dans la base de données");
+                res.status(404).json({ message: "Erreur lors de la création du token dans la base de données" });
+                return;
             }
 
             const tokenExisteBDD = await TokenModel.collection.updateOne(
@@ -486,7 +516,8 @@ class AuthController {
                 { $set: tokenObjet }, { upsert: true }
             );
             if (!(tokenExisteBDD.modifiedCount === 1 || tokenExisteBDD.upsertedCount === 1)) {
-                throw new Error("Erreur lors de la création ou modification du token dans la base de données");
+                res.status(404).json({ message: "Erreur lors de la création ou modification du token dans la base de données" });
+                return;
             }
 
             res.cookie("tokenAccess", `Bearer ${tokenAccess}`, { httpOnly: true, secure: true, sameSite: "strict" });

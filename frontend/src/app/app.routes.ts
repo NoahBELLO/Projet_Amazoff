@@ -13,31 +13,32 @@ import { AuthGuard } from './guards/auth.guard';
 import { NoAuthGuard } from './guards/noauth.guard';
 
 export const routes: Routes = [
+  // Mettre les AuthGuard et les NoAuthGuard sur les routes appropriées, exemple : canActivate: [NoAuthGuard]
   // Route par défaut, redirige vers /login
   { path: '', redirectTo: 'login', pathMatch: 'full' },
 
   // Page de connexion
-  { path: 'login', component: LoginComponent },
+  { path: 'login', component: LoginComponent, canActivate: [NoAuthGuard] },
 
   // Exemple de page après connexion
   { path: 'dashboard', component: DashboardComponent },
-  
+
   //Articles 
   { path: 'article/:id', component: ArticleVueComponent },
   { path: 'rating', component: ArticleRatingModalComponent },
-  { path: 'user-account/Article', component: ArticleCreatePageComponent},
-  { path: 'user-account/Commandes', component: CommandesVueComponent },
-        // { path: 'magasin', component: MagasinPageComponent },
-        // { path: 'parametres', component: ParametresPageComponent },
+  { path: 'user-account/Article', component: ArticleCreatePageComponent, canActivate: [AuthGuard] },
+  { path: 'user-account/Commandes', component: CommandesVueComponent, canActivate: [AuthGuard] },
+  // { path: 'user-account/Magasin', component: MagasinPageComponent },
+  // { path: 'user-account/Parametres', component: ParametresPageComponent },
 
-  { path: 'register', component: ModaleInscriptionComponent},
+  // { path: 'register', component: ModaleInscriptionComponent },
 
-  { path: 'user-account', component: UserAccountPageComponent},
+  { path: 'user-account', component: UserAccountPageComponent, canActivate: [AuthGuard] },
 
-  { path: 'user-cart', component: PanierVueComponent},
+  { path: 'user-cart', component: PanierVueComponent, canActivate: [NoAuthGuard] },
 
 
 ]  // Route pour les pages non trouvées
- // { path: '**', component: PageNotFoundComponent }
+  // { path: '**', component: PageNotFoundComponent }
 
-;
+  ;

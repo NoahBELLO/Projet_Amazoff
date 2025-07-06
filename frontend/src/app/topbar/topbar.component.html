@@ -1,10 +1,9 @@
 <div id="banniere">
     <div id="accueil">
-<img id="logo" src="../../assets/logo.png"
-     alt="Logo du site Amazoff" (click)="goToDashboard()"
-     style="cursor: pointer;">
+        <img id="logo" src="assets/LogoAmazoff.png" alt="Logo du site Amazoff" (click)="goToDashboard()"
+            style="cursor: pointer;">
         <div class="welcome">
-            <p>Bonjour Florian</p>
+            <p>Bonjour {{fname}}</p>
             <p style="font-weight: bold; ">Des offres exclusives vous attendent !</p>
         </div>
     </div>
@@ -23,11 +22,11 @@
             <i class="fa fa-bell large-icon"></i>
             <div class="user-info" [routerLink]="['/user-account']">
                 <i class="fa fa-user-circle large-icon"></i>
-                <label>Florian Potier</label>
+                <label>{{fname}} {{name}}</label>
             </div>
             <div class="nav-search">
                 <input [(ngModel)]="searchQuery" id="recherche" type="text" placeholder="Rechercher..."
-                (keyup.enter)="recherche_article()">
+                    (keyup.enter)="recherche_article()">
                 <i class="fa fa-search" (click)="recherche_article()"></i>
             </div>
 

@@ -2,15 +2,16 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http'; //l'import pour les requêtes http
 import { Observable } from 'rxjs';
 import { Article, RatingData, ResponseApi } from './article.interface';
+import { AuthentificationService } from './authentification.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ArticleService {
-  private articleBaseUrl = 'http://localhost:6001/articles';
-  private avisBaseUrl = 'http://localhost:6001/avis';
+  private articleBaseUrl = 'http://localhost:3001/articles';
+  private avisBaseUrl = 'http://localhost:3001/avis';
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private auth: AuthentificationService) { }
 
   //observable gère les réponses asychrones
   createArticle(articleData: FormData): Observable<ResponseApi> {
@@ -57,25 +58,41 @@ export class ArticleService {
     return quantitees;
   }
 
-  ratingArticle(ratingData: RatingData): Observable<ResponseApi>{
-    //@dur
-    const userId = '67371b2d1ed69fcb550f15e5';
-    const url = `${this.avisBaseUrl}/rating_article`;
-    ratingData.user_id = userId
+  ratingArticle(ratingData: RatingData): Observable<ResponseApi> {
+    return new Observable<ResponseApi>((observer) => {
+      this.auth.checkCookie().subscribe({
+        next: (response) => {
+          const url = `${this.avisBaseUrl}/rating_article`;
+          ratingData.user_id = response.userId;
 
-    return this.http.post<ResponseApi>(
-      url,
-      {
-        article_id: ratingData.articleId,
-        comment: ratingData.comment,
-        stars: ratingData.stars,
-        user_id: ratingData.user_id
-      },
-      { headers: { 'Content-Type': 'application/json' } }
-    )
+          this.http.post<ResponseApi>(
+            url,
+            {
+              article_id: ratingData.articleId,
+              comment: ratingData.comment,
+              stars: ratingData.stars,
+              user_id: ratingData.user_id
+            },
+            { headers: { 'Content-Type': 'application/json' } }
+          ).subscribe({
+            next: (res) => {
+              observer.next(res);
+              observer.complete();
+            },
+            error: (err) => {
+              observer.error(err);
+            }
+          });
+        },
+        error: (error) => {
+          console.error("Erreur lors de la requête Flag :", error);
+          observer.error(error);
+        }
+      });
+    });
   }
 
-  search(searchKeys: string): Observable<ResponseApi>{
+  search(searchKeys: string): Observable<ResponseApi> {
     const url = `${this.articleBaseUrl}/search`;
     return this.http.post<ResponseApi>(
       url,

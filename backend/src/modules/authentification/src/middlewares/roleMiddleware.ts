@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import Outils from "./authOutils";
+import Outils from "../authOutils";
 import { ObjectId } from "mongodb";
 import axios from 'axios';
 
@@ -42,7 +42,13 @@ function roleMiddleware(wantedRoles: string[]) {
             return;
         }
 
-        const reponseUser = await axios.get(`${urlValideUser}filtrer/id/${goodAccessToken.userId}`)
+        let reponseUser;
+        try {
+            reponseUser = await axios.get(`${urlValideUser}filtrer/id/${goodAccessToken.userId}`);
+        } catch (err) {
+            res.status(401).json({ message: "Utilisateur introuvable pour role" });
+            return;
+        }
         if (!reponseUser || !reponseUser.data) {
             res.status(401).json({ message: "Utilisateur introuvable pour role" });
             return;

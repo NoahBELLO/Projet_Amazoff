@@ -6,10 +6,12 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { Article, ResponseApi } from '../service/article.interface';
 import { FormsModule } from '@angular/forms';
 import { ArticleService } from '../service/article.service';
+import { UserService } from '../service/user.service';
+import { AuthentificationService } from '../service/authentification.service';
 
 @Component({
   selector: 'app-topbar',
-  imports: [RouterLink, NgIf,FormsModule, AsyncPipe],
+  imports: [RouterLink, NgIf, FormsModule, AsyncPipe],
   templateUrl: './topbar.component.html',
   styleUrl: './topbar.component.css'
 })
@@ -18,14 +20,15 @@ export class TopbarComponent {
   nombreArticles$!: Observable<number>;
   searchQuery: string = '';
   @Output() searchEvent = new EventEmitter<string>();
+  fname: string = "";
+  name: string = "";
 
   constructor(
     protected panierService: PanierService,
     protected articleService: ArticleService,
-    private router: Router) 
-    {
-      this.nombreArticles$ = this.panierService.getNombreArticlesAuPanier();
-     }
+    private router: Router, private userService: UserService, private authService: AuthentificationService) {
+    this.nombreArticles$ = this.panierService.getNombreArticlesAuPanier();
+  }
 
   ngOnInit(): void {
     this.panierService.getPanierUser().subscribe({
@@ -40,18 +43,36 @@ export class TopbarComponent {
 
     // s'abonne aux changements du nombre d'articles
     this.nombreArticles$.subscribe();
+
+    // let userId = '67371b2d1ed69fcb550f15e5';
+    this.authService.checkCookie().subscribe({
+      next: (response) => {
+        this.userService.infoUser(response.userId).subscribe({
+          next: (user) => {
+            this.fname = user.fname;
+            this.name = user.name;
+          },
+          error: (error) => {
+            console.error("Erreur lors de la récupération des informations utilisateur :", error);
+          }
+        });
+      },
+      error: (error) => {
+        console.error("Erreur lors de la requête Flag :", error);
+      }
+    });
   }
 
   goToDashboard() {
-  if (this.router.url === '/dashboard') {
-    // force le "rafraîchissement" en naviguant ailleurs puis en revenant
-    this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+    if (this.router.url === '/dashboard') {
+      // force le "rafraîchissement" en naviguant ailleurs puis en revenant
+      this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+        this.router.navigate(['/dashboard']);
+      });
+    } else {
       this.router.navigate(['/dashboard']);
-    });
-  } else {
-    this.router.navigate(['/dashboard']);
+    }
   }
-}
 
   recherche_article() {
     this.searchEvent.emit(this.searchQuery);
