@@ -1,4 +1,3 @@
-// paymentModeRoutes.js
 const express = require('express');
 const router = express.Router();
 
@@ -6,29 +5,31 @@ const {
   createPaymentMode,
   getUserPaymentModes,
   updatePaymentMode,
-  deletePaymentMode
+  deletePaymentMode,
+  getAllPaymentModes
 } = require('./paymentModeController');
 
-// const { verifyToken } = require('../middlewares/authMiddleware');
+const {
+  validatePaymentModeCreation,
+  validatePaymentModeUpdate
+} = require('./paymentModeMiddleware'); 
+// Vérification du microservice
+router.get('/', getUserPaymentModes);
 
-// Vérification de fonctionnement de l'API
-router.get('/', (req, res) => {
-  res.send('Microservice PaymentModes OK');
-});
 
-// Créer une paymentMode
-router.post('/create-paymentModes', createPaymentMode);
 
-// Récupérer les paymentModes d'un utilisateur
-router.get('/my-paymentModes', /* verifyToken, */ getUserPaymentModes);
+// Créer un mode de paiement avec validation
+router.post('/create', validatePaymentModeCreation, createPaymentMode);
 
-// Supprimer une paymentMode spécifique
-router.delete('/:id', /* verifyToken, */ deletePaymentMode);
+// Récupérer les modes de paiement d'un utilisateur
+router.get('/user', getUserPaymentModes);
 
-// Supprimer toutes les paymentModes d'un utilisateur
-//router.delete('/delete-allpaymentModes', /* verifyToken, */ deletePaymentMode);
+// Mettre à jour un mode de paiement avec validation
+router.put('/update/:id', validatePaymentModeUpdate, updatePaymentMode);
 
-// Mettre à jour une paymentMode spécifique
-router.put('/update-paymentModes/:id', /* verifyToken, */ updatePaymentMode);
+// Supprimer un mode de paiement
+router.delete('/delete/:id', deletePaymentMode);
+router.get('/all', getAllPaymentModes);
+
 
 module.exports = router;

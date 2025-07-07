@@ -6,3 +6,5 @@ dot-env
 APScheduler
 mariadb
 pytest
+dotenv
+loguru

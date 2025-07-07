@@ -19,10 +19,8 @@ const paymentModeSchema = new mongoose.Schema({
     type: Boolean,
     default: true
   },
-  createdAt: {
-    type: Date,
-    default: Date.now
-  }
-});
+},
+{ timestamps: true }
+);
 
 module.exports = mongoose.model('PaymentMode', paymentModeSchema);

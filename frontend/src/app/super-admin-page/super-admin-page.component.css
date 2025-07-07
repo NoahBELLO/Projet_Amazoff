@@ -1,0 +1,71 @@
+.superadmin-container {
+  max-width: 1000px;
+  margin: 40px auto;
+  padding: 20px;
+  text-align: center;
+  font-family: Arial, sans-serif;
+}
+
+.superadmin-container h2 {
+  font-size: 2rem;
+  margin-bottom: 20px;
+}
+
+.btn-add {
+  padding: 10px 20px;
+  background: #fdbd5a;
+  border: none;
+  border-radius: 50px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-bottom: 20px;
+}
+
+.btn-add:hover {
+  opacity: 0.9;
+}
+
+.search-bar {
+  width: 60%;
+  max-width: 400px;
+  padding: 10px 15px;
+  margin-bottom: 20px;
+  border-radius: 50px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.admin-table th, .admin-table td {
+  padding: 12px;
+  border: 1px solid #ddd;
+}
+
+.admin-table th {
+  background: #0f4143;
+  color: #fff;
+}
+
+.admin-table td button {
+  padding: 6px 12px;
+  margin: 0 2px;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  background: #fdbd5a;
+  font-weight: 500;
+}
+
+.admin-table td button:hover {
+  opacity: 0.9;
+}
+
+@media (max-width: 600px) {
+  .search-bar {
+    width: 90%;
+  }
+}

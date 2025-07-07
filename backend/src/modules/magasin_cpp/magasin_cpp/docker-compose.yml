@@ -5,7 +5,7 @@ services:
       dockerfile: Dockerfile
     container_name: magasin_cpp_service
     ports:
-      - "3001:3001"
+      - "7001:7001"
     networks:
       - magasin-network
     env_file:
