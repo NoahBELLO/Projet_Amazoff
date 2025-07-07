@@ -1,0 +1,17 @@
+<!-- signup.component.html -->
+<div class="signup-container">
+  <h2>Créer un compte</h2>
+  <form [formGroup]="signupForm" (ngSubmit)="onSubmit()">
+    <input formControlName="firstname" placeholder="Prénom">
+    <input formControlName="lastname" placeholder="Nom">
+    <input formControlName="email" placeholder="Email" type="email">
+    <input formControlName="password" placeholder="Mot de passe" type="password">
+    <select formControlName="role">
+      <option value="user">Utilisateur</option>
+      <option value="responsable">Responsable Magasin</option>
+      <option value="admin">Admin</option>
+    </select>
+    <button type="submit" [disabled]="loading">Créer mon compte</button>
+  </form>
+  <p *ngIf="errorMessage" class="error">{{ errorMessage }}</p>
+</div>

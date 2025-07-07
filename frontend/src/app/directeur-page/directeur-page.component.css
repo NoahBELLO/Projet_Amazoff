@@ -1,0 +1,62 @@
+/* directeur-page.component.css */
+
+.directeur-container {
+  max-width: 1000px;
+  margin: 40px auto;
+  padding: 20px;
+  text-align: center;
+  font-family: Arial, sans-serif;
+}
+
+.directeur-container h2 {
+  font-size: 2rem;
+  margin-bottom: 20px;
+}
+
+.search-bar {
+  width: 60%;
+  max-width: 400px;
+  padding: 10px 15px;
+  margin-bottom: 20px;
+  border-radius: 50px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+}
+
+.directeur-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.directeur-table th, .directeur-table td {
+  padding: 12px;
+  border: 1px solid #ddd;
+  text-align: center;
+}
+
+.directeur-table th {
+  background: #0f4143;
+  color: #fff;
+}
+
+.directeur-table td button {
+  padding: 6px 12px;
+  margin: 0 2px;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  background: #fdbd5a;
+  font-weight: 500;
+  transition: background 0.3s, transform 0.2s;
+}
+
+.directeur-table td button:hover {
+  background: #f1ab3e;
+  transform: translateY(-1px);
+}
+
+@media (max-width: 600px) {
+  .search-bar {
+    width: 90%;
+  }
+}

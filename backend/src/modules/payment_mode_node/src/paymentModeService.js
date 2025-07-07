@@ -41,6 +41,11 @@ class PaymentModeService {
     }
     return await PaymentMode.findByIdAndDelete(paymentModeId);
   }
+
+// Récupérer tous les modes de paiement (admin/debug)
+static async getAllPaymentModes() {
+  return await PaymentMode.find().sort({ createdAt: -1 });
+}
 }
 
 module.exports = PaymentModeService;

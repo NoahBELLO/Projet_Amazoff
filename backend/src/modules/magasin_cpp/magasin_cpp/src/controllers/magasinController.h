@@ -4,9 +4,11 @@
 #include <crow.h>
 #include <mongocxx/client.hpp>
 
-class MagasinController {
+class MagasinController
+{
 public:
-    static void init_routes(crow::SimpleApp& app);
+    template <typename App>
+    static void init_routes(App &app);
 };
 
 #endif

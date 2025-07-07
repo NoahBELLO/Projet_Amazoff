@@ -5,7 +5,8 @@ const {
   createPaymentMode,
   getUserPaymentModes,
   updatePaymentMode,
-  deletePaymentMode
+  deletePaymentMode,
+  getAllPaymentModes
 } = require('./paymentModeController');
 
 const {
@@ -13,9 +14,9 @@ const {
   validatePaymentModeUpdate
 } = require('./paymentModeMiddleware'); 
 // Vérification du microservice
-router.get('/', (req, res) => {
-  res.send('Microservice PaymentMode OK');
-});
+router.get('/', getUserPaymentModes);
+
+
 
 // Créer un mode de paiement avec validation
 router.post('/create', validatePaymentModeCreation, createPaymentMode);
@@ -28,5 +29,7 @@ router.put('/update/:id', validatePaymentModeUpdate, updatePaymentMode);
 
 // Supprimer un mode de paiement
 router.delete('/delete/:id', deletePaymentMode);
+router.get('/all', getAllPaymentModes);
+
 
 module.exports = router;

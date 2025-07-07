@@ -3,17 +3,20 @@
 #include "../models/magasinModel.h"
 #include <iostream>
 #include <sstream>
+#include "../middlewares/cors_middleware.h"
+
 
 // Si une macro DELETE est définie (par exemple par windows.h), on la désactive.
 #ifdef DELETE
 #undef DELETE
 #endif
 
-void MagasinController::init_routes(crow::SimpleApp &app)
+template <typename App>
+void MagasinController::init_routes(App &app)
 {
     // GET /magasins : Récupérer tous les magasins
     CROW_ROUTE(app, "/magasins").methods(crow::HTTPMethod::GET)([]() -> crow::response
-    {
+                                                                {
         try {
             auto collection = Database::get_client()["Magasins"]["magasins"];
             auto cursor = collection.find({});
@@ -34,12 +37,11 @@ void MagasinController::init_routes(crow::SimpleApp &app)
             return crow::response(magasins_json);
         } catch (const std::exception &e) {
             return crow::response(500, std::string("Erreur serveur : ") + e.what());
-        }
-    });
+        } });
 
     // POST /magasins : Ajouter un nouveau magasin
     CROW_ROUTE(app, "/magasins").methods(crow::HTTPMethod::POST)([](const crow::request &req) -> crow::response
-    {
+                                                                 {
         auto body = crow::json::load(req.body);
         // Vérification de la présence de tous les champs requis
         if (!body || !body.has("nom") || !body.has("adresse") || !body.has("ville") ||
@@ -68,12 +70,11 @@ void MagasinController::init_routes(crow::SimpleApp &app)
                 return crow::response(500, "Erreur lors de l'insertion du magasin");
         } catch (const std::exception &e) {
             return crow::response(500, std::string("Erreur serveur : ") + e.what());
-        }
-    });
+        } });
 
     // GET /magasins/:id : Récupérer un magasin par son ID
     CROW_ROUTE(app, "/magasins/<string>").methods(crow::HTTPMethod::GET)([](const std::string &id) -> crow::response
-    {
+                                                                         {
         try {
             auto collection = Database::get_client()["Magasins"]["magasins"];
             bsoncxx::oid oid;
@@ -102,12 +103,11 @@ void MagasinController::init_routes(crow::SimpleApp &app)
             return crow::response(magasin_json);
         } catch (const std::exception &e) {
             return crow::response(500, std::string("Erreur serveur : ") + e.what());
-        }
-    });
+        } });
 
     // PUT /magasins/update/:id : Mettre à jour un magasin
     CROW_ROUTE(app, "/magasins/update/<string>").methods(crow::HTTPMethod::PUT)([](const crow::request &req, const std::string &id) -> crow::response
-    {
+                                                                                {
         auto body = crow::json::load(req.body);
         if (!body)
             return crow::response(400, "Données invalides");
@@ -151,12 +151,11 @@ void MagasinController::init_routes(crow::SimpleApp &app)
             else if (result->matched_count() == 1)
                 return crow::response(200, "Aucune modification apportée (les données sont identiques)");
         }
-        return crow::response(404, "Magasin non trouvé");
-    });
+        return crow::response(404, "Magasin non trouvé"); });
 
     // DELETE /magasins/delete/:id : Supprimer un magasin
     CROW_ROUTE(app, "/magasins/remove/<string>").methods(crow::HTTPMethod::DELETE)([](const crow::request &, const std::string &id) -> crow::response
-    {
+                                                                                   {
         try {
             auto collection = Database::get_client()["Magasins"]["magasins"];
             bsoncxx::oid oid;
@@ -173,6 +172,7 @@ void MagasinController::init_routes(crow::SimpleApp &app)
                 return crow::response(404, "Magasin non trouvé");
         } catch (const std::exception &e) {
             return crow::response(500, std::string("Erreur serveur : ") + e.what());
-        }
-    });
+        } });
 }
+// pour générer l'instance template explicitement
+template void MagasinController::init_routes<crow::App<CORS>>(crow::App<CORS> &);

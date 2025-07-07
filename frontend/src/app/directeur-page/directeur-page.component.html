@@ -1,0 +1,37 @@
+<div class="directeur-container">
+  <h2>Dashboard Directeur</h2>
+
+  <input
+    type="text"
+    [(ngModel)]="searchTerm"
+    placeholder="Rechercher un article..."
+    class="directeur-search-bar"
+  />
+
+  <table class="directeur-table">
+    <thead>
+      <tr>
+        <th>Nom du Magasin</th>
+        <th>Adresse</th>
+        <th>Ville</th>
+        <th>Stock</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let magasin of magasins | filterMagasins:searchTerm">
+        <td>{{ magasin.nom }}</td>
+        <td>{{ magasin.adresse }}</td>
+        <td>{{ magasin.ville }}</td>
+        <td>{{ magasin.capacite_stock }} articles</td>
+        <td>
+          <button class="btn-view" (click)="voirDetails(magasin)">Voir</button>
+          <button class="btn-manage" (click)="gererStock(magasin)">Gérer</button>
+        </td>
+      </tr>
+      <tr *ngIf="(magasins | filterMagasins:searchTerm).length === 0">
+        <td colspan="5">Aucun magasin trouvé.</td>
+      </tr>
+    </tbody>
+  </table>
+</div>

@@ -20,5 +20,9 @@
     "mongodb": "^6.10.0",
     "mongoengine": "^1.0.8",
     "nodemon": "^3.1.9"
+  },
+  "devDependencies": {
+    "@types/cookie-parser": "^1.4.9",
+    "@types/node": "^24.0.10"
   }
 }

@@ -1,0 +1,40 @@
+<div class="superadmin-container">
+  <h2>Dashboard Super Admin</h2>
+
+  <button (click)="openAddResponsable()" class="btn-add">
+    Ajouter un Responsable
+  </button>
+
+  <input
+    type="text"
+    [(ngModel)]="searchTerm"
+    placeholder="Rechercher un magasin ou un responsable..."
+    class="search-bar"
+  />
+
+  <table class="admin-table">
+    <thead>
+      <tr>
+        <th>Nom du Magasin</th>
+        <th>Adresse</th>
+        <th>Responsable</th>
+        <th>Stock</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let magasin of magasins | filter : searchTerm">
+        <td>{{ magasin.nom }}</td>
+        <td>{{ magasin.adresse }}</td>
+        <td>{{ magasin.responsable_nom }}</td>
+        <td>{{ magasin.capacite_stock }} articles</td>
+
+        <td>
+          <button (click)="voirMagasin(magasin)">Voir</button>
+          <button (click)="modifierResponsable(magasin)">Modifier</button>
+          <button (click)="supprimerResponsable(magasin)">Supprimer</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

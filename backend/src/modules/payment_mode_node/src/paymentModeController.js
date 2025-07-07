@@ -67,10 +67,20 @@ const deletePaymentMode = async (req, res) => {
     res.status(400).json({ error: error.message });
   }
 };
+// Récupérer TOUS les modes de paiement (pour admin ou debug)
+const getAllPaymentModes = async (req, res) => {
+  try {
+    const paymentModes = await PaymentModeService.getAllPaymentModes();
+    res.status(200).json(paymentModes);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
 
 module.exports = {
   createPaymentMode,
   getUserPaymentModes,
   updatePaymentMode,
-  deletePaymentMode
+  deletePaymentMode,
+  getAllPaymentModes
 };

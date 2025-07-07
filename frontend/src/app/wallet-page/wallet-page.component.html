@@ -1,0 +1,33 @@
+<div class="wallet-container">
+  <h2>Mes modes de paiement</h2>
+
+  <div class="wallet-add-form">
+    <input [(ngModel)]="newMethod" placeholder="Mode de paiement (ex: Carte)">
+    <input [(ngModel)]="newDescription" placeholder="Description (optionnelle)">
+    <button (click)="addPaymentMode()">Ajouter</button>
+  </div>
+
+  <table class="wallet-table">
+    <thead>
+      <tr>
+        <th>Mode</th>
+        <th>Description</th>
+        <th>Actif</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let mode of paymentModes">
+        <td>{{ mode.method }}</td>
+        <td>{{ mode.description }}</td>
+        <td>{{ mode.isActive ? 'Oui' : 'Non' }}</td>
+        <td>
+          <button (click)="toggleActive(mode)">
+            {{ mode.isActive ? 'Désactiver' : 'Activer' }}
+          </button>
+          <button (click)="deletePaymentMode(mode)">Supprimer</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

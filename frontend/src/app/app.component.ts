@@ -10,10 +10,11 @@ import { TopbarComponent } from './topbar/topbar.component';
 
 //Le module HttpClientModule permet 
 @Component({
+  standalone: true,
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
-  imports: [RouterOutlet,RouterLink, CommonModule, HttpClientModule,ModaleInscriptionComponent, TopbarComponent] 
+  imports: [RouterOutlet, CommonModule, HttpClientModule] 
 })
 
 export class AppComponent {
