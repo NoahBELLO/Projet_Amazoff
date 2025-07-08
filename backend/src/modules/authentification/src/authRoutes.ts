@@ -6,7 +6,42 @@ import roleMiddleware from './middlewares/roleMiddleware';
 
 const authController: AuthController = new AuthController();
 // MIDDLEWARE
-router.get("/check", authMiddleware, roleMiddleware(["client"]), (req, res) => {
+router.get("/check", authMiddleware, roleMiddleware(["client", "employee", "directeurMagasin", "responsableMagasin", "admin", "superuser"]), (req, res) => {
+    if (req.auth) {
+        res.json({ loggedIn: true, userId: req.auth.userId });
+    } else {
+        res.json({ loggedIn: false });
+    }
+});
+router.get("/employee", authMiddleware, roleMiddleware(["employee"]), (req, res) => {
+    if (req.auth) {
+        res.json({ loggedIn: true, userId: req.auth.userId });
+    } else {
+        res.json({ loggedIn: false });
+    }
+});
+router.get("/directeur", authMiddleware, roleMiddleware(["directeurMagasin"]), (req, res) => {
+    if (req.auth) {
+        res.json({ loggedIn: true, userId: req.auth.userId });
+    } else {
+        res.json({ loggedIn: false });
+    }
+});
+router.get("/responsable", authMiddleware, roleMiddleware(["responsableMagasin"]), (req, res) => {
+    if (req.auth) {
+        res.json({ loggedIn: true, userId: req.auth.userId });
+    } else {
+        res.json({ loggedIn: false });
+    }
+});
+router.get("/admin", authMiddleware, roleMiddleware(["admin"]), (req, res) => {
+    if (req.auth) {
+        res.json({ loggedIn: true, userId: req.auth.userId });
+    } else {
+        res.json({ loggedIn: false });
+    }
+});
+router.get("/superuser", authMiddleware, roleMiddleware(["superuser"]), (req, res) => {
     if (req.auth) {
         res.json({ loggedIn: true, userId: req.auth.userId });
     } else {

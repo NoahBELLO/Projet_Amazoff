@@ -15,19 +15,22 @@
                     (click)="logout()"></i>
             </div>
 
-            <div class="panier-icon-container">
+            <div class="panier-icon-container" (mouseenter)="onCartMouseEnter()" (mouseleave)="onCartMouseLeave()"
+                style="position:relative;">
                 <i class="fa fa-cart-shopping large-icon" [routerLink]="['/user-cart']"></i>
-                <!-- permet de s'abonner à l'observable si c'est pas déjà fait -->
                 <ng-container *ngIf="(nombreArticles$ | async) as count">
                     <span *ngIf="count > 0" class="panier-badge">{{ count > 9 ? '9+' : count }}</span>
                 </ng-container>
+                <app-panier-preview *ngIf="showCartPreview" [articles]="cartArticles"></app-panier-preview>
             </div>
 
-            <div class="notification-icon-container">
+            <div class="notification-icon-container" (mouseenter)="onPopupMouseEnter()" (mouseleave)="onPopupMouseLeave()"
+                style="position:relative;">
                 <i class="fa fa-bell large-icon"></i>
-                <!-- <ng-container *ngIf="(nombreNotifications$ | async) as count">
+                <ng-container *ngIf="(nombreNotifications$ | async) as count">
                     <span *ngIf="count > 0" class="notification-badge">{{ count > 9 ? '9+' : count }}</span>
-                </ng-container> -->
+                </ng-container>
+                <app-notification-preview *ngIf="showNotificationPreview" [notifications]="notificationUser"></app-notification-preview>
             </div>
 
             <!-- <i class="fa fa-bars large-icon"></i> -->

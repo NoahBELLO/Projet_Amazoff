@@ -13,10 +13,12 @@
     <app-side-bar [sections]="sections" [activeSection]="activeSection"
         (setActiveSection)="setActiveSection($event)"></app-side-bar>
 
-    <div *ngIf="activeSection === 'Commandes'">
-        <app-commandes-vue></app-commandes-vue>
-    </div>
-    <div *ngIf="activeSection === 'Article'">
-        <app-article-create-page></app-article-create-page>
+    <div class="user-account-content">
+        <div *ngIf="activeSection === 'Commandes'">
+            <app-commandes-vue></app-commandes-vue>
+        </div>
+        <div *ngIf="activeSection === 'Article'">
+            <app-article-create-page></app-article-create-page>
+        </div>
     </div>
 </div>

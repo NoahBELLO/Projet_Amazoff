@@ -10,13 +10,13 @@
             <td>Désignation</td>
             <td>Prix</td>
             <td>Quantité</td>
-            <td>sous-total</td>
+            <td>Sous-total</td>
             <td></td>
           </tr>
           <tr *ngFor="let article of panier" class="panier-article">
             <td>
               <div class="infos_article">
-                <img [routerLink]="['/article', article.id]" [src]="'http://localhost:3001/articles/assets/uploads/' + article.image" alt="{{ article.name }}"
+                <img [routerLink]="['/article', article.id]" [src]="article.image ? 'http://localhost:3001/articles/assets/uploads/' + article.image : 'assets/default.png'" alt="{{ article.name }}"
                   class="article_img">
                 <a [routerLink]="['/article', article.id]" class="article_nom">{{ article.name }}</a>
               </div>
@@ -32,7 +32,7 @@
               </select>
             </td>
             <!-- prototype pour faire quantité sélectionnée x prix unitaire -->
-            <td>sous total: {{ article.sous_total }} €</td>
+            <td>Sous-total: {{ article.sous_total }} €</td>
             <td class="action-cell">
               <button class="supprimer" (click)="removeFromPanier(article.id)">Supprimer</button>
             </td>
@@ -46,7 +46,7 @@
         <span>Sous-total ({{ panier.length }} articles):</span>
         <span>{{ getTotal() }} €</span>
       </div>
-      <button class="checkout-btn">Passer la commande</button>
+      <button class="checkout-btn">Passer la commande</button> <!-- faire requete passer la commande -->
     </div>
   </div>
 

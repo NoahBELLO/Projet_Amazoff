@@ -98,12 +98,24 @@ class ArticleModel(Document):
                 avisResponse = requests.get(avis_url)
                 if avisResponse.ok:
                     avis_data = avisResponse.json()
-                    article['avis'] = avis_data.get('rs', [])
-                    article['stars'] = avis_data.get('stars', 0)
+                    article_avis = avis_data.get('rs', [])
+                    if article_avis:
+                        moyenne = sum(a.get("stars", 0.0) for a in article_avis) / len(article_avis)
+                    else:
+                        moyenne = 0.0
+                    article["avis"] = article_avis
+                    article["stars"] = moyenne
+                else:
+                    article["avis"] = []
+                    article["stars"] = 0.0
             except:
+                logger.warning(f"Erreur lors de l'appel au microservice avis")
+                article["avis"] = []
+                article["stars"] = 0.0
                 pass
             articles_dict.append(article)
         if articles_dict:
+            logger.critical(articles_dict)
             return True, articles_dict
         return False, []
 
@@ -235,7 +247,17 @@ class ArticleModel(Document):
 
         return True, results or []
 
-
+    def get_articles_by_ids(ids):
+        articles = {}
+        # On suppose que les IDs sont des chaînes de caractères
+        for article_id in ids:
+            try:
+                ok, article = ArticleModel().get_article(article_id)
+                if ok and article:
+                    articles[str(article_id)] = article
+            except Exception:
+                continue
+        return articles
        
     def load_cached_articles(self):
         chemin = os.path.join(os.path.dirname(__file__), 'cache', 'cached_articles.json')

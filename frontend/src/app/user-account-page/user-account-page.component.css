@@ -30,12 +30,13 @@
     min-height: 80vh;
 }
 
+.vueUserAccount {
+    display: flex;
+}
+
 .user-account-content {
     flex: 1;
     padding: 30px;
-}
-
-.vueUserAccount{
-    display: flex;
-    /* flex-direction: column; */
+    /* Ajoute éventuellement : */
+    min-width: 0;
 }

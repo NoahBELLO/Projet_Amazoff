@@ -119,6 +119,16 @@ def create_article():
     #@docker (code docker)
     datas = dict(request.form)
     datas['id'] = str(id_mongo)
+    image = request.files.get('image')
+    
+    if image and image.filename:
+        uploads_dir = os.path.join(os.path.dirname(__file__), '..', 'assets', 'uploads')
+        os.makedirs(uploads_dir, exist_ok=True)
+        image_path = os.path.join(uploads_dir, image.filename)
+        image.save(image_path)
+        datas['image'] = image.filename
+    else:
+        datas['image'] = None
 
     # MariaDB 
     try:
@@ -154,16 +164,6 @@ def create_article():
         log_failure('MONGO', crud_operation, datas, e)
         ArticleModelMD().delete(id_maria)  
         return jsonify({"error": True, "message": "Échec de l'insertion dans MongoDB."})
-    
-    image = request.files.get('image')
-    if image and image.filename:
-        uploads_dir = os.path.join(os.path.dirname(__file__), '..', 'assets', 'uploads')
-        os.makedirs(uploads_dir, exist_ok=True)
-        image_path = os.path.join(uploads_dir, image.filename)
-        image.save(image_path)
-        datas['image'] = image.filename
-    else:
-        datas['image'] = None
 
     return jsonify({"error": False, 'rs': {"id_mongo": id_mongo, "id_maria": id_maria}})
 
@@ -267,3 +267,17 @@ def health_check():
 def uploaded_file(filename):
     logger.critical(f"Request for file: {filename}")
     return send_from_directory(os.path.join(os.path.dirname(__file__), '..', 'assets', 'uploads'), filename)
+
+@bp.route('/batch', methods=['POST'])
+def get_articles_batch():
+    try:
+        data = request.get_json()
+        ids = data.get('ids', [])
+        if not ids:
+            return jsonify({"error": "Aucun ID fourni"}), 400
+
+        # Récupère tous les articles d'un coup (à adapter selon ta BDD)
+        articles = ArticleModel().get_articles_by_ids(ids)
+        return jsonify({"rs": articles}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
