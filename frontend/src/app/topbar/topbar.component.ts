@@ -18,6 +18,7 @@ import { AuthentificationService } from '../service/authentification.service';
 
 export class TopbarComponent {
   nombreArticles$!: Observable<number>;
+  // nombreNotifications$!: Observable<number>;
   searchQuery: string = '';
   @Output() searchEvent = new EventEmitter<string>();
   fname: string = "";
@@ -26,7 +27,7 @@ export class TopbarComponent {
   constructor(
     protected panierService: PanierService,
     protected articleService: ArticleService,
-    private router: Router, private userService: UserService, private authService: AuthentificationService) {
+    private router: Router, private userService: UserService, public authService: AuthentificationService) {
     this.nombreArticles$ = this.panierService.getNombreArticlesAuPanier();
   }
 
@@ -90,5 +91,24 @@ export class TopbarComponent {
     });
   }
 
+  logout() {
+    this.authService.logout();
+    this.router.navigate(['/dashboard']);
+  }
+
+  userAccount() {
+    this.authService.checkCookie().subscribe({
+      next: (response) => {
+        this.router.navigate(['/user-account']);
+      },
+      error: (error) => {
+        if (error.status === 401) {
+          this.fname = "";
+          this.name = "";
+          this.router.navigate(['/login']);
+        }
+      }
+    });
+  }
 }
 

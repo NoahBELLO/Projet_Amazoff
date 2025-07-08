@@ -7,7 +7,7 @@ const cors = require("cors");
 const paymentModeRoutes = require("./src/paymentModeRoutes");
 
 const app = express();
-const port = process.env.PORT || 6006;
+const port = process.env.PORT || 7003;
 const mongoUri = process.env.MONGO_URI_PAYEMENTMODE;
 
 // Middleware

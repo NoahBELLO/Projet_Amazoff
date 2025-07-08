@@ -9,6 +9,16 @@ from loguru import logger
 import requests
 import os
 
+def verification_url(urls):
+    for url in urls:
+        try:
+            response = requests.get(f"{url}health", timeout=3)
+            if response.ok:
+                return url
+        except Exception:
+            continue
+    return ""
+
 #liste des fields utiles:
 # URLField      pour les URL
 # ListField     pour les liste
@@ -56,7 +66,15 @@ class PanierModel(Document):
                 #     article_magasin_dict['quantite_utilisateur'] = article['quantite']
                 #     panier_user.append(article_magasin_dict)  
                 #@docker (code docker)
-                article_url = os.getenv("URL_ARTICLE_DOCKER") + str(article['article_id'])
+                nginx_urls = [os.getenv("URL_ARTICLE_DOCKER_1"), os.getenv("URL_ARTICLE_DOCKER_2")]
+                nginx_urls = [url for url in nginx_urls if url]
+
+                url_valide = verification_url(nginx_urls)
+                if not url_valide:
+                    logger.error(f"Erreur lors de la validation de l'URL")
+                    raise ErrorExc("Erreur lors de la validation de l'URL")
+                
+                article_url = f"{url_valide}{str(article['article_id'])}"
                 article_response = requests.get(article_url)
                 if article_response.ok:
                     article_magasin_dict = article_response.json().get('rs', {})
@@ -113,7 +131,15 @@ class PanierModel(Document):
             # if not article or article.stock < float(quantite):#vérif des stocks dispo
             #     raise ErrorExc ("Stock insuffisant")
             #@docker (code docker)
-            article_url = os.getenv("URL_ARTICLE_DOCKER") + str(article_id)
+            nginx_urls = [os.getenv("URL_ARTICLE_DOCKER_1"), os.getenv("URL_ARTICLE_DOCKER_2")]
+            nginx_urls = [url for url in nginx_urls if url]
+
+            url_valide = verification_url(nginx_urls)
+            if not url_valide:
+                logger.error(f"Erreur lors de la validation de l'URL")
+                raise ErrorExc("Erreur lors de la validation de l'URL")
+                
+            article_url = f"{url_valide}{str(article_id)}"
             article_response = requests.get(article_url)
             if not article_response.ok:
                 raise ErrorExc("Article introuvable")
@@ -202,7 +228,15 @@ class PanierModelMD():
                 #@model (code serveur)
                 # article_magasin = db_articles.get_by_id(article['article_id'])
                 #@docker (code docker)
-                article_url = os.getenv("URL_ARTICLE_DOCKER") + str(article['article_id'])
+                nginx_urls = [os.getenv("URL_ARTICLE_DOCKER_1"), os.getenv("URL_ARTICLE_DOCKER_2")]
+                nginx_urls = [url for url in nginx_urls if url]
+
+                url_valide = verification_url(nginx_urls)
+                if not url_valide:
+                    logger.error(f"Erreur lors de la validation de l'URL")
+                    raise ErrorExc("Erreur lors de la validation de l'URL")
+                
+                article_url = f"{url_valide}{str(article['article_id'])}"
                 response = requests.get(article_url)
                 if not response.ok:
                     raise ErrorExc(f"Impossible de récupérer l'article {article['article_id']}")
@@ -251,7 +285,15 @@ class PanierModelMD():
             # db_article = TableArticles()
             # article = db_article.get_by_id(article_id)
             #@docker (code docker)
-            article_url = os.getenv("URL_ARTICLE_DOCKER") + str(article_id)
+            nginx_urls = [os.getenv("URL_ARTICLE_DOCKER_1"), os.getenv("URL_ARTICLE_DOCKER_2")]
+            nginx_urls = [url for url in nginx_urls if url]
+
+            url_valide = verification_url(nginx_urls)
+            if not url_valide:
+                logger.error(f"Erreur lors de la validation de l'URL")
+                raise ErrorExc("Erreur lors de la validation de l'URL")
+                
+            article_url = f"{url_valide}{str(article_id)}"
             response = requests.get(article_url)
             if not response.ok:
                 raise ErrorExc(f"Impossible de récupérer l'article {article['article_id']}")

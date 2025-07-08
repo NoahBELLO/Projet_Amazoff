@@ -1,4 +1,4 @@
-.sections{
+/* .sections{
     display:flex;
     flex-direction: row;
     border-width: 5px;
@@ -23,6 +23,19 @@
 }
 .section:hover{
     cursor:pointer;
+} */
+
+.user-account-layout {
+    display: flex;
+    min-height: 80vh;
 }
 
+.user-account-content {
+    flex: 1;
+    padding: 30px;
+}
 
+.vueUserAccount{
+    display: flex;
+    /* flex-direction: column; */
+}

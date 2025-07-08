@@ -1,0 +1,13 @@
+.sidebar {
+    display: flex;
+    flex-direction: column;
+    width: 220px;
+    min-width: 180px;
+    background: #f5f5f5;
+    border-right: 1px solid #ddd;
+    padding: 20px 0;
+}
+
+.sidebar button {
+    margin: 5px 0;
+}

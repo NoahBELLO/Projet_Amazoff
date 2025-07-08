@@ -2,16 +2,16 @@ import { Component } from '@angular/core';
 import { PanierService } from '../service/panier.service';
 import { Article } from '../service/article.interface';
 import { TopbarComponent } from "../topbar/topbar.component";
-import { NgClass, NgFor, NgIf } from '@angular/common';
+import { AsyncPipe, NgClass, NgFor, NgIf } from '@angular/common';
 import { ArticleService } from '../service/article.service';
 import { FormsModule } from '@angular/forms';//pour les soucis de ngmodel
 import { Router, RouterLink } from '@angular/router';
-
+import { AuthentificationService } from '../service/authentification.service';
 
 
 @Component({
   selector: 'app-panier-vue',
-  imports: [TopbarComponent, NgFor, NgIf, FormsModule, RouterLink],
+  imports: [TopbarComponent, NgFor, NgIf, FormsModule, RouterLink, AsyncPipe],
   templateUrl: './panier-vue.component.html',
   styleUrl: './panier-vue.component.css'
 })
@@ -24,7 +24,7 @@ export class PanierVueComponent {
   constructor(
     private panierService: PanierService,
     private articleService: ArticleService,
-    private router: Router
+    private router: Router, public authService: AuthentificationService
   ) { }
 
   ngOnInit() {

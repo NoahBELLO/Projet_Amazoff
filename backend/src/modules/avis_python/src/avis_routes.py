@@ -73,3 +73,8 @@ def get_avis_by_article(article_id):
         return jsonify({"error": False, "rs": avis})
     except Exception as e:
         return jsonify({"error": True, "rs": str(e)})
+    
+#@docker (code docker)
+@bp.route("/health", methods=["GET"])
+def health_check():
+    return jsonify({"error": False, "message": "Service is healthy"}), 200

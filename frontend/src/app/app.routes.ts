@@ -21,7 +21,7 @@ import { NoAuthGuard } from './guards/noauth.guard';
 export const routes: Routes = [
   // Mettre les AuthGuard et les NoAuthGuard sur les routes appropriées, exemple : canActivate: [NoAuthGuard]
   // Route par défaut, redirige vers /login
-  { path: '', redirectTo: 'login', pathMatch: 'full' },
+  { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
 
   // Page de connexion
   { path: 'login', component: LoginComponent, canActivate: [NoAuthGuard] },
@@ -29,7 +29,7 @@ export const routes: Routes = [
 
   // Exemple de page après connexion
   { path: 'dashboard', component: DashboardComponent },
-  
+
   //Articles 
   { path: 'article/:id', component: ArticleVueComponent },
   { path: 'rating', component: ArticleRatingModalComponent },
@@ -40,9 +40,9 @@ export const routes: Routes = [
 
   // { path: 'register', component: ModaleInscriptionComponent },
 
-  { path: 'user-account', component: UserAccountPageComponent, canActivate: [AuthGuard] },
+  { path: 'user-account', component: UserAccountPageComponent, canActivate: [AuthGuard], },
 
-  { path: 'user-cart', component: PanierVueComponent, canActivate: [NoAuthGuard] },
+  { path: 'user-cart', component: PanierVueComponent },
 
 
 ]  // Route pour les pages non trouvées

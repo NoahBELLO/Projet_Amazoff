@@ -1,9 +1,22 @@
-<app-topbar></app-topbar>
+<!-- <app-topbar></app-topbar>
 <div class="sections">
     <div *ngFor="let section of sections">
         <div class="section" [routerLink]="[section.label]">
             <h3>{{ section.label }}</h3>
             <label> {{ section.description }}</label>
         </div>
+    </div>
+</div> -->
+
+<app-topbar></app-topbar>
+<div class="vueUserAccount">
+    <app-side-bar [sections]="sections" [activeSection]="activeSection"
+        (setActiveSection)="setActiveSection($event)"></app-side-bar>
+
+    <div *ngIf="activeSection === 'Commandes'">
+        <app-commandes-vue></app-commandes-vue>
+    </div>
+    <div *ngIf="activeSection === 'Article'">
+        <app-article-create-page></app-article-create-page>
     </div>
 </div>

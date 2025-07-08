@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { FormulaireComponent } from '../components/formulaire/formulaire.component';
-import { NgIf } from '@angular/common';
+import { NgIf, Location } from '@angular/common';
 import { AuthentificationService } from '../service/authentification.service';
 
 @Component({
@@ -11,7 +11,7 @@ import { AuthentificationService } from '../service/authentification.service';
   styleUrl: './login.component.css'
 })
 export class LoginComponent {
-  constructor(private authService: AuthentificationService) { }
+  constructor(private authService: AuthentificationService, private location: Location) { }
   typeForm: string = "login";
 
   formulaireLogin() {
@@ -24,5 +24,9 @@ export class LoginComponent {
 
   connexionGoogle() {
     window.location.href = "http://localhost:3001/authentification/google";
+  }
+
+  retour() {
+    this.location.back();
   }
 }

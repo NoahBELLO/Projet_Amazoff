@@ -19,6 +19,15 @@ import requests
 # .objects(champs=valeur)       itère sur les pages qui on valeur comme champs
 # .save()                       perform an insert or update si ça existe
 # .delete()                     supprime 
+def verification_url(urls):
+    for url in urls:
+        try:
+            response = requests.get(f"{url}health", timeout=3)
+            if response.ok:
+                return url
+        except Exception:
+            continue
+    return ""
 
 class ArticleModel(Document): 
     id_maria = IntField(required=True)
@@ -78,7 +87,14 @@ class ArticleModel(Document):
                 #     article['avis'] = avis.get('comments', [])
                 #     article['stars'] = avis.get('stars', 0)
                 #@docker (code docker)
-                avis_url = os.getenv("URL_AVIS_DOCKER") + str(article['id'])
+                nginx_urls = [os.getenv("URL_AVIS_DOCKER_1"), os.getenv("URL_AVIS_DOCKER_2")]
+                nginx_urls = [url for url in nginx_urls if url]
+
+                url_valide = verification_url(nginx_urls)
+                if not url_valide:
+                    return False, []
+                
+                avis_url = f"{url_valide}{str(article['id'])}"
                 avisResponse = requests.get(avis_url)
                 if avisResponse.ok:
                     avis_data = avisResponse.json()
@@ -116,7 +132,14 @@ class ArticleModel(Document):
             # article["avis"] = article_avis
             # article["stars"] = moyenne
             #@docker (code docker)
-            avis_url = os.getenv("URL_AVIS_DOCKER") + str(article_id)
+            nginx_urls = [os.getenv("URL_AVIS_DOCKER_1"), os.getenv("URL_AVIS_DOCKER_2")]
+            nginx_urls = [url for url in nginx_urls if url]
+
+            url_valide = verification_url(nginx_urls)
+            if not url_valide:
+                return False, []
+                
+            avis_url = f"{url_valide}{str(article['id'])}"
             try:
                 avis_response = requests.get(avis_url)
                 if avis_response.ok:
