@@ -1,6 +1,6 @@
 from datetime import datetime, timezone
 import os
-from flask import Blueprint, jsonify, request, json
+from flask import Blueprint, jsonify, request, json, send_from_directory
 from loguru import logger
 from articles_model import ArticleModel
 from articles_model import ArticleModelMD
@@ -106,7 +106,7 @@ def get_single_article(article_id):
 #route create
 @bp.route("/create", methods=["POST"])
 def create_article():
-    datas = request.json
+    # datas = request.json #@model (code serveur)
     logger.critical('route create')
     id_mongo = ObjectId()
     id_maria = False
@@ -116,12 +116,27 @@ def create_article():
     if not (test_maria() and test_mongo(os.getenv("MONGO_URI_ARTICLES"))):
         return jsonify({"error": True, "message": "Les deux bases doivent être disponibles pour effectuer l'ajout."}), 503
 
+    #@docker (code docker)
+    datas = dict(request.form)
+    datas['id'] = str(id_mongo)
+    image = request.files.get('image')
+    
+    if image and image.filename:
+        uploads_dir = os.path.join(os.path.dirname(__file__), '..', 'assets', 'uploads')
+        os.makedirs(uploads_dir, exist_ok=True)
+        image_path = os.path.join(uploads_dir, image.filename)
+        image.save(image_path)
+        datas['image'] = image.filename
+    else:
+        datas['image'] = None
 
     # MariaDB 
     try:
-        datas_sql = datas
-        datas_sql['id'] = str(id_mongo)
-        err_maria, id_maria = ArticleModelMD().create(datas_sql)
+        #@model (code serveur)
+        # datas_sql = datas
+        # datas_sql['id'] = str(id_mongo)
+        # err_maria, id_maria = ArticleModelMD().create(datas_sql)
+        err_maria, id_maria = ArticleModelMD().create(datas) #@docker (code docker)
         if not err_maria:
             return jsonify({"error": True, "message": "Échec de l'insertion dans MariaDB."})
 
@@ -133,10 +148,13 @@ def create_article():
     # MongoDB 
     try:
         logger.critical('mongo')
-        datas_mongo = datas
-        datas_mongo['id_maria'] = id_maria
-        datas_mongo['id'] = str(id_mongo) 
-        err_mongo, id_mongo = ArticleModel().save_data(datas_mongo)
+        #model (code serveur)
+        # datas_mongo = datas
+        # datas_mongo['id_maria'] = id_maria
+        # datas_mongo['id'] = str(id_mongo) 
+        # err_mongo, id_mongo = ArticleModel().save_data(datas_mongo)
+        datas['id_maria'] = id_maria #@docker (code docker)
+        err_mongo, id_mongo = ArticleModel().save_data(datas) #@docker (code docker)
         if not err_mongo:
             ArticleModelMD().delete(id_maria)  
             return jsonify({"error": True, "message": "Échec de l'insertion dans MongoDB."})
@@ -146,7 +164,7 @@ def create_article():
         log_failure('MONGO', crud_operation, datas, e)
         ArticleModelMD().delete(id_maria)  
         return jsonify({"error": True, "message": "Échec de l'insertion dans MongoDB."})
-    
+
     return jsonify({"error": False, 'rs': {"id_mongo": id_mongo, "id_maria": id_maria}})
 
 
@@ -239,3 +257,27 @@ def delete_article(id_article):
         
 
     return jsonify({'error': False})
+
+#@docker (code docker)
+@bp.route("/health", methods=["GET"])
+def health_check():
+    return jsonify({"error": False, "message": "Service is healthy"}), 200
+
+@bp.route('/assets/uploads/<filename>')
+def uploaded_file(filename):
+    logger.critical(f"Request for file: {filename}")
+    return send_from_directory(os.path.join(os.path.dirname(__file__), '..', 'assets', 'uploads'), filename)
+
+@bp.route('/batch', methods=['POST'])
+def get_articles_batch():
+    try:
+        data = request.get_json()
+        ids = data.get('ids', [])
+        if not ids:
+            return jsonify({"error": "Aucun ID fourni"}), 400
+
+        # Récupère tous les articles d'un coup (à adapter selon ta BDD)
+        articles = ArticleModel().get_articles_by_ids(ids)
+        return jsonify({"rs": articles}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500

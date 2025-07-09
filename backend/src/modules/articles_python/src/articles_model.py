@@ -19,6 +19,15 @@ import requests
 # .objects(champs=valeur)       itère sur les pages qui on valeur comme champs
 # .save()                       perform an insert or update si ça existe
 # .delete()                     supprime 
+def verification_url(urls):
+    for url in urls:
+        try:
+            response = requests.get(f"{url}health", timeout=3)
+            if response.ok:
+                return url
+        except Exception:
+            continue
+    return ""
 
 class ArticleModel(Document): 
     id_maria = IntField(required=True)
@@ -83,16 +92,35 @@ class ArticleModel(Document):
                 #     article['avis'] = avis.get('comments', [])
                 #     article['stars'] = avis.get('stars', 0)
                 #@docker (code docker)
-                avis_url = os.getenv("URL_AVIS_DOCKER") + str(article['id'])
+                nginx_urls = [os.getenv("URL_AVIS_DOCKER_1"), os.getenv("URL_AVIS_DOCKER_2")]
+                nginx_urls = [url for url in nginx_urls if url]
+
+                url_valide = verification_url(nginx_urls)
+                if not url_valide:
+                    return False, []
+                
+                avis_url = f"{url_valide}{str(article['id'])}"
                 avisResponse = requests.get(avis_url)
                 if avisResponse.ok:
                     avis_data = avisResponse.json()
-                    article['avis'] = avis_data.get('rs', [])
-                    article['stars'] = avis_data.get('stars', 0)
+                    article_avis = avis_data.get('rs', [])
+                    if article_avis:
+                        moyenne = sum(a.get("stars", 0.0) for a in article_avis) / len(article_avis)
+                    else:
+                        moyenne = 0.0
+                    article["avis"] = article_avis
+                    article["stars"] = moyenne
+                else:
+                    article["avis"] = []
+                    article["stars"] = 0.0
             except:
+                logger.warning(f"Erreur lors de l'appel au microservice avis")
+                article["avis"] = []
+                article["stars"] = 0.0
                 pass
             articles_dict.append(article)
         if articles_dict:
+            logger.critical(articles_dict)
             return True, articles_dict
         return False, []
 
@@ -121,7 +149,14 @@ class ArticleModel(Document):
             # article["avis"] = article_avis
             # article["stars"] = moyenne
             #@docker (code docker)
-            avis_url = os.getenv("URL_AVIS_DOCKER") + str(article_id)
+            nginx_urls = [os.getenv("URL_AVIS_DOCKER_1"), os.getenv("URL_AVIS_DOCKER_2")]
+            nginx_urls = [url for url in nginx_urls if url]
+
+            url_valide = verification_url(nginx_urls)
+            if not url_valide:
+                return False, []
+                
+            avis_url = f"{url_valide}{str(article['id'])}"
             try:
                 avis_response = requests.get(avis_url)
                 if avis_response.ok:
@@ -217,7 +252,17 @@ class ArticleModel(Document):
 
         return True, results or []
 
-
+    def get_articles_by_ids(ids):
+        articles = {}
+        # On suppose que les IDs sont des chaînes de caractères
+        for article_id in ids:
+            try:
+                ok, article = ArticleModel().get_article(article_id)
+                if ok and article:
+                    articles[str(article_id)] = article
+            except Exception:
+                continue
+        return articles
        
     def load_cached_articles(self):
         chemin = os.path.join(os.path.dirname(__file__), 'cache', 'cached_articles.json')

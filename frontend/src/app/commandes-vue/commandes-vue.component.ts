@@ -9,9 +9,9 @@ import { CommandeBlocComponent } from '../commande-bloc/commande-bloc.component'
 @Component({
   selector: 'app-commandes-vue',
   imports: [NgFor,
-    TopbarComponent,
+    // TopbarComponent,
     CommandeBlocComponent,
-    ArticleRatingModalComponent
+    // ArticleRatingModalComponent
   ],
   templateUrl: './commandes-vue.component.html',
   styleUrl: './commandes-vue.component.css'

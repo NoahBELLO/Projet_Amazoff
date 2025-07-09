@@ -19,7 +19,7 @@ services:
       - microservice_paniers
       - microservice_magasin
       - microservice_notifications
-      # - microservice_payment_mode
+      - microservice_payment_mode
 
   nginx-container-2:
     container_name: nginx-container-2
@@ -41,7 +41,7 @@ services:
       - microservice_paniers
       - microservice_magasin
       - microservice_notifications
-      # - microservice_payment_mode
+      - microservice_payment_mode
 
   frontend:
     container_name: frontend
@@ -220,25 +220,25 @@ services:
       timeout: 3s
       retries: 3
 
-  # microservice_payment_mode:
-  #   # container_name: microservice_payment_mode
-  #   build:
-  #     context: ../backend/src/modules/payment_mode_node
-  #   restart: always
-  #   volumes:
-  #     - ../backend/src/modules/payment_mode_node:/usr/src/app
-  #   # ports:
-  #   #   - 7003:7003
-  #   networks:
-  #     - reseau_projet
-  #   command: ["sh", "./install.sh"]
-  #   deploy:
-  #     replicas: 2
-  #   healthcheck:
-  #     test: ["CMD", "wget", "-qO-", "http://localhost:7003/paymentMode/health"]
-  #     interval: 10s
-  #     timeout: 3s
-  #     retries: 3
+  microservice_payment_mode:
+    # container_name: microservice_payment_mode
+    build:
+      context: ../backend/src/modules/payment_mode_node
+    restart: always
+    volumes:
+      - ../backend/src/modules/payment_mode_node:/usr/src/app
+    # ports:
+    #   - 7003:7003
+    networks:
+      - reseau_projet
+    command: ["sh", "./install.sh"]
+    deploy:
+      replicas: 2
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:7003/paymentMode/health"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
 
 networks:
   reseau_projet:

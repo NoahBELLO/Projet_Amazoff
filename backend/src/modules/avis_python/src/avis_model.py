@@ -8,6 +8,15 @@ from loguru import logger
 import requests
 import os
 
+def verification_url(urls):
+    for url in urls:
+        try:
+            response = requests.get(f"{url}health", timeout=3)
+            if response.ok:
+                return url
+        except Exception:
+            continue
+    return ""
 
 class AvisModel(Document): 
     id_maria = IntField(required=True)
@@ -65,7 +74,15 @@ class AvisModel(Document):
             #     user = user.to_dict()
             #     logger.debug(user)
             #@docker (code docker)
-            user_url = os.getenv("URL_USER_DOCKER") + f"avis_filtrer/id/{_user_id}"
+            nginx_urls = [os.getenv("URL_USER_DOCKER_1"), os.getenv("URL_USER_DOCKER_2")]
+            nginx_urls = [url for url in nginx_urls if url]
+
+            url_valide = verification_url(nginx_urls)
+            if not url_valide:
+                logger.error(f"Erreur lors de la validation de l'URL")
+                raise ErrorExc("Erreur lors de la validation de l'URL")
+            
+            user_url = f"{url_valide}avis_filtrer/id/{_user_id}"
             user_response = requests.get(user_url)
             if user_response.ok:
                 user = user_response.json()
@@ -132,7 +149,15 @@ class AvisModelMD():
                 # else:
                 #     user = user.to_dict()
                 #@docker (code docker)
-                user_url = os.getenv("URL_USER_DOCKER") + f"avis_filtrer/id/{_user_id}"
+                nginx_urls = [os.getenv("URL_USER_DOCKER_1"), os.getenv("URL_USER_DOCKER_2")]
+                nginx_urls = [url for url in nginx_urls if url]
+
+                url_valide = verification_url(nginx_urls)
+                if not url_valide:
+                    logger.error(f"Erreur lors de la validation de l'URL")
+                    raise ErrorExc("Erreur lors de la validation de l'URL")
+                
+                user_url = f"{url_valide}avis_filtrer/id/{_user_id}"
                 user_response = requests.get(user_url)
                 if user_response.ok:
                     user = user_response.json()

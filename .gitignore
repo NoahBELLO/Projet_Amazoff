@@ -1,4 +1,10 @@
 __pycache__
+*__pycache__
+**/__pycache__
+**/assets
+cache
+*cache
+**/cache
 venv
 .env
 *.env

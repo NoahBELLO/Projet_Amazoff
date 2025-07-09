@@ -3,26 +3,40 @@
         <img id="logo" src="assets/LogoAmazoff.png" alt="Logo du site Amazoff" (click)="goToDashboard()"
             style="cursor: pointer;">
         <div class="welcome">
-            <p>Bonjour {{fname}}</p>
+            <p *ngIf="authService.loggedIn$ | async">Bonjour {{fname}}</p>
+            <p *ngIf="!(authService.loggedIn$ | async)">Bonjour</p>
             <p style="font-weight: bold; ">Des offres exclusives vous attendent !</p>
         </div>
     </div>
     <div>
         <div class="menu">
-            <div class="panier-icon-container">
+            <div class="logout-icon-container">
+                <i class="fa fa-right-from-bracket large-icon" *ngIf="authService.loggedIn$ | async"
+                    (click)="logout()"></i>
+            </div>
+
+            <div class="panier-icon-container" (mouseenter)="onCartMouseEnter()" (mouseleave)="onCartMouseLeave()"
+                style="position:relative;">
                 <i class="fa fa-cart-shopping large-icon" [routerLink]="['/user-cart']"></i>
-                <!-- permet de s'abonner à l'observable si c'est pas déjà fait -->
                 <ng-container *ngIf="(nombreArticles$ | async) as count">
                     <span *ngIf="count > 0" class="panier-badge">{{ count > 9 ? '9+' : count }}</span>
                 </ng-container>
+                <app-panier-preview *ngIf="showCartPreview" [articles]="cartArticles"></app-panier-preview>
             </div>
 
+            <div class="notification-icon-container" (mouseenter)="onPopupMouseEnter()" (mouseleave)="onPopupMouseLeave()"
+                style="position:relative;">
+                <i class="fa fa-bell large-icon"></i>
+                <ng-container *ngIf="(nombreNotifications$ | async) as count">
+                    <span *ngIf="count > 0" class="notification-badge">{{ count > 9 ? '9+' : count }}</span>
+                </ng-container>
+                <app-notification-preview *ngIf="showNotificationPreview" [notifications]="notificationUser"></app-notification-preview>
+            </div>
 
-            <i class="fa fa-bars large-icon"></i>
-            <i class="fa fa-bell large-icon"></i>
-            <div class="user-info" [routerLink]="['/user-account']">
-                <i class="fa fa-user-circle large-icon"></i>
-                <label>{{fname}} {{name}}</label>
+            <!-- <i class="fa fa-bars large-icon"></i> -->
+            <div class="user-info">
+                <i class="fa fa-user-circle large-icon" (click)="userAccount()"></i>
+                <label *ngIf="authService.loggedIn$ | async" (click)="userAccount()">{{fname}} {{name}}</label>
             </div>
             <div class="nav-search">
                 <input [(ngModel)]="searchQuery" id="recherche" type="text" placeholder="Rechercher..."

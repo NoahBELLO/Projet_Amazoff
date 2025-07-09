@@ -1,19 +1,21 @@
 <div class="liste_articles">
-<div *ngFor="let article of articles" class="article_component" [routerLink]="['/article', article.id]">
-    <div class="header_article_component">
-        <label class="prix">{{ article.prix }}€</label>
-        <!-- <button class="options-button">
+    <div *ngFor="let article of articles" class="article_component" [routerLink]="['/article', article.id]">
+        <div class="header_article_component">
+            <label class="prix">{{ article.prix }}€</label>
+            <!-- <button class="options-button">
             <i class="fas fa-ellipsis-v"></i>
         </button> -->
+        </div>
+        <div class="picture">
+            <img class="img"
+                [src]="article.image ? 'http://localhost:3001/articles/assets/uploads/' + article.image : 'assets/default.png'"
+                alt="{{ article.name }}">
+        </div>
+        <div class="footer_article_component">
+            <label class="title">{{ article.name }}</label>
+            <div class="stars" *ngIf="article.stars && article.stars > 0">
+                <i *ngFor="let star of articleService.starsArray(article.stars)" [ngClass]="star"></i>
+            </div>
+        </div>
     </div>
-    <div class="picture">
-        <img class="img" src="assets/{{ article.image }}" alt="{{ article.name }}">
-    </div>
-    <div class="footer_article_component">
-        <label class="title">{{ article.name }}</label>
-        <div class="stars">
-            <i *ngFor="let star of articleService.starsArray(article.stars)" [ngClass]="star"></i>
-          </div>
-    </div>
-</div>
 </div>

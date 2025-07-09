@@ -1,0 +1,6 @@
+<div class="sidebar">
+    <button *ngFor="let section of sections" (click)="selectSection(section.key)"
+        [class.active]="section.key === activeSection">
+        {{ section.label }}
+    </button>
+</div>
