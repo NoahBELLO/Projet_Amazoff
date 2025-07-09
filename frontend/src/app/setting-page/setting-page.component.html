@@ -1,0 +1,20 @@
+<div class="settings-container">
+    <h2>Paramètres du compte</h2>
+    <form [formGroup]="userForm" (ngSubmit)="onSave()">
+        <label>Nom</label>
+        <input formControlName="name" type="text">
+        <label>Prénom</label>
+        <input formControlName="fname" type="text">
+        <label>Adresse</label>
+        <input formControlName="adress" type="text">
+        <label>Login</label>
+        <input formControlName="login" type="text">
+        <label>Email</label>
+        <input formControlName="email" type="email">
+        <label>Mot de passe</label>
+        <input formControlName="password" type="password">
+        <button type="submit">Enregistrer</button>
+    </form>
+    <hr>
+    <button class="delete-btn" (click)="onDeleteRequest()">Demander la suppression du compte</button>
+</div>

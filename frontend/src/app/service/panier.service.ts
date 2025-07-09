@@ -53,7 +53,18 @@ export class PanierService {
     );
   }
 
-
+  getPanierUserEtCache() {
+    this.getPanierUser().subscribe({
+      next: (response) => {
+        if (!response.error && response.rs?.articles) {
+          this.panierUser.next(response.rs.articles);
+        } else {
+          this.panierUser.next([]);
+        }
+      },
+      error: () => this.panierUser.next([])
+    });
+  }
 
 
   //fonction de suppression d'un article du panier

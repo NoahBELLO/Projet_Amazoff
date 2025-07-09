@@ -1,5 +1,6 @@
 export interface Article {
   id: string;
+  id_magasin: string;
   name: string;
   image?: string;
   prix: number;
@@ -32,6 +33,7 @@ export interface RatingData {
 }
 
 export interface Notifications {
+  _id: string;
   userId: string;
   message?: string;
   title?: string;

@@ -50,10 +50,12 @@ class PanierModel(Document):
     
     def get_cart(self, user_id):
         try:
+            logger.info(f"Récupération du panier pour l'utilisateur {user_id}")
             panier_bdd = PanierModel.objects(user_id=str(user_id)).first()
             if not panier_bdd:
                 raise ErrorExc("Aucun panier trouvé pour cet utilisateur.")
-
+            logger.info(f"Panier trouvé : {panier_bdd.to_dict()}")
+            #on récupère les articles du panier
             panier_user = []
             for article in panier_bdd.articles:
                 #@model (code serveur)
@@ -68,14 +70,15 @@ class PanierModel(Document):
                 #@docker (code docker)
                 nginx_urls = [os.getenv("URL_ARTICLE_DOCKER_1"), os.getenv("URL_ARTICLE_DOCKER_2")]
                 nginx_urls = [url for url in nginx_urls if url]
-
+                logger.info(f"Vérification des URLs : {nginx_urls}")
                 url_valide = verification_url(nginx_urls)
                 if not url_valide:
                     logger.error(f"Erreur lors de la validation de l'URL")
                     raise ErrorExc("Erreur lors de la validation de l'URL")
-                
+                logger.info(f"URL valide trouvée : {url_valide}")
                 article_url = f"{url_valide}{str(article['article_id'])}"
                 article_response = requests.get(article_url)
+                logger.info(f"Requête GET pour l'article {article['article_id']} : {article_response.status_code}")
                 if article_response.ok:
                     article_magasin_dict = article_response.json().get('rs', {})
                     #on ajoute le sous total par rapport au prix de la bdd (last updated price)

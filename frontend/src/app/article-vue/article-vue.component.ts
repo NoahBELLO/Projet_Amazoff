@@ -7,6 +7,7 @@ import { PanierService } from '../service/panier.service';
 import { FormsModule } from '@angular/forms'; //pour les soucis de ngmodel
 import { ArticleRatingModalComponent } from '../article-rating-modal/article-rating-modal.component';
 import { RatingData } from '../service/article.interface';
+import { AuthentificationService } from '../service/authentification.service';
 
 @Component({
   selector: 'app-article-vue',
@@ -34,7 +35,7 @@ export class ArticleVueComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     protected articleService: ArticleService, //pour utiliser ses fonctions
-    private panierService: PanierService,
+    private panierService: PanierService, public authService: AuthentificationService,
     private router: Router) { }
 
 

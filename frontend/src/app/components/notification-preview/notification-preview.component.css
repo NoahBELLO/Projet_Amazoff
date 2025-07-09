@@ -1,19 +1,122 @@
 .notif-preview {
     position: absolute;
-    top: 60px;
+    top: 50px;
     right: 0;
-    width: 320px;
-    background: #fff;
-    border: 1px solid #ddd;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-    border-radius: 8px;
-    z-index: 100;
-    padding: 15px;
+    z-index: 200;
+    padding: 16px;
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    font-family: 'Segoe UI', sans-serif;
+    width: 350px;
+    max-height: 400px;
+    overflow-y: auto;
+    text-align: center;
+}
+
+.notif-empty {
+    text-align: center;
+    color: #888;
+    font-style: italic;
+    padding: 20px 0;
 }
 
 .notif-preview-item {
     display: flex;
     align-items: center;
-    gap: 10px;
-    margin-bottom: 8px;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.notif-preview-item:last-child {
+    border-bottom: none;
+}
+
+.marquee-container {
+    flex: 1;
+    overflow: hidden;
+    white-space: nowrap;
+    position: relative;
+}
+
+.marquee-text {
+    display: inline-block;
+    animation: scroll-left 8s linear infinite;
+    font-weight: 500;
+    color: #333;
+}
+
+@keyframes scroll-left {
+    0% {
+        transform: translateX(100%);
+    }
+
+    100% {
+        transform: translateX(-100%);
+    }
+}
+
+.notif-date {
+    font-size: 0.85rem;
+    color: #888;
+    white-space: nowrap;
+}
+
+.notif-close-btn {
+    background: #00bfff;
+    border: none;
+    color: white;
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s ease;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.notif-close-btn:hover {
+    background: #009acd;
+}
+
+.marquee-container {
+    width: 200px;
+    overflow: hidden;
+    white-space: nowrap;
+    position: relative;
+}
+
+.marquee-text {
+    display: inline-block;
+    animation: scroll-left 10s linear infinite;
+}
+
+@keyframes scroll-left {
+    0% {
+        transform: translateX(100%);
+    }
+
+    100% {
+        transform: translateX(-100%);
+    }
+}
+
+.supprimer-toutes-notifications {
+    margin-top: 16px;
+    color: #00bfff;
+    font-weight: bold;
+    text-decoration: none;
+    transition: color 0.2s;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: inherit;
+    padding: 0;
+}
+
+.supprimer-toutes-notifications:hover {
+    color: #009acd;
 }

@@ -15,6 +15,8 @@ router.get('/filtrer/id/:id', userController.getUserByIdFiltrer);
 router.get('/avis_filtrer/id/:id', userController.getUserByIdFiltrerAvisPython);
 router.get('/commandes_filtrer/id/:id', userController.getUserByIdFiltrerCommandesPython);
 router.get('/info/:id', userController.getUserInfo);
+router.get('/infos/:id', userController.getUserInfos);
+router.get('/middleware/:id', userController.getUserByIdMiddleware);
 
 // POST
 router.post('/', userController.createUser);
@@ -24,6 +26,10 @@ router.put('/', userController.updateUserRegister);
 router.put('/id/:id', userController.updateUserById);
 router.put('/email/:email', userController.updateUserByEmail);
 router.put('/login/:login', userController.updateUserByLogin);
+
+// PATCH
+router.patch('/:id', userController.patchUserById);
+router.patch('/role/:id', userController.patchUserRole);
 
 //DELETE
 router.delete('/id/:id', userController.deleteUserById);

@@ -1,4 +1,4 @@
-.présentation_article {
+/* .présentation_article {
     display: flex;
     flex-direction: row;
     margin-top: 20px;
@@ -7,7 +7,6 @@
     justify-content: space-between;
 }
 
-/* CSS pour les images */
 img {
     height: 500px;
 }
@@ -51,7 +50,6 @@ label {
     margin-bottom: 10px;
 }
 
-/* CSS pour les achats */
 .disponibilite {
     display: flex;
     align-items: center;
@@ -72,7 +70,6 @@ label {
     width: 300px;
     min-width: 200px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    /* Ombre pour plus de profondeur */
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -134,6 +131,7 @@ button {
     display: flex;
     flex-direction: column;
     align-items: center;
+    text-align: center;
 }
 
 #ajouter {
@@ -180,7 +178,6 @@ button {
     color: #000;
 }
 
-/* CSS pour les avis */
 .bloc_commentaires {
     margin-top: 20px;
     width: 100%;
@@ -203,4 +200,237 @@ button {
 .bloc_commentaires p {
     margin: 10px 0;
     line-height: 1.6;
+}
+
+.avertissement{
+    color: red;
+    font-weight: bold;
+    margin-top: 10px;
+} */
+
+/* ======== CONTAINER PRINCIPAL ======== */
+.présentation_article {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 30px 20px;
+    font-family: Arial, sans-serif;
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    max-width: 900px;
+    margin: 20px auto;
+}
+
+/* ======== IMAGE ARTICLE ======== */
+.article-image-container {
+    position: relative;
+    width: 100%;
+    max-width: 400px;
+    margin-bottom: 20px;
+}
+
+.article-image {
+    width: 100%;
+    border-radius: 12px;
+    object-fit: cover;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.discount-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background-color: #d9534f;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+/* ======== INFOS ARTICLE ======== */
+.infos {
+    text-align: center;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.nom_article {
+    font-size: 1.8rem;
+    color: #0f4143;
+    font-weight: bold;
+    margin-bottom: 10px;
+    display: block;
+}
+
+.stars {
+    color: #fdbd5a;
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+}
+
+hr {
+    border: 0;
+    border-top: 1px solid #ccc;
+    margin: 10px 0;
+}
+
+.tarification label {
+    display: block;
+    margin: 8px 0;
+    font-size: 1rem;
+    color: #333;
+}
+
+/* ======== TARIFICATION ======== */
+.achat {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.prix-initial {
+    text-decoration: line-through;
+    color: #888;
+    margin-right: 10px;
+    font-size: 1rem;
+}
+
+.prix-reduit {
+    font-size: 1.4rem;
+    font-weight: bold;
+    color: #0f4143;
+}
+
+/* ======== DISPONIBILITÉ / QUANTITÉ ======== */
+.disponibilite {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    color: #28a745;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+.disponible-icon {
+    color: #28a745;
+}
+
+.indisponible-icon {
+    color: red;
+}
+
+.quantite-select {
+    margin: 15px 0;
+}
+
+.quantite-dropdown {
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+    margin-top: 5px;
+}
+
+/* ======== BOUTON PANIER ======== */
+#bouton {
+    margin-top: 10px;
+}
+
+#ajouter {
+    background-color: #fdbd5a;
+    color: #000;
+    border: none;
+    border-radius: 50px;
+    padding: 10px 20px;
+    font-weight: bold;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.2s;
+}
+
+#ajouter:hover {
+    background-color: #fbc048;
+    transform: translateY(-2px);
+}
+
+.avertissement {
+    color: #d9534f;
+    font-size: 0.95rem;
+    margin-bottom: 8px;
+}
+
+/* ======== BOUTON ÉVALUATION ======== */
+.rate {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.boutton_rate {
+    background-color: #0f4143;
+    color: #fff;
+    border: none;
+    border-radius: 50px;
+    padding: 10px 20px;
+    font-weight: bold;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.2s;
+}
+
+.boutton_rate:hover {
+    background-color: #0d3638;
+    transform: translateY(-2px);
+}
+
+/* ======== COMMENTAIRES ======== */
+.bloc_commentaires {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 20px;
+    border-top: 1px solid #ddd;
+}
+
+.bloc_commentaires .stars {
+    color: #fdbd5a;
+    font-size: 1rem;
+    margin-bottom: 5px;
+}
+
+.username {
+    font-size: 0.85rem;
+    color: #555;
+    margin-left: 10px;
+}
+
+.bloc_commentaires p {
+    margin: 5px 0 20px;
+    color: #333;
+}
+
+/* ======== RESPONSIVE ======== */
+@media (max-width: 768px) {
+    .article-image-container {
+        max-width: 100%;
+    }
+
+    .nom_article {
+        font-size: 1.5rem;
+    }
+
+    .prix-reduit {
+        font-size: 1.2rem;
+    }
+
+    .tarification label {
+        font-size: 0.95rem;
+    }
+
+    .boutton_rate,
+    #ajouter {
+        width: 100%;
+    }
 }

@@ -1,9 +1,32 @@
 <div class="cart-preview">
   <div *ngIf="articles.length === 0">Votre panier est vide.</div>
+
   <div *ngFor="let article of articles" class="cart-preview-item">
     <img [src]="article.image ? 'http://localhost:3001/articles/assets/uploads/' + article.image : 'assets/default.png'"
       width="40">
-    <span>{{ article.name }} x {{ article.quantite_utilisateur }}</span>
+
+    <div class="marquee-container">
+      <span [ngClass]="{'marquee-text': article.name.length > 30}">{{ article.name }}</span>
+    </div>
+
+    <div class="cart-preview-item-actions">
+      <button *ngIf="article.quantite_utilisateur && article.quantite_utilisateur === 1"
+        (click)="supprimerArticle(article)">
+        <i class="fas fa-trash"></i>
+      </button>
+
+      <button *ngIf="article.quantite_utilisateur && article.quantite_utilisateur > 1"
+        (click)="modifierQuantite(article, -1)">
+        <i class="fas fa-minus"></i>
+      </button>
+
+      <span class="quantite">{{ article.quantite_utilisateur }}</span>
+
+      <button (click)="modifierQuantite(article, 1)">
+        <i class="fas fa-plus"></i>
+      </button>
+    </div>
   </div>
+
   <a [routerLink]="['/user-cart']" class="voir-panier">Voir le panier</a>
 </div>

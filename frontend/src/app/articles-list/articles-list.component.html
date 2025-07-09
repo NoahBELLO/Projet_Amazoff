@@ -1,0 +1,56 @@
+<h2>Liste des articles</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Image</th>
+            <th>Nom</th>
+            <th>Prix (€)</th>
+            <th>Description</th>
+            <th>Réduction</th>
+            <th>Stock</th>
+            <th *ngIf="canEditOrDelete()">Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let article of articles">
+            <td><img class="img"
+                    [src]="article.image ? 'http://localhost:3001/articles/assets/uploads/' + article.image : 'assets/default.png'"
+                    alt="{{ article.name }}"></td>
+            <td>{{ article.name }}</td>
+            <td>{{ article.prix }}</td>
+            <td>{{ article.description }}</td>
+            <td>{{ article.reduction }}</td>
+            <td>{{ article.stock }}</td>
+            <td class="actions" *ngIf="canEditOrDelete()">
+                <div class="btn-group">
+                    <!-- <button class="btn btn-primary" (click)="editArticle(article)">Modifier</button> -->
+                    <button class="btn btn-danger" (click)="deleteArticle(article)">Supprimer</button>
+                </div>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<!-- <div class="popup" *ngIf="popupVisible">
+    <div class="popup-content">
+        <h3>Modifier l'article</h3>
+        <form [formGroup]="articleForm" (ngSubmit)="saveEdit()">
+            <input type="hidden" formControlName="id">
+            <input type="hidden" formControlName="id_magasin">
+            <label for="name">Nom</label>
+            <input id="name" formControlName="name" type="text">
+            <label for="description">Description</label>
+            <input id="description" formControlName="description" type="text">
+            <label for="price">Prix (€)</label>
+            <input id="price" formControlName="price" type="number">
+            <label for="stock">Stock</label>
+            <input id="stock" formControlName="stock" type="number">
+            <label for="reduction">Réduction</label>
+            <input id="reduction" formControlName="reduction" type="number">
+            <label for="image">Image</label>
+            <input id="image" formControlName="image" type="file" (change)="onFileChange($event)">
+            <button type="submit" class="btn btn-success">Enregistrer</button>
+            <button type="button" class="btn btn-secondary" (click)="closePopup()">Annuler</button>
+        </form>
+    </div>
+</div> -->

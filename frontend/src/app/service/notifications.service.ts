@@ -24,15 +24,15 @@ export class NotificationsService {
         return response.userId;
       }),
       switchMap((userId: string) => {
-        const url = `${this.baseUrl}/${userId}`;
+        const url = `${this.baseUrl}my-notifications?userId=${userId}`;
         return this.http.get(url).pipe(
           tap((response: any) => {
-            if (response && response.rs && response.rs.articles) {
-              this.notificationsUser.next(response.rs.articles);
-              const count = response.rs.articles.length; //compteur articles
+            if (response) {
+              this.notificationsUser.next(response);
+              const count = response.length;
               this.nombreNotifications.next(count);
             } else {
-              console.log("Aucun article trouvé dans la réponse");
+              console.log("Aucune notification trouvé dans la réponse");
               this.notificationsUser.next([]);
               this.nombreNotifications.next(0);
             }
@@ -47,6 +47,42 @@ export class NotificationsService {
       })
     );
   }
+
+  deleteNotification(id: string): Observable<any> {
+    return this.auth.checkCookie().pipe(
+      switchMap((response) => {
+        return this.http.delete(`${this.baseUrl}${id}`).pipe(
+          tap(() => {
+            this.notificationsUser.next([]);
+            this.nombreNotifications.next(0);
+          }),
+          catchError(error => {
+            console.error('Erreur lors de la suppression de toutes les notifications:', error);
+            return throwError(() => error);
+          })
+        );
+      })
+    );
+  }
+
+  deleteAllNotifications(): Observable<any> {
+    return this.auth.checkCookie().pipe(
+      switchMap((response) => {
+        const userId = response.userId;
+        return this.http.delete(`${this.baseUrl}delete-by-user-ids/${userId}`).pipe(
+          tap(() => {
+            this.notificationsUser.next([]);
+            this.nombreNotifications.next(0);
+          }),
+          catchError(error => {
+            console.error('Erreur lors de la suppression de toutes les notifications:', error);
+            return throwError(() => error);
+          })
+        );
+      })
+    );
+  }
+
   getNombreNotifications() {
     return this.nombreNotifications$;
   }

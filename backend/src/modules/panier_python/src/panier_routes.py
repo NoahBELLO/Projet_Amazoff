@@ -22,10 +22,12 @@ def log_failure(target: str, crud: str, datas: dict, error: Exception):
 @bp.route("/<user_id>", methods=["GET"])
 def get_panier(user_id):
     if test_mongo(os.getenv("MONGO_URI_PANIERS")):
-        try:                
+        logger.critical('test mongo ok')
+        try:         
+            logger.critical('test mongo ok 2')       
             db = PanierModel()
             err_mongo, rs_mongo = db.get_cart(user_id) 
-            logger.critical(rs_mongo)
+            logger.critical(f'rs mongo {rs_mongo}')
             if err_mongo:
                 return jsonify({"error": not err_mongo, "rs": rs_mongo})
         except ErrorExc as e:

@@ -1,0 +1,203 @@
+/* ======== TABLE DES ARTICLES ======== */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    font-family: Arial, sans-serif;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    border-radius: 12px;
+}
+
+thead {
+    background-color: #0f4143;
+    color: #fff;
+}
+
+thead th {
+    padding: 15px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 1rem;
+}
+
+tbody tr {
+    background-color: #fff;
+    transition: background 0.3s;
+}
+
+tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+tbody tr:hover {
+    background-color: #f1f1f1;
+}
+
+td {
+    padding: 15px;
+    vertical-align: middle;
+    font-size: 0.95rem;
+    color: #333;
+    border-bottom: 1px solid #ddd;
+    text-align: center;
+}
+
+/* ======== IMAGE ARTICLE ======== */
+td .img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* ======== TITRE H2 ======== */
+h2 {
+    font-size: 1.8rem;
+    color: #0f4143;
+    text-align: center;
+    margin-top: 30px;
+    margin-bottom: 20px;
+}
+
+/* ======== BOUTONS D’ACTIONS (EDIT / DELETE) ======== */
+.btn {
+    padding: 5px 10px;
+    border: none;
+    border-radius: 50px;
+    font-weight: bold;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.2s;
+    margin-right: 10px;
+}
+
+/* ======= MODIFIER ======= */
+.btn-primary {
+    background-color: #fdbd5a;
+    color: #000;
+}
+
+.btn-primary:hover {
+    background-color: #fbc048;
+    transform: translateY(-2px);
+}
+
+/* ======= SUPPRIMER ======= */
+.btn-danger {
+    background-color: #d9534f;
+    color: #fff;
+}
+
+.btn-danger:hover {
+    background-color: #c9302c;
+    transform: translateY(-2px);
+}
+
+.btn-group {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+/* ======== POPUP OVERLAY ======== */
+.popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(15, 65, 67, 0.5);
+    /* semi-transparent */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+/* ======== CONTENU DE LA POPUP ======== */
+.popup-content {
+    background-color: #fff;
+    padding: 30px 40px;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+    width: 100%;
+    max-width: 500px;
+    font-family: Arial, sans-serif;
+}
+
+.popup-content h3 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    color: #0f4143;
+    text-align: center;
+    font-size: 1.5rem;
+}
+
+/* ======== CHAMPS FORMULAIRE ======== */
+.popup-content form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.popup-content label {
+    font-weight: bold;
+    color: #0f4143;
+    font-size: 0.95rem;
+}
+
+.popup-content input[type="text"],
+.popup-content input[type="number"],
+.popup-content input[type="file"] {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.3s;
+}
+
+.popup-content input:focus {
+    border-color: #0f4143;
+    outline: none;
+}
+
+/* ======== BOUTONS FORMULAIRE ======== */
+.popup-content .btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 50px;
+    font-weight: bold;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.2s;
+}
+
+/* ======== SUCCESS / SECONDARY ======== */
+.btn-success {
+    background-color: #0f4143;
+    color: #fff;
+}
+
+.btn-success:hover {
+    background-color: #0d3638;
+    transform: translateY(-2px);
+}
+
+.btn-secondary {
+    background-color: #ddd;
+    color: #333;
+}
+
+.btn-secondary:hover {
+    background-color: #ccc;
+    transform: translateY(-2px);
+}
+
+/* ======== RESPONSIVE ======== */
+@media (max-width: 480px) {
+    .popup-content {
+        padding: 20px;
+    }
+}

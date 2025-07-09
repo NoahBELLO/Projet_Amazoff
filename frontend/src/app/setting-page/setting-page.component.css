@@ -1,0 +1,94 @@
+/* ======== PARAMÈTRES COMPTE ======== */
+.settings-container {
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto 40px auto;
+    padding: 25px 20px;
+    background-color: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    font-family: Arial, sans-serif;
+}
+
+.settings-container h2 {
+    text-align: center;
+    font-size: 1.5rem;
+    color: #0f4143;
+    margin-bottom: 25px;
+}
+
+.settings-container form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.settings-container label {
+    font-weight: bold;
+    color: #3e3e3e;
+    margin-bottom: 4px;
+    font-size: 0.95rem;
+}
+
+.settings-container input {
+    padding: 10px 14px;
+    border: 1px solid #ccc;
+    border-radius: 50px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+}
+
+.settings-container input:focus {
+    border-color: #fdbd5a;
+    outline: none;
+}
+
+.settings-container button[type="submit"] {
+    margin-top: 10px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 50px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 1rem;
+    background: #fdbd5a;
+    color: #000;
+    transition: background 0.3s, transform 0.2s, box-shadow 0.3s;
+}
+
+.settings-container button[type="submit"]:hover {
+    background: #fbc048;
+    transform: translateY(-2px);
+}
+
+hr {
+    margin: 30px 0;
+    border: none;
+    height: 1px;
+    background-color: #ddd;
+}
+
+.delete-btn {
+    width: 100%;
+    padding: 10px 20px;
+    background-color: #dc3545;
+    color: white;
+    font-weight: bold;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.delete-btn:hover {
+    background-color: #c82333;
+    transform: translateY(-2px);
+}
+
+/* ======== RESPONSIVE SETTINGS ======== */
+@media (max-width: 480px) {
+    .settings-container {
+        padding: 20px 15px;
+    }
+}

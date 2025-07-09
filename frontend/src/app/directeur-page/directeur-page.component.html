@@ -1,12 +1,12 @@
 <div class="directeur-container">
-  <h2>Dashboard Directeur</h2>
+  <h2>Mon magasin</h2><!-- Dashboard Directeur -->
 
-  <input
+  <!-- <input
     type="text"
     [(ngModel)]="searchTerm"
     placeholder="Rechercher un article..."
     class="directeur-search-bar"
-  />
+  /> -->
 
   <table class="directeur-table">
     <thead>
@@ -26,7 +26,7 @@
         <td>{{ magasin.capacite_stock }} articles</td>
         <td>
           <button class="btn-view" (click)="voirDetails(magasin)">Voir</button>
-          <button class="btn-manage" (click)="gererStock(magasin)">Gérer</button>
+          <!-- <button class="btn-manage" (click)="editerMagasin(magasin)">Gérer</button> -->
         </td>
       </tr>
       <tr *ngIf="(magasins | filterMagasins:searchTerm).length === 0">
@@ -34,4 +34,33 @@
       </tr>
     </tbody>
   </table>
+</div>
+
+<div class="popup-overlay" *ngIf="popupType && selectedMagasin">
+  <div class="popup-content">
+    <button class="close-btn" (click)="fermerPopup()">X</button>
+    <ng-container *ngIf="popupType === 'voir'">
+      <h3>Détails du magasin</h3>
+      <p><strong>Nom :</strong> {{ selectedMagasin.nom }}</p>
+      <p><strong>Adresse :</strong> {{ selectedMagasin.adresse }}</p>
+      <p><strong>Ville :</strong> {{ selectedMagasin.ville }}</p>
+      <p><strong>Email :</strong> {{ selectedMagasin.email }}</p>
+      <p><strong>Téléphone :</strong> {{ selectedMagasin.telephone }}</p>
+      <p><strong>Stockage maximum :</strong> {{ selectedMagasin.capacite_stock }} articles</p>
+      <p><strong>Stockage actuel :</strong> {{ selectedMagasin.current_stock }} articles</p>
+    </ng-container>
+    <!-- <ng-container *ngIf="popupType === 'edit'">
+      <h3>Modifier le magasin</h3>
+      <form #editForm="ngForm" (ngSubmit)="sauvegarderModifications(selectedMagasin!)">
+        <label>Nom :
+          <input [(ngModel)]="selectedMagasin!.nom" name="nom" required />
+        </label>
+        <label>Adresse :
+          <input [(ngModel)]="selectedMagasin!.adresse" name="adresse" required />
+        </label>
+        <button type="submit">Enregistrer</button>
+        <button type="button" (click)="fermerPopup()">Annuler</button>
+      </form>
+    </ng-container> -->
+  </div>
 </div>

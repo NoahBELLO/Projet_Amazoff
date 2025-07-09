@@ -14,7 +14,7 @@ import { NotificationsService } from '../service/notifications.service';
 
 @Component({
   selector: 'app-topbar',
-  imports: [RouterLink, NgIf, FormsModule, AsyncPipe, PanierPreviewComponent, NotificationPreviewComponent],
+  imports: [NgIf, FormsModule, AsyncPipe, PanierPreviewComponent, NotificationPreviewComponent],
   templateUrl: './topbar.component.html',
   styleUrl: './topbar.component.css'
 })
@@ -43,20 +43,28 @@ export class TopbarComponent {
   ngOnInit(): void {
     this.panierService.getPanierUser().subscribe({
       next: (response) => {
+        if (!response.error && response.rs?.articles) {
+          this.cartArticles = response.rs.articles;
+        } else {
+          this.cartArticles = [];
+        }
       },
       error: (err) => {
         console.error('Erreur lors du chargement du panier', err);
       }
     });
 
+    this.panierService.getPanierUserEtCache();
+
     this.notificationsService.getNotificationUser().subscribe({
       next: (response) => {
+        this.notificationUser = response || [];
       },
       error: (err) => {
         console.error('Erreur lors du chargement des notifications  ', err);
       }
     });
-    
+
     this.nombreArticles$ = this.panierService.getNombreArticlesAuPanier();
     this.nombreNotifications$ = this.notificationsService.getNombreNotifications();
 
@@ -133,11 +141,6 @@ export class TopbarComponent {
   onCartMouseEnter() {
     this.cartHover = true;
     this.updateCartPreview();
-    this.panierService.getPanierUser().subscribe({
-      next: (response) => {
-        this.cartArticles = response.rs?.articles || [];
-      }
-    });
   }
 
   onCartMouseLeave() {

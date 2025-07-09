@@ -1,8 +1,12 @@
 <div class="notif-preview">
-  <div *ngIf="notifications.length === 0">Aucune notifications.</div>
-  <div *ngFor="let notification of notifications" class="notif-preview-item">
-    <!-- <img [src]="notification.image ? 'http://localhost:3001/articles/assets/uploads/' + notification.image : 'assets/default.png'"
-      width="40"> -->
-    <span>{{ notification.title }}</span>
+  <div *ngIf="notifications.length === 0" class="notif-empty">Aucune notification.</div>
+  <div *ngFor="let notification of notifications; let i = index" class="notif-preview-item">
+    <div class="marquee-container">
+      <span class="marquee-text">{{ notification.title }}</span>
+    </div>
+    <span class="notif-date">{{ notification.createdAt | date: 'dd/MM/yyyy HH:mm' }}</span>
+    <button class="notif-close-btn" (click)="removeNotification(i)">✖</button>
   </div>
+
+  <button class="supprimer-toutes-notifications" (click)="removeAllNotification()">Supprimer toutes les notifications</button>
 </div>

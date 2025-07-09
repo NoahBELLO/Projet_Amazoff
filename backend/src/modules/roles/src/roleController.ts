@@ -225,5 +225,30 @@ class RoleController {
             res.status(500).json({ error: 'Erreur serveur' });
         }
     }
+
+    async convertionId(req: Request, res: Response): Promise<void> {
+        try {
+            const roles: string[] = req.body.roles;
+
+            if (!Array.isArray(roles) || roles.length === 0) {
+                res.status(400).json({ error: 'roles must be a non-empty array' });
+                return;
+            }
+
+            const objectIds: ObjectId[] = roles.map(id => new ObjectId(id));
+            const rolesBDD = await RoleModel.collection
+                .find({ _id: { $in: objectIds } })
+                .project({ name: 1 })
+                .toArray();
+
+            const nameRoles: string[] = rolesBDD.map(r => r.name);
+
+            res.status(200).json({ nameRoles });
+        }
+        catch (err) {
+            console.error("Erreur lors de la conversion des rôles :", err);
+            res.status(500).json({ error: 'Erreur serveur' });
+        }
+    }
 }
 export default RoleController;

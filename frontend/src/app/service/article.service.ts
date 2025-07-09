@@ -103,4 +103,14 @@ export class ArticleService {
     )
   }
 
+  deleteArticle(articleId: string): Observable<ResponseApi> {
+    return this.http.delete<ResponseApi>(`${this.articleBaseUrl}/delete/${articleId}`, { headers: { 'Content-Type': 'application/json' } });
+  }
+
+  updateArticle(article: FormData) {
+    return this.http.patch<any>(
+      `${this.articleBaseUrl}/patch/${article.get('id')}`,
+      article
+    );
+  }
 }

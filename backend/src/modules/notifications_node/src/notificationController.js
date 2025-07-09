@@ -1,10 +1,11 @@
 // notificationController.js
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
-const NotificationService = require('./notificationService');
+const NotificationService = require("./notificationService");
 exports.createNotification = async (req, res) => {
   try {
-    const userId = req.query.userId || req.body.userId || "677bee6f001291cbbe4eda4";
+    const userId =
+      req.query.userId || req.body.userId || "677bee6f001291cbbe4eda4";
     const { message, title, type, requestId, redirectUrl, data } = req.body;
 
     if (!userId || !message) {
@@ -21,7 +22,7 @@ exports.createNotification = async (req, res) => {
       data
     );
 
-    res.status(201).json({ message: 'Notification créée', notification });
+    res.status(201).json({ message: "Notification créée", notification });
   } catch (error) {
     console.error("Erreur lors de la création :", error);
     res.status(500).json({ error: "Erreur serveur lors de la création." });
@@ -39,24 +40,28 @@ exports.createNotification = async (req, res) => {
 //   }
 // };
 
-
 //pour le test  pcq l'authentification n'est pas encore fait
 exports.getUserNotifications = async (req, res) => {
   try {
     const userId = req.user?.id || req.query.userId;
 
     if (!userId) {
-      return res.status(400).json({ error: "Aucun identifiant utilisateur fourni." });
+      return res
+        .status(400)
+        .json({ error: "Aucun identifiant utilisateur fourni." });
     }
 
-    const notifications = await NotificationService.getUserNotifications(userId);
+    const notifications = await NotificationService.getUserNotifications(
+      userId
+    );
     res.status(200).json(notifications);
   } catch (error) {
-    console.error('Erreur lors de la récupération des notifications :', error);
-    res.status(500).json({ error: 'Erreur serveur lors de la récupération des notifications.' });
+    console.error("Erreur lors de la récupération des notifications :", error);
+    res.status(500).json({
+      error: "Erreur serveur lors de la récupération des notifications.",
+    });
   }
 };
-
 
 // Marquer une notification comme lue
 // exports.markNotificationAsRead = async (req, res) => {
@@ -77,35 +82,61 @@ exports.markNotificationAsRead = async (req, res) => {
     const notificationId = req.params.id;
 
     if (!mongoose.Types.ObjectId.isValid(notificationId)) {
-      return res.status(400).json({ error: 'ID de notification invalide.' });
+      return res.status(400).json({ error: "ID de notification invalide." });
     }
 
     const notification = await NotificationService.markAsRead(notificationId);
     if (!notification) {
-      return res.status(404).json({ error: 'Notification non trouvée.' });
+      return res.status(404).json({ error: "Notification non trouvée." });
     }
 
-    res.status(200).json({ message: 'Notification marquée comme lue.', notification });
+    res
+      .status(200)
+      .json({ message: "Notification marquée comme lue.", notification });
   } catch (error) {
-    console.error('Erreur lors de la mise à jour de la notification :', error);
-    res.status(500).json({ error: 'Erreur serveur lors de la mise à jour.' });
+    console.error("Erreur lors de la mise à jour de la notification :", error);
+    res.status(500).json({ error: "Erreur serveur lors de la mise à jour." });
   }
 };
-
 
 // Supprimer une notification
 exports.deleteNotification = async (req, res) => {
   try {
-    const notification = await NotificationService.deleteNotification(req.params.id);
+    const notification = await NotificationService.deleteNotification(
+      req.params.id
+    );
     if (!notification) {
-      return res.status(404).json({ error: 'Notification non trouvée.' });
+      return res.status(404).json({ error: "Notification non trouvée." });
     }
-    res.status(200).json({ message: 'Notification supprimée avec succès.', notification });
+    res
+      .status(200)
+      .json({ message: "Notification supprimée avec succès.", notification });
   } catch (error) {
-    console.error('Erreur lors de la suppression de la notification :', error);
-    res.status(500).json({ error: 'Erreur serveur lors de la suppression.' });
+    console.error("Erreur lors de la suppression de la notification :", error);
+    res.status(500).json({ error: "Erreur serveur lors de la suppression." });
   }
 };
+
+exports.deleteNotificationByUserId = async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    if (!userId) {
+      return res
+        .status(400)
+        .json({ error: "Aucun identifiant utilisateur fourni." });
+    }
+    const notification = await NotificationService.deleteNotificationsByUserIds(
+      userId
+    );
+    res
+      .status(200)
+      .json({ message: "Notification supprimée avec succès.", notification });
+  } catch (error) {
+    console.error("Erreur lors de la suppression de la notification :", error);
+    res.status(500).json({ error: "Erreur serveur lors de la suppression." });
+  }
+};
+
 // Marquer toutes les notifications comme lues
 // exports.markAllAsRead = async (req, res) => {
 //   try {
@@ -126,23 +157,28 @@ exports.markAllAsRead = async (req, res) => {
     }
 
     await NotificationService.markAllAsRead(userId);
-    res.status(200).json({ message: 'Toutes les notifications ont été marquées comme lues.' });
+    res.status(200).json({
+      message: "Toutes les notifications ont été marquées comme lues.",
+    });
   } catch (error) {
-    console.error('Erreur lors du marquage des notifications :', error);
-    res.status(500).json({ error: 'Erreur serveur lors du marquage.' });
+    console.error("Erreur lors du marquage des notifications :", error);
+    res.status(500).json({ error: "Erreur serveur lors du marquage." });
   }
 };
-
 
 // Supprimer toutes les notifications
 exports.deleteAllNotifications = async (req, res) => {
   try {
     const userId = req.user.id;
     await NotificationService.deleteAllNotifications(userId);
-    res.status(200).json({ message: 'Toutes les notifications ont été supprimées.' });
+    res
+      .status(200)
+      .json({ message: "Toutes les notifications ont été supprimées." });
   } catch (error) {
-    console.error('Erreur lors de la suppression des notifications :', error);
-    res.status(500).json({ error: 'Erreur serveur lors de la suppression des notifications.' });
+    console.error("Erreur lors de la suppression des notifications :", error);
+    res.status(500).json({
+      error: "Erreur serveur lors de la suppression des notifications.",
+    });
   }
 };
 // Mettre à jour une notification
@@ -151,18 +187,24 @@ exports.updateNotification = async (req, res) => {
     const notificationId = req.params.id;
 
     if (!mongoose.Types.ObjectId.isValid(notificationId)) {
-      return res.status(400).json({ error: 'ID de notification invalide.' });
+      return res.status(400).json({ error: "ID de notification invalide." });
     }
 
-    const updatedNotification = await NotificationService.updateNotification(notificationId, req.body);
+    const updatedNotification = await NotificationService.updateNotification(
+      notificationId,
+      req.body
+    );
 
     if (!updatedNotification) {
-      return res.status(404).json({ error: 'Notification non trouvée.' });
+      return res.status(404).json({ error: "Notification non trouvée." });
     }
 
-    res.status(200).json({ message: 'Notification mise à jour.', notification: updatedNotification });
+    res.status(200).json({
+      message: "Notification mise à jour.",
+      notification: updatedNotification,
+    });
   } catch (error) {
-    console.error('Erreur lors de la mise à jour de la notification :', error);
-    res.status(500).json({ error: 'Erreur serveur lors de la mise à jour.' });
+    console.error("Erreur lors de la mise à jour de la notification :", error);
+    res.status(500).json({ error: "Erreur serveur lors de la mise à jour." });
   }
 };

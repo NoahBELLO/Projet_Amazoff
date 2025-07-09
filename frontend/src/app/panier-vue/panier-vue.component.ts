@@ -7,6 +7,7 @@ import { ArticleService } from '../service/article.service';
 import { FormsModule } from '@angular/forms';//pour les soucis de ngmodel
 import { Router, RouterLink } from '@angular/router';
 import { AuthentificationService } from '../service/authentification.service';
+import { Observable } from 'rxjs';
 
 
 @Component({
@@ -16,7 +17,8 @@ import { AuthentificationService } from '../service/authentification.service';
   styleUrl: './panier-vue.component.css'
 })
 export class PanierVueComponent {
-  panier: Article[] = []; //liste d'article = au panier
+  // panier: Article[] = []; //liste d'article = au panier
+  panier$: Observable<Article[]>;
   error: boolean = false;
   message: string = '';
   quantitee: number[] = []
@@ -25,28 +27,30 @@ export class PanierVueComponent {
     private panierService: PanierService,
     private articleService: ArticleService,
     private router: Router, public authService: AuthentificationService
-  ) { }
-
-  ngOnInit() {
-    this.panierService.getPanierUser().subscribe(
-      (response) => {
-        if (!response.error) {
-          this.panier = response.rs.articles.map((article: { stock: any; }) => ({
-            ...article,
-            stock: article.stock
-          }));
-        } else {
-          this.error = response.error;
-          this.message = response.message || 'Erreur inconnue';
-        }
-      },
-      (err) => {
-        this.error = true;
-        this.message = 'Erreur lors de la récupération du panier';
-        console.error(err);
-      }
-    );
+  ) {
+    this.panier$ = this.panierService.panierUser$;
   }
+
+  // ngOnInit() {
+  //   this.panierService.getPanierUser().subscribe(
+  //     (response) => {
+  //       if (!response.error) {
+  //         this.panier = response.rs.articles.map((article: { stock: any; }) => ({
+  //           ...article,
+  //           stock: article.stock
+  //         }));
+  //       } else {
+  //         this.error = response.error;
+  //         this.message = response.message || 'Erreur inconnue';
+  //       }
+  //     },
+  //     (err) => {
+  //       this.error = true;
+  //       this.message = 'Erreur lors de la récupération du panier';
+  //       console.error(err);
+  //     }
+  //   );
+  // }
 
 
   removeFromPanier(articleId: string): void {
@@ -87,9 +91,8 @@ export class PanierVueComponent {
     });
   }
 
-  getTotal(): number {
-    //reduce pour faire la somme des article.sous_total dans un tableau
-    return this.panier.reduce((sum, article) => sum + article.sous_total!, 0);
+  getTotal(panier: Article[]): number {
+    return panier.reduce((sum: number, article: Article) => sum + (article.sous_total ?? 0), 0);
   }
 
 }

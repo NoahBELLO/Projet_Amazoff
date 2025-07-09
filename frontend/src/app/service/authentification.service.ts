@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { BehaviorSubject } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { map, tap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -53,6 +53,12 @@ export class AuthentificationService {
     this.http.post(`${this.apiUrl}logout`, {}, { withCredentials: true }).subscribe(() => {
       this.loggedInSubject.next(false);
     });
+  }
+
+  getRole(): Observable<string | null> {
+    return this.checkCookie().pipe(
+      map((response: any) => response.role ?? null)
+    );
   }
 
   async hashSHA256(message: string): Promise<string> {

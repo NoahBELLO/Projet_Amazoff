@@ -1,0 +1,32 @@
+<h2>Liste des utilisateurs</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Nom</th>
+            <th>Prénom</th>
+            <th *ngIf="currentUserRoles.includes('admin') || currentUserRoles.includes('superuser')">Email</th>
+            <th>Rôle</th>
+            <th *ngIf="canEditRoles() || canDeleteUsers()">Changer le rôle</th>
+            <th *ngIf="canEditRoles() || canDeleteUsers()">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let user of users">
+            <td>{{ user.name }}</td>
+            <td>{{ user.fname }}</td>
+            <td *ngIf="currentUserRoles.includes('admin') || currentUserRoles.includes('superuser')">{{ user.email }}
+            </td>
+            <td>{{ getRoleNames(user.role) }}</td>
+            <td *ngIf="canEditRoles()">
+                <select [(ngModel)]="user.selectedRole"><!-- [value]="user.role" (change)="onRoleChange(user, getSelectValue($event))" -->
+                    <option *ngFor="let role of getEditableRoles()" [value]="role">{{ getRoleLabel(role) }}</option>
+                </select>
+            </td>
+            <td>
+                <button *ngIf="canEditRoles() || canDeleteUsers()" (click)="onRoleChange(user)"
+                    style="margin-left:8px;">Modifier</button>
+                <button *ngIf="canDeleteUsers()" (click)="onDeleteUser(user)">Supprimer</button>
+            </td>
+        </tr>
+    </tbody>
+</table>

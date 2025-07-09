@@ -8,7 +8,7 @@ const paymentModeRoutes = require("./src/paymentModeRoutes");
 
 const app = express();
 const port = process.env.PORT || 7003;
-const mongoUri = process.env.MONGO_URI_PAYEMENTMODE;
+const mongoUri = process.env.MONGO_URI_PAYEMENTMODE || "mongodb+srv://widad:admin@clusterzero.qcluw.mongodb.net/PayementMode?";
 
 // Middleware
 app.use(cors());

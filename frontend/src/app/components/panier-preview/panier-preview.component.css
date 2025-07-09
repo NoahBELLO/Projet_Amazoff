@@ -1,27 +1,103 @@
 .cart-preview {
     position: absolute;
-    top: 60px;
+    top: 50px;
     right: 0;
-    width: 320px;
-    background: #fff;
-    border: 1px solid #ddd;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-    border-radius: 8px;
-    z-index: 100;
-    padding: 15px;
+    z-index: 200;
+    padding: 16px;
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    font-family: 'Segoe UI', sans-serif;
 }
 
 .cart-preview-item {
     display: flex;
     align-items: center;
-    gap: 10px;
-    margin-bottom: 8px;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.cart-preview-item img {
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.cart-preview-item span {
+    flex: 1;
+    font-weight: 500;
+    color: #333;
+}
+
+.cart-preview-item-actions {
+    display: flex;
+    align-items: center;
+    background: #f0f8ff;
+    border: 1px solid #00bfff;
+    border-radius: 30px;
+    padding: 4px 10px;
+    gap: 6px;
+    box-shadow: inset 0 1px 2px rgba(0, 191, 255, 0.2);
+}
+
+.cart-preview-item-actions button {
+    background: #00bfff;
+    border: none;
+    color: white;
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s ease;
+    cursor: pointer;
+}
+
+.cart-preview-item-actions button:hover {
+    background: #009acd;
+}
+
+.cart-preview-item-actions .quantite {
+    min-width: 20px;
+    text-align: center;
+    font-weight: bold;
+    color: #0077b6;
 }
 
 .voir-panier {
     display: block;
-    margin-top: 10px;
-    text-align: right;
-    color: #0077ff;
+    margin-top: 16px;
+    text-align: center;
+    color: #00bfff;
     font-weight: bold;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.voir-panier:hover {
+    color: #009acd;
+}
+
+.marquee-container {
+    width: 200px;
+    overflow: hidden;
+    white-space: nowrap;
+    position: relative;
+}
+
+.marquee-text {
+    display: inline-block;
+    animation: scroll-left 10s linear infinite;
+}
+
+@keyframes scroll-left {
+    0% {
+        transform: translateX(100%);
+    }
+
+    100% {
+        transform: translateX(-100%);
+    }
 }

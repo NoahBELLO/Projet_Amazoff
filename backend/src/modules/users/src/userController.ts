@@ -92,6 +92,33 @@ class UserController {
         }
     }
 
+    async getUserInfos(req: Request, res: Response): Promise<void> {
+        try {
+            let { id } = req.params;
+            if (!id) {
+                res.status(404).json({ message: "ID manquant" });
+                return;
+            }
+
+            let user = await UserModel.collection.findOne({ _id: new ObjectId(id) }, {
+                projection: {
+                    _id: 0, name: 1, fname: 1, email: 1, adress: 1,
+                    login: 1
+                }
+            });
+            if (!user) {
+                res.status(404).json({ message: "Utilisateur non trouvé" });
+                return;
+            }
+
+            res.status(200).json(user);
+        }
+        catch (err) {
+            console.error("Erreur lors de la récupération de l'utilisateur:", err);
+            res.status(500).json({ message: "Aucun utilisateur trouvé" });
+        }
+    }
+
     async getUserByIdFiltrer(req: Request, res: Response): Promise<void> {
         try {
             let { id } = req.params;
@@ -101,6 +128,28 @@ class UserController {
             }
 
             let user = await UserModel.collection.findOne({ _id: new ObjectId(id) }, { projection: { _id: 1, role: 1, salt: 1, password: 1 } });
+            if (!user) {
+                res.status(404).json({ message: "Utilisateur non trouvé" });
+                return;
+            }
+
+            res.status(200).json(user);
+        }
+        catch (err) {
+            console.error("Erreur lors de la récupération de l'utilisateur:", err);
+            res.status(500).json({ message: "Aucun utilisateur trouvé" });
+        }
+    }
+
+    async getUserByIdMiddleware(req: Request, res: Response): Promise<void> {
+        try {
+            let { id } = req.params;
+            if (!id) {
+                res.status(404).json({ message: "ID manquant" });
+                return;
+            }
+
+            let user = await UserModel.collection.findOne({ _id: new ObjectId(id) }, { projection: { _id: 1, email: 1, role: 1 } });
             if (!user) {
                 res.status(404).json({ message: "Utilisateur non trouvé" });
                 return;
@@ -618,6 +667,114 @@ class UserController {
         catch (err) {
             console.error("Erreur lors de la suppression de l'utilisateur :", err);
             res.status(500).json({ message: "Aucun utilisateur supprimé" });
+        }
+    }
+
+    async patchUserById(req: Request, res: Response): Promise<void> {
+        try {
+            const { id } = req.params;
+            const updateData = req.body;
+
+            let user = await UserModel.collection.findOne({ _id: new ObjectId(id) }, { projection: { salt: 1, role: 1 } });
+            if (!user) {
+                res.status(404).json({ message: "Utilisateur non trouvé" });
+                return;
+            }
+
+            const donnee: any = {};
+            donnee.role = user.role;
+            if (updateData.name) donnee.name = updateData.name;
+            if (updateData.fname) donnee.fname = updateData.fname;
+            if (updateData.email) donnee.email = updateData.email;
+            if (updateData.login) donnee.login = updateData.login;
+            if (updateData.role) donnee.role = updateData.role;
+            if (updateData.adress) donnee.adress = updateData.adress;
+            if (updateData.password) {
+                donnee.password = crypto.createHash('sha256').update(updateData.password + process.env.PEPPER + user.salt).digest('hex');
+            }
+
+            if (Object.keys(donnee).length === 0) {
+                res.status(400).json({ message: "Aucune donnée à mettre à jour" });
+                return;
+            }
+
+            const result = await UserModel.collection.updateOne({ _id: new ObjectId(id) }, { $set: donnee });
+            if (result.modifiedCount === 0) {
+                res.status(404).json({ message: "Aucune information mise à jour" });
+                return;
+            }
+
+            const notif_payload = {
+                userId: id,
+                message: "Votre profil a été modifié.",
+                title: "Modification profil",
+                type: "info"
+            }
+
+            const nginx_urls: string[] = [
+                process.env.NOTIFICATION_URL_NGINX_1 as string,
+                process.env.NOTIFICATION_URL_NGINX_2 as string
+            ].filter(Boolean);
+
+            const urlValide = await verificationUrl(nginx_urls);
+            if (!urlValide) {
+                res.status(404).json({ message: "Aucune URL valide trouvée" });
+                return;
+            }
+
+            const response = await axios.post(`${urlValide}create-notif`, notif_payload);
+            if (!response || !response.data) {
+                res.status(404).json({ message: "Erreur lors de la création de la notification" });
+                return;
+            }
+
+            res.status(200).json({ message: "Informations mises à jour avec succès" });
+        } catch (err) {
+            console.error("Erreur lors de la mise à jour de l'utilisateur :", err);
+            res.status(500).json({ message: "Erreur lors de la mise à jour de l'utilisateur" });
+        }
+    }
+
+    async patchUserRole(req: Request, res: Response): Promise<void> {
+        try {
+            const { id } = req.params;
+            const { role } = req.body;
+            if (!id || !role) {
+                res.status(400).json({ message: "ID ou rôle manquant" });
+                return;
+            }
+
+            const nginx_urls_role: string[] = [
+                process.env.ROLE_URL_NGINX_1 as string,
+                process.env.ROLE_URL_NGINX_2 as string
+            ].filter(Boolean);
+
+            const urlValideRole = await verificationUrl(nginx_urls_role);
+            if (!urlValideRole) {
+                res.status(404).json({ message: "Aucune URL valide trouvée" });
+                return;
+            }
+
+            // Si tu stockes le rôle comme ObjectId, convertis-le
+            const response = await axios.get(`${urlValideRole}name/${role}`);
+            if (!response || !response.data) {
+                res.status(401).json({ message: "Utilisateur introuvable pour role" });
+                return;
+            }
+            
+            const result = await UserModel.collection.updateOne(
+                { _id: new ObjectId(id) },
+                { $set: { role: [new ObjectId(response.data._id)] } }
+            );            
+            if (result.modifiedCount === 0) {
+                res.status(404).json({ message: "Aucun utilisateur mis à jour" });
+                return;
+            }
+
+            res.status(200).json({ message: "Rôle mis à jour avec succès" });
+        } catch (err) {
+            console.error("Erreur lors de la mise à jour du rôle :", err);
+            res.status(500).json({ message: "Erreur lors de la mise à jour du rôle" });
         }
     }
 }

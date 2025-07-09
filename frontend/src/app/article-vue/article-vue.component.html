@@ -1,10 +1,11 @@
 <app-topbar></app-topbar>
 <div class="présentation_article" *ngIf="article">
     <div class="article-image-container" *ngIf="article">
-        <img [src]="article.image ? 'http://localhost:3001/articles/assets/uploads/' + article.image : 'assets/default.png'" alt="{{ article.name || 'Article' }}"
-            class="article-image">
+        <img [src]="article.image ? 'http://localhost:3001/articles/assets/uploads/' + article.image : 'assets/default.png'"
+            alt="{{ article.name || 'Article' }}" class="article-image">
         <div *ngIf="article.reduction > 0" class="discount-badge">-{{ article.reduction }}%</div>
     </div>
+
     <div class="infos">
         <label class="nom_article">{{ article.name }}</label>
         <div class="stars">
@@ -12,15 +13,16 @@
         </div>
         <hr>
         <div class="tarification">
-            <label>{{ article.prix }}€</label>
-            <label>Réduction: {{ article.reduction }} %</label>
-            <label>Description: <br>{{ article.description }}</label>
+            <label class="prix">{{ article.prix }}€</label>
+            <label>Réduction : {{ article.reduction }} %</label>
+            <label>Description : <br>{{ article.description }}</label>
         </div>
     </div>
 
     <div *ngIf="!article" class="loading">
         <i class="fas fa-spinner fa-spin"></i> Chargement en cours...
     </div>
+
     <div>
         <div class="achat">
             <label *ngIf="article.stock > 0" class="prix-initial ">{{ article.prix }}€</label>
@@ -28,14 +30,15 @@
                 {{ article.prix * (1 - article.reduction/100) | number:'1.2-2' }}€
             </span>
 
-            <label *ngIf="article.stock > 0"> Livraison le: {{ article.livraison }} </label>
+            <!-- <label *ngIf="article.stock > 0"> Livraison le: {{ article.livraison }} </label> -->
             <div *ngIf="article.stock > 0; else elseBlock">
                 <div class="disponibilite">
                     <i class="fas fa-check-circle disponible-icon"></i>
                     <label>En stock</label>
                 </div>
+
                 <div class="quantite-select">
-                    <label>Quantité:</label>
+                    <label>Quantité : </label>
                     <select [(ngModel)]="selectedQuantity" class="quantite-dropdown">
                         <option *ngFor="let stock of stocks" [value]="stock">
                             {{ stock }}
@@ -44,10 +47,13 @@
                 </div>
 
                 <div id="bouton">
-                    <button id="ajouter" (click)="addArticleToCart(article.id)">Ajouter au panier</button>
-                    <button id="acheter">Acheter cet article</button>
+                    <p *ngIf="!(authService.loggedIn$ | async)" class="avertissement">Veuillez vous connecter pour ajouter des articles au panier et évaluer l'article.</p>
+                    <button *ngIf="(authService.loggedIn$ | async)" id="ajouter"
+                        (click)="addArticleToCart(article.id)">Ajouter au panier</button>
+                    <!-- <button id="acheter">Acheter cet article</button> -->
                 </div>
             </div>
+
             <ng-template #elseBlock>
                 <div class="disponibilite">
                     <i class="fas fa-times-circle indisponible-icon"></i>
@@ -56,29 +62,30 @@
                 </div>
             </ng-template>
         </div>
-        <div class="rate">
+        
+        <div class="rate" *ngIf="(authService.loggedIn$ | async)">
             <button class="boutton_rate" (click)="ratingModal.openModal(article.id)">Évaluer ce produit</button>
         </div>
     </div>
 </div>
 <div class="bloc_commentaires">
-  <div *ngIf="article?.avis">
-    <div *ngFor="let commentaire of avis">
-        <!-- ignore les commentaires vides -->
-      <ng-container *ngIf="commentaire.comment && commentaire.comment.trim() !== ''">
-        <div>
-          <div class="stars">
-            <i *ngFor="let star of articleService.starsArray(commentaire.stars)" [ngClass]="star"></i>
-            <span class="username">
-              {{ commentaire.fname || 'Utilisateur anonyme' }} {{ commentaire.name }} le
-              {{ commentaire.date_publication }}
-            </span>
-          </div>
-          <p>{{ commentaire.comment }}</p>
+    <div *ngIf="article?.avis">
+        <div *ngFor="let commentaire of avis">
+            <!-- ignore les commentaires vides -->
+            <ng-container *ngIf="commentaire.comment && commentaire.comment.trim() !== ''">
+                <div>
+                    <div class="stars">
+                        <i *ngFor="let star of articleService.starsArray(commentaire.stars)" [ngClass]="star"></i>
+                        <span class="username">
+                            {{ commentaire.fname || 'Utilisateur anonyme' }} {{ commentaire.name }} le
+                            {{ commentaire.date_publication }}
+                        </span>
+                    </div>
+                    <p>{{ commentaire.comment }}</p>
+                </div>
+            </ng-container>
         </div>
-      </ng-container>
     </div>
-  </div>
 </div>
 
 

@@ -14,6 +14,8 @@ interface PayloadAccess {
 
 export interface ReqAuth {
     userId: number;
+    email: string;
+    role: string[];
 }
 
 declare module 'express-serve-static-core' {
@@ -132,7 +134,50 @@ async function authMiddleware(req: Request, res: Response, next: NextFunction) {
         return;
     }
 
-    req.auth = { userId: goodAccessToken.userId };
+    const nginx_urls_role: string[] = [
+        process.env.ROLE_URL_NGINX_1 as string,
+        process.env.ROLE_URL_NGINX_2 as string
+    ].filter(Boolean);
+
+    const urlValideRole = await verificationUrl(nginx_urls_role);
+    if (!urlValideRole) {
+        res.status(500).json({ message: "Aucune URL valide trouvée" });
+        return;
+    }
+
+    const nginx_urls_user: string[] = [
+        process.env.USER_URL_NGINX_1 as string,
+        process.env.USER_URL_NGINX_2 as string
+    ].filter(Boolean);
+
+    const urlValideUser = await verificationUrl(nginx_urls_user);
+    if (!urlValideUser) {
+        res.status(500).json({ message: "Aucune URL valide trouvée" });
+        return;
+    }
+
+    let roleName
+    let user
+    try {
+        const responseUser = await axios.get(`${urlValideUser}middleware/${goodAccessToken.userId}`);
+        if (!responseUser || !responseUser.data) {
+            res.status(401).json({ message: "Utilisateur introuvable pour role" });
+            return;
+        }
+
+        const response = await axios.post(`${urlValideRole}convertionId`, { roles: responseUser.data.role });
+        if (!response || !response.data) {
+            res.status(401).json({ message: "Utilisateur introuvable pour role" });
+            return;
+        }
+        roleName = response.data.nameRoles;
+        user = responseUser.data.email;
+    } catch (err) {
+        res.status(500).json({ error: true, message: 'Erreur rôle' });
+        return
+    }
+
+    req.auth = { userId: goodAccessToken.userId, email: user, role: roleName };
 
     return next();
 }

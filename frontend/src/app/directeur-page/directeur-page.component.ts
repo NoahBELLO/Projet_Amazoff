@@ -15,6 +15,8 @@ import { FilterMagasinsPipe } from "../pipes/filter.pipe";
 export class DirecteurPageComponent implements OnInit {
   searchTerm = '';
   magasins: Magasin[] = [];
+  selectedMagasin: Magasin | null = null;
+  popupType: 'voir' | 'edit' | null = null;
   //@dur
   readonly responsableEmail = 'widad@amazoff.com';
 
@@ -38,10 +40,30 @@ export class DirecteurPageComponent implements OnInit {
   }
 
   voirDetails(magasin: Magasin): void {
-    alert(`Voir détails de ${magasin.nom}`);
+    this.selectedMagasin = magasin;
+    this.popupType = 'voir';
   }
 
-  gererStock(magasin: Magasin): void {
-    alert(`Gérer le stock de ${magasin.nom}`);
+  fermerPopup(): void {
+    this.selectedMagasin = null;
+    this.popupType = null;
   }
+
+  /* editerMagasin(magasin: Magasin): void {
+    this.selectedMagasin = { ...magasin }; // clone pour éviter la modification directe
+    this.popupType = 'edit';
+  } */
+
+  /* sauvegarderModifications(magasin: Magasin): void {
+    this.magasinService.updateMagasin(magasin).subscribe({
+      next: (updated) => {
+        const index = this.magasins.findIndex(m => m._id === updated._id);
+        if (index !== -1) this.magasins[index] = updated;
+        this.fermerPopup();
+      },
+      error: (err) => {
+        console.error('Erreur lors de la mise à jour du magasin', err);
+      }
+    });
+  } */
 }

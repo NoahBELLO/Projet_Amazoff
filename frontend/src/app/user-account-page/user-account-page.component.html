@@ -17,8 +17,29 @@
         <div *ngIf="activeSection === 'Commandes'">
             <app-commandes-vue></app-commandes-vue>
         </div>
-        <div *ngIf="activeSection === 'Article'">
+
+        <div *ngIf="activeSection === 'AjoutArticle'">
             <app-article-create-page></app-article-create-page>
+        </div>
+
+        <div *ngIf="activeSection === 'ListeArticles'">
+            <app-articles-list [userRoles]="userRoles"></app-articles-list>
+        </div>
+
+        <div *ngIf="activeSection === 'Magasin'">
+            <app-directeur-page></app-directeur-page>
+        </div>
+
+        <div *ngIf="activeSection === 'ListeMagasins'">
+            <app-super-admin-page></app-super-admin-page>
+        </div>
+
+        <div *ngIf="activeSection === 'Paramètres'">
+            <app-setting-page></app-setting-page>
+        </div>
+
+        <div *ngIf="activeSection === 'Utilisateurs'">
+            <app-user-list-page></app-user-list-page>
         </div>
     </div>
 </div>
