@@ -55,12 +55,22 @@
 </body>
 
 </html> -->
+<header class="header">
+    <div class="brand">
+        <h1>AmazOff</h1>
+        <p>Moins de clics, plus de rires !</p>
+    </div>
+</header>
+
+<div class="logo-container">
+    <img src="assets/logo.png" alt="Logo AmazOff" class="logo-bag">
+</div>
 
 <div class="login-container">
     <div class="controls">
         <div class="combo-box">
-            <button (click)="formulaireLogin()" id="connexion">Connexion</button>
-            <button (click)="formulaireRegister()" id="inscription">Inscription</button>
+            <button (click)="formulaireLogin()" [class.active]="typeForm === 'login'">Connexion</button>
+            <button (click)="formulaireRegister()" [class.active]="typeForm === 'register'">Inscription</button>
         </div>
     </div>
 
@@ -70,11 +80,11 @@
 
     <div class="social-login">
         <h2>Ou connectez-vous avec</h2>
-
         <div class="social-buttons">
-            <button (click)="connexionGoogle()" class="socialConnexion" id="googleButton">
-                <img src="LogoGoogle.ico" alt="Google" id="google" />
+            <button (click)="connexionGoogle()" class="socialConnexion">
+                <img src="LogoGoogle.ico" alt="Connexion Google" />
             </button>
         </div>
     </div>
 </div>
+

@@ -29,6 +29,7 @@ class ArticleModel(Document):
     description = StringField(required=True, max_length=200)
     stock = FloatField(required=True)
     meta = {'collection': 'article' , 'db_alias': 'articles-db'}
+    id_magasin = StringField(required=True)
 
     def to_dict(self):
         """Convertir un document en dictionnaire"""
@@ -41,7 +42,9 @@ class ArticleModel(Document):
             "reduction": self.reduction,
             "description": self.description,
             "stock": self.stock,
+            "id_magasin": self.id_magasin,   
         }
+
     
     def check_fields(self, datas):
         if "name" not in datas or len(datas['name'].strip()) == 0:
@@ -58,7 +61,9 @@ class ArticleModel(Document):
         
         if "description" not in datas or len(datas['description'].strip()) == 0:
             raise ErrorExc(f"Veuillez définir une description.")
-        
+        if "id_magasin" not in datas or len(datas['id_magasin'].strip()) == 0:
+            raise ErrorExc(f"Veuillez définir l'id du magasin associé à l'article.")
+
         # if "reduction" in datas:
         #     if float(datas['reduction']):
         #         raise ErrorExc(f"Veuillez définir une réduction valide (doit être un nombre).")
@@ -218,6 +223,13 @@ class ArticleModel(Document):
         chemin = os.path.join(os.path.dirname(__file__), 'cache', 'cached_articles.json')
         with open(chemin, 'r', encoding='utf-8') as f:
             return json.load(f)
+
+    def get_articles_by_magasin(self, id_magasin):
+        articles = ArticleModel.objects(id_magasin=id_magasin)
+        articles_dict = [article.to_dict() for article in articles]
+        if articles_dict:
+            return True, articles_dict
+        return False, []
 
 
 class ArticleModelMD():

@@ -31,6 +31,7 @@ void MagasinController::init_routes(App &app)
                 magasins_json[i]["telephone"] = std::string(doc["telephone"].get_string().value);
                 magasins_json[i]["responsable_nom"] = std::string(doc["responsable_nom"].get_string().value);
                 magasins_json[i]["responsable_email"] = std::string(doc["responsable_email"].get_string().value);
+                magasins_json[i]["current_stock"] = doc["current_stock"].get_int32();
                 magasins_json[i]["capacite_stock"] = doc["capacite_stock"].get_int32();
                 i++;
             }
@@ -60,7 +61,9 @@ void MagasinController::init_routes(App &app)
                 body["telephone"].s(),
                 body["responsable_nom"].s(),
                 body["responsable_email"].s(),
+                 body["current_stock"].i(),
                 body["capacite_stock"].i()
+                
             );
             auto collection = Database::get_client()["Magasins"]["magasins"];
             auto result = collection.insert_one(magasin.to_bson().view());
@@ -100,6 +103,7 @@ void MagasinController::init_routes(App &app)
             magasin_json["responsable_nom"] = std::string(doc["responsable_nom"].get_string().value);
             magasin_json["responsable_email"] = std::string(doc["responsable_email"].get_string().value);
             magasin_json["capacite_stock"] = doc["capacite_stock"].get_int32();
+            magasin_json["current_stock"] = doc["current_stock"].get_int32();
             return crow::response(magasin_json);
         } catch (const std::exception &e) {
             return crow::response(500, std::string("Erreur serveur : ") + e.what());
@@ -115,7 +119,7 @@ void MagasinController::init_routes(App &app)
         // Vérifier que tous les champs requis sont présents
         if (!body.has("nom") || !body.has("adresse") || !body.has("ville") ||
             !body.has("email") || !body.has("telephone") ||
-            !body.has("responsable_nom") || !body.has("responsable_email") || !body.has("capacite_stock"))
+            !body.has("responsable_nom") || !body.has("responsable_email")  || !body.has("current_stock")|| !body.has("capacite_stock"))
         {
             return crow::response(400, "Certains champs requis sont manquants");
         }
@@ -139,6 +143,7 @@ void MagasinController::init_routes(App &app)
                                          << "telephone" << body["telephone"].s()
                                          << "responsable_nom" << body["responsable_nom"].s()
                                          << "responsable_email" << body["responsable_email"].s()
+                                         << "current_stock" << body["current_stock"].i()
                                          << "capacite_stock" << body["capacite_stock"].i()
                                          << bsoncxx::builder::stream::close_document
                                          << bsoncxx::builder::stream::finalize;
@@ -173,6 +178,85 @@ void MagasinController::init_routes(App &app)
         } catch (const std::exception &e) {
             return crow::response(500, std::string("Erreur serveur : ") + e.what());
         } });
+        // PATCH /magasins/batch/capacite_stock
+CROW_ROUTE(app, "/magasins/batch/capacite_stock").methods(crow::HTTPMethod::PATCH)(
+    [](const crow::request &req) -> crow::response {
+        auto body = crow::json::load(req.body);
+        if (!body || !body.has("updates") || body["updates"].t() != crow::json::type::List) {
+            return crow::response(400, "Données invalides : 'updates' manquant ou invalide");
+        }
+
+        auto updates = body["updates"];
+        auto collection = Database::get_client()["Magasins"]["magasins"];
+        int modified_count = 0;
+        try {
+            for (auto &item : updates) {
+                if (!item.has("id") || !item.has("capacite_stock")) continue;
+
+                bsoncxx::oid oid;
+                try {
+                    oid = bsoncxx::oid(std::string(item["id"].s()));
+                } catch (...) {
+                    continue;
+                }
+
+                bsoncxx::builder::stream::document filter_builder, update_builder;
+                filter_builder << "_id" << oid;
+                update_builder << "$set" << bsoncxx::builder::stream::open_document
+                               << "capacite_stock" << item["capacite_stock"].i()
+                               << bsoncxx::builder::stream::close_document;
+
+                auto result = collection.update_one(filter_builder.view(), update_builder.view());
+                if (result && result->modified_count() == 1) {
+                    modified_count++;
+                }
+            }
+            return crow::response(200, "Capacité stock mise à jour pour " + std::to_string(modified_count) + " magasin(s).");
+        } catch (const std::exception &e) {
+            return crow::response(500, std::string("Erreur serveur : ") + e.what());
+        }
+    });
+
+// PATCH /magasins/batch/current_stock
+CROW_ROUTE(app, "/magasins/batch/current_stock").methods(crow::HTTPMethod::PATCH)(
+    [](const crow::request &req) -> crow::response {
+        auto body = crow::json::load(req.body);
+        if (!body || !body.has("updates") || body["updates"].t() != crow::json::type::List) {
+            return crow::response(400, "Données invalides : 'updates' manquant ou invalide");
+        }
+
+        auto updates = body["updates"];
+        auto collection = Database::get_client()["Magasins"]["magasins"];
+        int modified_count = 0;
+        try {
+            for (auto &item : updates) {
+                if (!item.has("id") || !item.has("current_stock")) continue;
+
+                bsoncxx::oid oid;
+                try {
+                    oid = bsoncxx::oid(std::string(item["id"].s()));
+                } catch (...) {
+                    continue;
+                }
+
+                bsoncxx::builder::stream::document filter_builder, update_builder;
+                filter_builder << "_id" << oid;
+                update_builder << "$set" << bsoncxx::builder::stream::open_document
+                               << "current_stock" << item["current_stock"].i()
+                               << bsoncxx::builder::stream::close_document;
+
+                auto result = collection.update_one(filter_builder.view(), update_builder.view());
+                if (result && result->modified_count() == 1) {
+                    modified_count++;
+                }
+            }
+            return crow::response(200, "Current stock mis à jour pour " + std::to_string(modified_count) + " magasin(s).");
+        } catch (const std::exception &e) {
+            return crow::response(500, std::string("Erreur serveur : ") + e.what());
+        }
+    });
+
+
 }
 // pour générer l'instance template explicitement
 template void MagasinController::init_routes<crow::App<CORS>>(crow::App<CORS> &);
