@@ -4,7 +4,7 @@ dans angular.json, rajouter à Styles:
 "node_modules/@fortawesome/fontawesome-free/css/all.css" */
 
 
-#banniere {
+/* #banniere {
     background-color: #c08f69;
     display: flex;
     justify-content: space-between;
@@ -80,7 +80,7 @@ label,
   font-weight: bold;
   animation: pulse 1.5s infinite;
 }
-/* pour faire le battement de coeur de l'icône */
+
 @keyframes pulse {
   0% {
     transform: scale(1);
@@ -94,7 +94,7 @@ label,
 }
 
 .panier-icon-container {
-  position: relative; /* nécessaire pour que le badge se place par rapport à l’icône */
+  position: relative;
 }
 .notification-badge {
   position: absolute;
@@ -108,7 +108,7 @@ label,
   font-weight: bold;
   animation: pulse 1.5s infinite;
 }
-/* pour faire le battement de coeur de l'icône */
+
 @keyframes pulse {
   0% {
     transform: scale(1);
@@ -122,7 +122,7 @@ label,
 }
 
 .notification-icon-container {
-  position: relative; /* nécessaire pour que le badge se place par rapport à l’icône */
+  position: relative;
 }
 
 .user-info label {
@@ -134,46 +134,196 @@ label,
 .nav-search {
     display: flex;
     align-items: center;
-    position: relative; /* Positionnement relatif pour le conteneur */
+    position: relative; 
 }
 
 #recherche {
     height: 50px;
     width: 300px;
     min-width: 200px;
-    border-radius: 25px; /* Bordures arrondies */
-    border: 2px solid #FFD700; /* Bordure dorée */
-    padding-left: 10px; /* Espace à gauche pour le texte */
-    padding-right: 50px; /* Espace pour l'icône à droite */
+    border-radius: 25px; 
+    border: 2px solid #FFD700; 
+    padding-left: 10px; 
+    padding-right: 50px;
     font-size: 16px;
-    background-color: #fff; /* Fond blanc */
-    color: #333; /* Couleur du texte */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Ombre subtile */
-    transition: border-color 0.3s ease, box-shadow 0.3s ease; /* Transition pour les effets */
+    background-color: #fff; 
+    color: #333; 
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 #recherche:focus {
-    border-color: #c08f69; /* Changement de couleur de bordure au focus */
-    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2); /* Ombre plus prononcée au focus */
-    outline: none; /* Supprimer le contour par défaut */
+    border-color: #c08f69; 
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2); 
+    outline: none; 
 }
 
 .fa-search {
     font-size: 20px;
     width: 40px;
     height: 40px;
-    border-radius: 50%; /* Icône ronde */
+    border-radius: 50%; 
     display: flex;
     justify-content: center;
     align-items: center;
     color: #FFD700;
     background-color: black;
-    position: absolute; /* Positionnement absolu */
-    right: 10px; /* Position à droite de la barre de recherche */
+    position: absolute; 
+    right: 10px; 
     top: 50%;
-    transform: translateY(-50%); /* Centrage vertical */
-    z-index: 1; /* Assure que l'icône est au-dessus de la barre de recherche */
+    transform: translateY(-50%); 
+    z-index: 1; 
 }
 .menu {
     position: relative;
+}*/
+/* ======== BANNIÈRE ======== */
+#banniere {
+  background: #0f4143;
+  /* fond bleu profond Amazoff */
+  padding: 10px 20px;
+  font-family: Arial, sans-serif;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* ======== ACCUEIL (logo + message) ======== */
+#accueil {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+#logo {
+  width: 150px;
+  padding: 0px;
+  max-width: 100%;
+  cursor: pointer;
+}
+
+.welcome {
+  flex: 1;
+  text-align: center;
+  font-size: 1.5rem;
+  color: #fff;
+}
+
+.welcome p {
+  margin: 2px 0;
+}
+
+/* ======== MENU ======== */
+.menu {
+  display: flex;
+  align-items: center;
+  justify-content: end;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-top: 10px;
+}
+
+/* ======== ICONES ======== */
+.large-icon {
+  font-size: 1.8rem;
+  color: #fdbd5a;
+  cursor: pointer;
+  transition: transform 0.2s, color 0.2s;
+}
+
+.large-icon:hover {
+  transform: scale(1.1);
+  color: #fff;
+}
+
+/* ======== PANIER / NOTIF BADGES ======== */
+.panier-icon-container,
+.notification-icon-container {
+  position: relative;
+}
+
+.panier-badge,
+.notification-badge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: #f44336;
+  color: white;
+  font-size: 0.7rem;
+  font-weight: bold;
+  padding: 3px 6px;
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px #0f4143;
+}
+
+.panier-icon-container,
+.notification-icon-container {
+  margin-right: 18px;
+}
+
+.menu > :last-child {
+  margin-right: 0;
+}
+
+/* ======== USER INFOS ======== */
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  color: #fff;
+}
+
+.user-info label {
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.user-info label:hover {
+  color: #fdbd5a;
+}
+
+/* ======== SEARCH BAR ======== */
+.nav-search {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  border: 1px solid #fdbd5a;
+  padding: 5px 10px;
+  border-radius: 50px;
+  background: #fdf6eb;
+}
+
+.nav-search input {
+  border: none;
+  outline: none;
+  font-size: 0.95rem;
+  width: 150px;
+  background: transparent;
+}
+
+.nav-search i {
+  color: #0f4143;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.nav-search i:hover {
+  color: #fdbd5a;
+}
+
+/* ======== RESPONSIVE ======== */
+@media (max-width: 768px) {
+
+  #accueil,
+  .menu {
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .nav-search input {
+    width: 100px;
+  }
 }

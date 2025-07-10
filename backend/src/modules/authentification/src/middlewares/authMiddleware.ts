@@ -173,8 +173,12 @@ async function authMiddleware(req: Request, res: Response, next: NextFunction) {
         roleName = response.data.nameRoles;
         user = responseUser.data.email;
     } catch (err) {
-        res.status(500).json({ error: true, message: 'Erreur rôle' });
-        return
+        if (typeof err === "object" && err !== null && "response" in err && typeof (err as any).response === "object" && (err as any).response !== null && "status" in (err as any).response && (err as any).response.status === 404) {
+            res.status(401).json({ message: "Utilisateur introuvable" });
+        } else {
+            res.status(500).json({ error: true, message: 'Erreur rôle' });
+        }
+        return;
     }
 
     req.auth = { userId: goodAccessToken.userId, email: user, role: roleName };

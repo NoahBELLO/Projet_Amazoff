@@ -80,6 +80,7 @@ export class FormulaireComponent implements OnChanges {
       const body = { identifiant, motDePasse: hash };
       this.authService.login(body).subscribe({
         next: (response) => {
+          window.location.reload(); 
           this.routes.navigate(['/dashboard']);
         },
         error: (error) => {

@@ -145,7 +145,7 @@ class UserController {
         try {
             let { id } = req.params;
             if (!id) {
-                res.status(404).json({ message: "ID manquant" });
+                res.status(401).json({ message: "ID manquant" });
                 return;
             }
 

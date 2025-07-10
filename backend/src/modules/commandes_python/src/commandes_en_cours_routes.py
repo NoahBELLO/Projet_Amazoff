@@ -40,36 +40,36 @@ def create_commande(user_id):
     mongo_id = False
    
       # --- MongoDB ---
-    if test_mongo():
-        try:
-            err_mongo, mongo_id = CommandesEnCoursModel().create(user_id, datas)
-            if err_mongo:
-                response["ids"]["mongo"] = str(mongo_id)
-            else:
-                raise RuntimeError("Erreur lors de la création de la commande sur MongoDB")
-        except Exception as e:
-            logger.warning(f"[CREATE_COMMANDE] Échec MongoDB : {e}")
-            log_failure('MONGO_COMMANDE', {"user_id": user_id}, e)
+    # if test_mongo():
+    try:
+        err_mongo, mongo_id = CommandesEnCoursModel().create(user_id, datas)
+        if err_mongo:
+            response["ids"]["mongo"] = str(mongo_id)
+        else:
+            raise RuntimeError("Erreur lors de la création de la commande sur MongoDB")
+    except Exception as e:
+        logger.warning(f"[CREATE_COMMANDE] Échec MongoDB : {e}")
+        log_failure('MONGO_COMMANDE', {"user_id": user_id}, e)
 
     # --- MariaDB ---
-    if test_maria():
-        try:
-            if not mongo_id:
-                mongo_id = ObjectId()
-                logger.critical(f"[CREATE_CART] MongoId généré : {mongo_id}")
+    # if test_maria():
+    #     try:
+    #         if not mongo_id:
+    #             mongo_id = ObjectId()
+    #             logger.critical(f"[CREATE_CART] MongoId généré : {mongo_id}")
             
-            datas_maria = datas
-            datas_maria['id']
-            err_maria, maria_id = CommandesEnCoursModel().create(user_id=user_id, id=str(mongo_id) , datas=datas)
-            if err_maria:
-                response["ids"]["mariadb"] = maria_id
-            else:
-                raise RuntimeError("Erreur lors de la création de la commande sur MariaDB")
-        except Exception as e:
-            logger.warning(f"[CREATE_COMMANDE] Échec MariaDB : {e}")
-            log_failure('MARIADB_COMMANDE', {"user_id": user_id}, e)
+    #         datas_maria = datas
+    #         datas_maria['id']
+    #         err_maria, maria_id = CommandesEnCoursModel().create(user_id=user_id, id=str(mongo_id) , datas=datas)
+    #         if err_maria:
+    #             response["ids"]["mariadb"] = maria_id
+    #         else:
+    #             raise RuntimeError("Erreur lors de la création de la commande sur MariaDB")
+    #     except Exception as e:
+    #         logger.warning(f"[CREATE_COMMANDE] Échec MariaDB : {e}")
+    #         log_failure('MARIADB_COMMANDE', {"user_id": user_id}, e)
 
-    # Réponse 
+    # Réponse
     if not response["ids"]:
         return jsonify({"error": True, "message": "Aucun insert n’a fonctionné."})
     return jsonify({'error': False, 'rs': response})

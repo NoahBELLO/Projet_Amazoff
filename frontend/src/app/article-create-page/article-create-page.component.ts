@@ -46,6 +46,7 @@ export class ArticleCreatePageComponent {
       next: (response) => {
         console.log('Article enregistré', response);
         alert("Article enregistré avec succès");
+        window.location.reload();
       },
       error: (error) => {
         console.error('Erreur lors de l\'enregistrement', error);

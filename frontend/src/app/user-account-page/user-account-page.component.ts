@@ -15,7 +15,7 @@ import { UserListPageComponent } from '../user-list-page/user-list-page.componen
 @Component({
   selector: 'app-user-account-page',
   imports: [
-    TopbarComponent, SideBarComponent,
+    SideBarComponent,
     ArticleCreatePageComponent, CommandesVueComponent, NgIf,
     ArticlesListComponent, DirecteurPageComponent,
     SuperAdminPageComponent, SettingsPageComponent, UserListPageComponent
@@ -72,7 +72,7 @@ export class UserAccountPageComponent implements OnInit {
       ) {
         sectionsSet.add(JSON.stringify({ label: "Commandes", key: "Commandes" }));
         sectionsSet.add(JSON.stringify({ label: "Paramètres", key: "Paramètres" }));
-        this.activeSection = "Paramètres";
+        this.activeSection = "Commandes";
       }
 
       this.sections = Array.from(sectionsSet).map(s => JSON.parse(s));

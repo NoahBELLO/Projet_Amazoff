@@ -20,6 +20,7 @@ def verification_url(urls):
 
 class CommandesEnCoursModel(Document): 
     user_id = StringField(required=True)
+    paiement_id = StringField(required=False)
     commandes = ListField(required=True)
     total = FloatField(required=True)
     paiement = StringField(required=True)

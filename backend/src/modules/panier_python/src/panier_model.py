@@ -199,6 +199,17 @@ class PanierModel(Document):
             if article_panier['article_id'] == article_id:
                 return article_panier
         return False
+
+    def vider_panier(self, user_id):
+        try:
+            panier = PanierModel.objects(user_id=str(user_id)).first()
+            if not panier:
+                raise ErrorExc("Panier non trouvé")
+            panier.articles = []
+            panier.save()
+            return True
+        except Exception as e:
+            raise ErrorExc(f"Erreur lors du vidage du panier : {str(e)}")
     
 class PanierModelMD():
     _id = 0
@@ -358,3 +369,14 @@ class PanierModelMD():
         if rs:
             return True
         raise ErrorExc("Échec de la restauration du panier en base de données.")
+    
+    def vider_panier(self, user_id):
+        try:
+            panier = PanierModel.objects(user_id=str(user_id)).first()
+            if not panier:
+                raise ErrorExc("Panier non trouvé")
+            panier.articles = []
+            panier.save()
+            return True
+        except Exception as e:
+            raise ErrorExc(f"Erreur lors du vidage du panier : {str(e)}")

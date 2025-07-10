@@ -13,7 +13,7 @@ import { AuthentificationService } from '../service/authentification.service';
   selector: 'app-article-vue',
   templateUrl: './article-vue.component.html',
   styleUrls: ['./article-vue.component.css'],
-  imports: [TopbarComponent,
+  imports: [
     NgFor,
     NgClass,
     NgIf,

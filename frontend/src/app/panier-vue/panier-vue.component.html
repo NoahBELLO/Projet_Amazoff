@@ -1,4 +1,4 @@
-<app-topbar></app-topbar>
+<!-- <app-topbar></app-topbar> -->
 <ng-container *ngIf="panier$ | async as panier">
   <div class="panier-container">
     <div *ngIf="panier.length > 0; else noArticles">
@@ -34,7 +34,7 @@
                 </select>
               </td>
               <!-- prototype pour faire quantité sélectionnée x prix unitaire -->
-              <td>Sous-total: {{ article.sous_total }} €</td>
+              <td>Sous-total : {{ article.sous_total }} €</td>
               <td class="action-cell">
                 <button class="supprimer" (click)="removeFromPanier(article.id)">Supprimer</button>
               </td>
@@ -45,10 +45,11 @@
 
       <div class="panier_summary">
         <div class="summary_article">
-          <span>Sous-total ({{ panier.length }} articles):</span>
+          <span>Sous-total ({{ panier.length }} articles) : </span>
           <span>{{ getTotal(panier) }} €</span>
         </div>
-        <button class="checkout-btn">Passer la commande</button> <!-- faire requete passer la commande -->
+        <button class="checkout-btn" (click)="ouvrirPopupPaiement()">Passer la commande</button>
+        <!-- faire requete passer la commande -->
       </div>
     </div>
 
@@ -65,3 +66,29 @@
     </ng-template>
   </div>
 </ng-container>
+
+<div class="modal-backdrop" *ngIf="popupPaiementOuvert">
+  <div class="modal">
+    <h3>Paiement</h3>
+    <form (ngSubmit)="validerPaiement()">
+      <label>
+        Numéro de carte :
+        <input type="text" [(ngModel)]="paiement.numeroCarte" name="numeroCarte" required />
+      </label>
+      <label>
+        Nom sur la carte :
+        <input type="text" [(ngModel)]="paiement.nomCarte" name="nomCarte" required />
+      </label>
+      <label>
+        Date d'expiration :
+        <input type="text" [(ngModel)]="paiement.expiration" name="expiration" required />
+      </label>
+      <label>
+        CVV :
+        <input type="text" [(ngModel)]="paiement.cvv" name="cvv" required />
+      </label>
+      <button type="submit">Valider le paiement</button>
+      <button type="button" (click)="fermerPopupPaiement()">Annuler</button>
+    </form>
+  </div>
+</div>

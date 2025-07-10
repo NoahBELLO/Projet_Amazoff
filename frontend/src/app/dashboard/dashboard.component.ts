@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { TopbarComponent} from "../topbar/topbar.component";
+import { TopbarComponent } from "../topbar/topbar.component";
 import { ArticlePageComponentComponent } from "../article-page-component/article-page-component.component";
 import { NgFor } from '@angular/common';
 import { ArticleService } from '../service/article.service';
@@ -9,16 +9,16 @@ import { Article, ResponseApi } from '../service/article.interface';
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
   styleUrls: [],
-  imports: [TopbarComponent,
-     ArticlePageComponentComponent,
-    ]
+  imports: [
+    ArticlePageComponentComponent,
+  ]
 })
-export class DashboardComponent implements OnInit{
-  articles: Article[] = []; 
+export class DashboardComponent implements OnInit {
+  articles: Article[] = [];
   filteredArticles: Article[] = [];
 
 
-  constructor(private articleService: ArticleService) {}
+  constructor(private articleService: ArticleService) { }
 
   ngOnInit() {
     this.onSearch("");

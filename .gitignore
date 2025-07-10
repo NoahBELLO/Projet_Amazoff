@@ -18,3 +18,4 @@ venv
 **/failed_articles_requests.log
 **/failed_avis_request.log
 **/failed_cart_requests.log
+**/failed_insert_articles.log

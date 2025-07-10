@@ -18,6 +18,7 @@ const validatePaymentModeCreation = (req, res, next) => {
 
   const { error } = schema.validate(req.body, { abortEarly: false });
   if (error) {
+    console.error('Validation error:', error.details);
     const formattedErrors = error.details.map(({ message, path }) => ({
       field: path[0],
       message

@@ -17,7 +17,8 @@ export class PanierService {
   nombreArticles$ = this.nombreArticles.asObservable();
 
   private baseUrl = 'http://localhost:3001/paniers';
-
+  private urlPaiement = "http://localhost:3001/payment_mode";
+  private urlCommandes = "http://localhost:3001/commandes/en_cours";
 
   constructor(private http: HttpClient, private auth: AuthentificationService) { }
 
@@ -137,4 +138,15 @@ export class PanierService {
     return this.nombreArticles$;
   }
 
+  creerPaiement(paiement: any): Observable<any> {
+    return this.http.post(`${this.urlPaiement}/create`, paiement);
+  }
+
+  creerCommande(commande: any, userId: string): Observable<any> {
+    return this.http.post(`${this.urlCommandes}/create/${userId}`, commande);
+  }
+
+  viderPanier(userId: string): Observable<any> {
+    return this.http.delete(`${this.baseUrl}/vider_panier/${userId}`); // adapte l'URL à ton API
+  }
 }

@@ -13,17 +13,13 @@
                     name="description">
             </div>
             <div class="form-left">
-                <label for="article-price">Prix:</label>
+                <label for="article-price">Prix ( € ):</label>
                 <input type="number" id="article-price" class="input" [(ngModel)]="articleDatas.prix" name="prix">
             </div>
             <div class="form-left">
-                <label for="article-reduction">Réduction:</label>
+                <label for="article-reduction">Réduction ( % ):</label>
                 <input type="number" id="article-reduction" class="input" [(ngModel)]="articleDatas.reduction"
                     name="reduction">
-            </div>
-            <div class="form-actions">
-                <button type="submit" class="btn btn-primary">Ajouter l'Article</button>
-                <!-- <button type="reset" class="btn btn-secondary">Annuler</button> -->
             </div>
         </div>
 
@@ -43,4 +39,8 @@
         </div>
     </div>
 
+    <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Ajouter l'Article</button>
+        <!-- <button type="reset" class="btn btn-secondary">Annuler</button> -->
+    </div>
 </form>

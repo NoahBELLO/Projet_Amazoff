@@ -24,23 +24,45 @@ export class UserListPageComponent implements OnInit {
   ngOnInit() {
     this.authService.getRole().subscribe(roles => {
       this.currentUserRoles = Array.isArray(roles) ? roles.filter((r): r is string => r !== null) : [roles].filter((r): r is string => r !== null);
-      this.loadUsers();
       this.loadRoles();
     });
   }
 
   loadUsers() {
     this.userService.getAllUsers().subscribe(users => {
-      this.users = users.map((u: any) => ({
-        ...u,
-        selectedRole: Array.isArray(u.role) ? u.role[0] : u.role // adapte selon ton modèle
-      }));
+      // On attend que les rôles soient chargés pour pouvoir faire la correspondance
+      if (
+        this.currentUserRoles.includes('responsableMagasin') ||
+        this.currentUserRoles.includes('directeurMagasin')
+      ) {
+        // On filtre en fonction du nom du rôle
+        this.users = users
+          .filter((u: any) => {
+            const userRoles = Array.isArray(u.role) ? u.role : [u.role];
+            // On récupère les noms des rôles de l'utilisateur
+            const userRoleNames = userRoles
+              .map((roleId: string) => this.roles.find(r => r._id === roleId)?.name)
+              .filter(Boolean);
+            // On exclut si l'utilisateur a admin ou superuser
+            return !userRoleNames.includes('admin') && !userRoleNames.includes('superuser');
+          })
+          .map((u: any) => ({
+            ...u,
+            selectedRole: Array.isArray(u.role) ? u.role[0] : u.role
+          }));
+      } else {
+        this.users = users.map((u: any) => ({
+          ...u,
+          selectedRole: Array.isArray(u.role) ? u.role[0] : u.role
+        }));
+      }
     });
   }
 
   loadRoles() {
     this.userService.getAllRoles().subscribe(roles => {
       this.roles = roles;
+      this.loadUsers();
     });
   }
 

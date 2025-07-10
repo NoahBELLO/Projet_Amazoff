@@ -7,12 +7,12 @@ import { ArticleService } from '../service/article.service';
 import { FormsModule } from '@angular/forms';//pour les soucis de ngmodel
 import { Router, RouterLink } from '@angular/router';
 import { AuthentificationService } from '../service/authentification.service';
-import { Observable } from 'rxjs';
+import { catchError, map, Observable, switchMap, tap, throwError } from 'rxjs';
 
 
 @Component({
   selector: 'app-panier-vue',
-  imports: [TopbarComponent, NgFor, NgIf, FormsModule, RouterLink, AsyncPipe],
+  imports: [NgFor, NgIf, FormsModule, RouterLink, AsyncPipe],
   templateUrl: './panier-vue.component.html',
   styleUrl: './panier-vue.component.css'
 })
@@ -22,6 +22,14 @@ export class PanierVueComponent {
   error: boolean = false;
   message: string = '';
   quantitee: number[] = []
+  popupPaiementOuvert: boolean = false;
+  paiement: {
+    numeroCarte: string; nomCarte: string;
+    expiration: string; cvv: string;
+  } = {
+      numeroCarte: '', nomCarte: '',
+      expiration: '', cvv: ''
+    };
 
   constructor(
     private panierService: PanierService,
@@ -93,6 +101,68 @@ export class PanierVueComponent {
 
   getTotal(panier: Article[]): number {
     return panier.reduce((sum: number, article: Article) => sum + (article.sous_total ?? 0), 0);
+  }
+
+  ouvrirPopupPaiement() {
+    this.popupPaiementOuvert = true;
+  }
+
+  fermerPopupPaiement() {
+    this.popupPaiementOuvert = false;
+  }
+
+  validerPaiement() {
+    console.log("Paiement validé avec les informations suivantes :", this.paiement);
+    this.authService.checkCookie().subscribe({
+      next: (response) => {
+        this.panier$.subscribe(panier => {
+          const total = this.getTotal(panier);
+          const paiementBody = {
+            userId: response.userId,
+            method: "cb",
+            details: JSON.stringify({
+              numeroCarte: this.paiement.numeroCarte,
+              nomCarte: this.paiement.nomCarte,
+              expiration: this.paiement.expiration,
+              cvv: this.paiement.cvv,
+              total: total
+            })
+          };
+
+          this.panierService.creerPaiement(paiementBody).subscribe((paiementRes: any) => {
+            const paiementId = paiementRes._id;
+            const commandes = panier.map(article => ({
+              article_id: article.id,
+              name: article.name,
+              quantite: article.quantite_utilisateur,
+              prix: article.prix,
+              image: article.image,
+              reduction: article.reduction,
+              sous_total: article.sous_total
+            }));
+
+            const commande = {
+              commandes: commandes,
+              total: total,
+              paiement: "CB VISA",
+              paiement_id: paiementId,
+              user_id: response.userId,
+              date_publication: new Date().toISOString()
+            };
+
+            this.panierService.creerCommande(commande, response.userId).subscribe((commandeRes: any) => {
+              this.panierService.viderPanier(response.userId).subscribe(() => {
+                this.popupPaiementOuvert = false;
+                this.router.navigate(['/user-account']);
+              });
+            });
+          });
+        });
+      },
+      error: (error) => {
+        console.error("Erreur lors de la requête Flag :", error);
+      }
+    });
   }
 
 }

@@ -273,3 +273,39 @@ def delete_cart(user_id):
 @bp.route("/health", methods=["GET"])
 def health():
     return {"status": "ok"}, 200
+
+@bp.route("/vider_panier/<string:user_id>", methods=["DELETE"])
+def vider_panier(user_id):
+    crud_operation = "PATCH VIDER"
+    if not (test_maria() and test_mongo(os.getenv("MONGO_URI_PANIERS"))):
+        return jsonify({"error": True, "message": "Les deux bases doivent être disponibles pour effectuer l'opération."}), 503
+
+    db = PanierModel()
+    db2 = PanierModelMD()
+
+    # Backup avant modification
+    ok_maria, old_cart = db2.get_cart_backup(user_id)
+    if not ok_maria:
+        return jsonify({"error": True, "message": "Panier introuvable en SQL"})
+
+    # MariaDB
+    try:
+        err_maria = db2.vider_panier(user_id)
+        if not err_maria:
+            raise RuntimeError("Erreur MariaDB lors du vidage du panier")
+    except Exception as e:
+        log_failure('MARIADB_CART', crud_operation, {"user_id": user_id}, e)
+        return jsonify({"error": True, "message": f"Échec vidage Maria {e}"}), 500
+
+    # MongoDB
+    try:
+        err_mongo = db.vider_panier(user_id)
+        if not err_mongo:
+            db2.update(old_cart['id_maria'], old_cart)
+            raise RuntimeError("Erreur MongoDB lors du vidage du panier")
+    except Exception as e:
+        log_failure('MONGO_CART', crud_operation, {"user_id": user_id}, e)
+        db2.update(old_cart['id_maria'], old_cart)
+        return jsonify({"error": True, "message": f"Échec vidage Mongo, Maria restauré {e}"}), 500
+
+    return jsonify({"error": False, "message": "Panier vidé avec succès"})
