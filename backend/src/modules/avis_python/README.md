@@ -20,9 +20,8 @@ Il assure la double persistance des avis en MongoDB et MariaDB, expose une API R
 - **Python 3.11**
 - **Flask** (API REST)
 - **MongoEngine** (MongoDB)
-- **MariaDB** (relationnel)
+- **MariaDB** (BDD relationnel)
 - **Loguru** (logs)
-- **APScheduler** (batch périodique)
 - **Docker** (conteneurisation)
 
 ---
@@ -60,9 +59,7 @@ README.md                # Documentation
 ## 🔗 Endpoints principaux
 
 - `POST /avis/rating_article` : Ajoute un avis (note/commentaire) sur un article. Les deux bases doivent être disponibles.
-
 - `GET /avis/<article_id>` : Récupère tous les avis d’un article.
-
 - `GET /avis/health` : Vérifie la santé du microservice.
 
 ---

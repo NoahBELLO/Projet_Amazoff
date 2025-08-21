@@ -11,6 +11,19 @@ Ce microservice gère les paniers d’utilisateurs pour la plateforme Amazoff. I
 - Journalisation des échecs dans `failed_cart_requests.log`
 - Vérification de la santé des bases via `/paniers/health`
 
+---
+
+## 🛠️ Stack technique
+
+- **Python 3.11**
+- **Flask** (API REST)
+- **MongoEngine** (MongoDB)
+- **MariaDB** (BDD relationnel, supporté)
+- **Loguru** (logs)
+- **Docker** (conteneurisation)
+
+---
+
 ## 📦 Structure
 
 ```
@@ -43,19 +56,12 @@ README.md                # Documentation
 ## 🔗 Endpoints principaux
 
 - `GET /paniers/<user_id>` : Récupérer le panier d’un utilisateur
-
 - `POST /paniers/create_cart/<user_id>` : Créer un panier
-
 - `PATCH /paniers/add_to_cart/<user_id>` : Ajouter un article
-
 - `PATCH /paniers/remove_from_cart/<user_id>` : Retirer un article
-
 - `PATCH /paniers/edit_cart/<user_id>` : Modifier la quantité d’un article
-
 - `DELETE /paniers/delete_cart/<user_id>` : Supprimer le panier
-
 - `DELETE /paniers/vider_panier/<user_id>` : Vider le panier
-
 - `GET /paniers/health` : Vérification de la santé du service
 
 ---

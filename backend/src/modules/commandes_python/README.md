@@ -20,9 +20,8 @@ Il utilise MongoDB pour la persistance, expose une API REST avec Flask et vérif
 - **Python 3.11**
 - **Flask** (API REST)
 - **MongoEngine** (MongoDB)
-- **MariaDB** (relationnel, supporté)
+- **MariaDB** (BDD relationnel, supporté)
 - **Loguru** (logs)
-- **APScheduler** (batch périodique)
 - **Docker** (conteneurisation)
 
 ---
@@ -62,11 +61,8 @@ README.md                # Documentation
 ## 🔗 Endpoints principaux
 
 - `GET /commandes/en_cours/<user_id>` : Récupère les commandes en cours d’un utilisateur.
-
 - `POST /commandes/en_cours/create/<user_id>` : Crée une nouvelle commande en cours.
-
 - `DELETE /commandes/en_cours/delete/<numero_commande>` : Passe une commande en livrée.
-
 - `GET /commandes/livrees/<user_id>` : Récupère les commandes livrées d’un utilisateur.
 
 ---

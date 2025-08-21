@@ -16,9 +16,9 @@ Ce microservice gère la gestion des articles du catalogue Amazoff (CRUD, recher
 - **Python 3.11**
 - **Flask** (API REST)
 - **MongoEngine** (MongoDB)
-- **MariaDB** (relationnel)
+- **MariaDB** (BDD relationnel)
 - **Loguru** (logs)
-- **APScheduler** (batch périodique)
+- **APScheduler** (librairie pour pouvoir mettre des timers et déclencher des actions)
 - **Docker** (conteneurisation)
 
 ## 📦 Structure
@@ -57,8 +57,8 @@ README.md                # Documentation
 - `POST /articles/search` : Recherche avancée
 - `GET /articles/<id>` : Détail d’un article
 - `POST /articles/create` : Création (avec upload image)
-- `PATCH /articles/patch/<id>` : Modification
-- `DELETE /articles/delete/<id>` : Suppression
+- `PATCH /articles/patch/<id>` : Modification d'un article
+- `DELETE /articles/delete/<id>` : Suppression d'un article
 - `GET /articles/health` : Healthcheck
 
 ## 🚦 Démarrage
