@@ -14,7 +14,7 @@ Chaque microservice possède sa propre base de données (MongoDB ou MariaDB), ce
 
 ```mermaid
 graph TD
-    A[Frontend Angular] --> B[|HTTP| (API Gateway Nginx)]
+    A[Frontend Angular] --> B[API Gateway Nginx]
     B --> C1[Auth (Node.js/TS)]
     B --> C2[Users (Node.js/TS)]
     B --> C3[Roles (Node.js/TS)]
