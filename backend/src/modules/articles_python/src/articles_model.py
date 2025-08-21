@@ -37,7 +37,7 @@ class ArticleModel(Document):
     reduction = IntField(required=False)
     description = StringField(required=True, max_length=200)
     stock = FloatField(required=True)
-    meta = {'collection': 'article' , 'db_alias': 'articles-db'}
+    meta = {'collection': 'articles' , 'db_alias': 'articles-db'}
     id_magasin = StringField(required=True)
 
     def to_dict(self):

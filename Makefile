@@ -14,5 +14,5 @@ restart:
 	cd ./environnements && docker-compose restart
 
 clean:
-	cd ./environnements && docker-compose down -v
+	cd ./environnements && docker-compose down -v --rmi all --remove-orphans
 	docker system prune -f

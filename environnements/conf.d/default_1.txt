@@ -1,0 +1,166 @@
+upstream microservice_authentification_cluster {
+    server microservice_authentification:5001;
+}
+
+upstream microservice_role_cluster {
+    server microservice_role:5002;
+}
+
+upstream microservice_user_cluster {
+    server microservice_user:5003;
+}
+
+upstream microservice_article_cluster {
+    server microservice_articles:6001;
+}
+
+upstream microservice_avis_cluster {
+    server microservice_avis:6002;
+}
+
+upstream microservice_commande_cluster {
+    server microservice_commandes:6003;
+}
+
+upstream microservice_panier_cluster {
+    server microservice_paniers:6004;
+}
+
+upstream microservice_magasin_cluster {
+    server microservice_magasin:7001;
+}
+
+upstream microservice_notifications_cluster {
+    server microservice_notifications:7002;
+}
+
+upstream microservice_payment_mode_cluster {
+    server microservice_payment_mode:7003;
+}
+
+server {
+
+    listen 3001; 
+    server_name localhost;
+
+    location /users/ {
+        proxy_pass http://microservice_user_cluster/users/;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        add_header 'Access-Control-Allow-Origin' 'http://localhost:4200' always;
+        add_header 'Access-Control-Allow-Methods' 'GET, POST, PUT, PATCH, DELETE, OPTIONS' always;
+        add_header 'Access-Control-Allow-Headers' 'Origin, Content-Type, Accept, Authorization' always;
+    }
+
+    location /roles/ {
+        proxy_pass http://microservice_role_cluster/roles/;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        add_header 'Access-Control-Allow-Origin' 'http://localhost:4200' always;
+        add_header 'Access-Control-Allow-Methods' 'GET, POST, PUT, DELETE, OPTIONS' always;
+        add_header 'Access-Control-Allow-Headers' 'Origin, Content-Type, Accept, Authorization' always;
+    }
+
+    location /authentification/ {
+        proxy_pass http://microservice_authentification_cluster/authentification/;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        add_header 'Access-Control-Allow-Origin' 'http://localhost:4200' always;
+        add_header 'Access-Control-Allow-Credentials' 'true' always;
+        add_header 'Access-Control-Allow-Methods' 'GET, POST, PUT, DELETE, OPTIONS' always;
+        add_header 'Access-Control-Allow-Headers' 'Origin, Content-Type, Accept, Authorization' always;
+    }
+
+    location /articles/ {
+        proxy_pass http://microservice_article_cluster/articles/;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        add_header 'Access-Control-Allow-Origin' 'http://localhost:4200' always;
+        add_header 'Access-Control-Allow-Methods' 'GET, POST, PUT, PATCH, DELETE, OPTIONS' always;
+        add_header 'Access-Control-Allow-Headers' 'Origin, Content-Type, Accept, Authorization' always;
+    }
+
+    location /avis/ {
+        proxy_pass http://microservice_avis_cluster/avis/;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        add_header 'Access-Control-Allow-Origin' 'http://localhost:4200' always;
+        add_header 'Access-Control-Allow-Methods' 'GET, POST, PUT, PATCH, DELETE, OPTIONS' always;
+        add_header 'Access-Control-Allow-Headers' 'Origin, Content-Type, Accept, Authorization' always;
+    }
+
+    location /commandes/ {
+        proxy_pass http://microservice_commande_cluster/commandes/;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        add_header 'Access-Control-Allow-Origin' 'http://localhost:4200' always;
+        add_header 'Access-Control-Allow-Methods' 'GET, POST, PUT, PATCH, DELETE, OPTIONS' always;
+        add_header 'Access-Control-Allow-Headers' 'Origin, Content-Type, Accept, Authorization' always;
+    }
+
+    location /paniers/ {
+        proxy_pass http://microservice_panier_cluster/paniers/;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        add_header 'Access-Control-Allow-Origin' 'http://localhost:4200' always;
+        add_header 'Access-Control-Allow-Methods' 'GET, POST, PUT, PATCH, DELETE, OPTIONS' always;
+        add_header 'Access-Control-Allow-Headers' 'Origin, Content-Type, Accept, Authorization' always;
+    }
+
+    location /magasins/ {
+        proxy_pass http://microservice_magasin_cluster/;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        # add_header 'Access-Control-Allow-Origin' 'http://localhost:4200' always;
+        # add_header 'Access-Control-Allow-Methods' 'GET, POST, PUT, DELETE, OPTIONS' always;
+        # add_header 'Access-Control-Allow-Headers' 'Origin, Content-Type, Accept, Authorization' always;
+    }
+
+    location /notifications/ {
+        proxy_pass http://microservice_notifications_cluster/notifications/;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        add_header 'Access-Control-Allow-Origin' 'http://localhost:4200' always;
+        add_header 'Access-Control-Allow-Methods' 'GET, POST, PUT, DELETE, OPTIONS' always;
+        add_header 'Access-Control-Allow-Headers' 'Origin, Content-Type, Accept, Authorization' always;
+    }
+
+    location /payment_mode/ {
+        proxy_pass http://microservice_payment_mode_cluster/paymentMode/;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        add_header 'Access-Control-Allow-Origin' 'http://localhost:4200' always;
+        add_header 'Access-Control-Allow-Methods' 'GET, POST, PUT, DELETE, PATCH, OPTIONS' always;
+        add_header 'Access-Control-Allow-Headers' 'Origin, Content-Type, Accept, Authorization' always;
+    }
+}

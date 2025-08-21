@@ -1,4 +1,40 @@
 services:
+  mongodb_container:
+    container_name: mongodb_container
+    image: mongo:latest
+    restart: always
+    env_file:
+      - .env
+    networks:
+      - reseau_projet
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+    volumes:
+      - mongodb_data:/data/db
+      - ./mongo-init:/docker-entrypoint-initdb.d
+
+  mariadb_container:
+    container_name: mariadb_container
+    image: mariadb:latest
+    restart: always
+    env_file:
+      - .env
+    networks:
+      - reseau_projet
+    ports:
+      - "3306:3306"
+    environment:
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
+      MARIADB_DATABASE: ${MARIADB_DATABASE}
+      MARIADB_USER: ${MARIADB_USER}
+      MARIADB_PASSWORD: ${MARIADB_PASSWORD}
+    volumes:
+      - mariadb_data:/var/lib/mysql
+      - ./mariadb-init:/docker-entrypoint-initdb.d
+
   nginx-container-1:
     container_name: nginx-container-1
     image: nginx:latest
@@ -61,10 +97,28 @@ services:
     build:
       context: ../backend/src/modules/authentification
     restart: always
+    env_file:
+      - .env
     volumes:
       - ../backend/src/modules/authentification:/usr/src/app
     # ports:
     #   - 5001:5001
+    depends_on:
+      - mongodb_container
+    environment:
+      MONGO_URI: ${MONGO_URI_CONTENEUR}
+      PORT: ${PORT_AUTHENTIFICATION}
+      BASE_DE_DONNEE: ${BASE_DE_DONNEE_AUTHENTIFICATION}
+      COLLECTION: ${COLLECTION_AUTHENTIFICATION}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+      ROLE_URL_NGINX_1: ${ROLE_URL_NGINX_1}
+      USER_URL_NGINX_1: ${USER_URL_NGINX_1}
+      ROLE_URL_NGINX_2: ${ROLE_URL_NGINX_2}
+      USER_URL_NGINX_2: ${USER_URL_NGINX_2}
+      PEPPER: ${PEPPER}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
+      GOOGLE_REDIRECT_URI: ${GOOGLE_REDIRECT_URI}
     networks:
       - reseau_projet
     deploy:
@@ -81,10 +135,19 @@ services:
     build:
       context: ../backend/src/modules/roles
     restart: always
+    env_file:
+      - .env
     volumes:
       - ../backend/src/modules/roles:/usr/src/app
     # ports:
     #   - 5002:5002
+    depends_on:
+      - mongodb_container
+    environment:
+      MONGO_URI: ${MONGO_URI_CONTENEUR}
+      PORT: ${PORT_ROLES}
+      BASE_DE_DONNEE: ${BASE_DE_DONNEE_ROLES}
+      COLLECTION: ${COLLECTION_ROLES}
     networks:
       - reseau_projet
     deploy:
@@ -100,10 +163,26 @@ services:
     build:
       context: ../backend/src/modules/users
     restart: always
+    env_file:
+      - .env
     volumes:
       - ../backend/src/modules/users:/usr/src/app
     # ports:
     #   - 5003:5003
+    depends_on:
+      - mongodb_container
+    environment:
+      MONGO_URI: ${MONGO_URI_CONTENEUR}
+      PORT: ${PORT_UTILISATEURS}
+      BASE_DE_DONNEE: ${BASE_DE_DONNEE_UTILISATEURS}
+      COLLECTION: ${COLLECTION_UTILISATEURS}
+      ROLE_URL_NGINX_1: ${ROLE_URL_NGINX_1}
+      ROLE_URL_NGINX_2: ${ROLE_URL_NGINX_2}
+      PANIER_URL_NGINX_1: ${PANIER_URL_NGINX_1}
+      PANIER_URL_NGINX_2: ${PANIER_URL_NGINX_2}
+      NOTIFICATION_URL_NGINX_1: ${NOTIFICATION_URL_NGINX_1}
+      NOTIFICATION_URL_NGINX_2: ${NOTIFICATION_URL_NGINX_2}
+      PEPPER: ${PEPPER}
     networks:
       - reseau_projet
     deploy:
@@ -119,10 +198,27 @@ services:
     build:
       context: ../backend/src/modules/articles_python
     restart: always
+    env_file:
+      - .env
+    depends_on:
+      - mongodb_container
+      - mariadb_container
     environment:
       - PYTHONPATH=/usr/src/app:/usr/src/app/src
-    env_file:
-      - ../backend/src/modules/articles_python/.env
+      - MONGO_URI_ARTICLES=${MONGO_URI_ARTICLES}
+      - CORS_ORIGINS=${CORS_ORIGINS}
+      - URL_AVIS_DOCKER_1=${URL_AVIS_DOCKER_1}
+      - URL_AVIS_DOCKER_2=${URL_AVIS_DOCKER_2}
+      - URL_AVIS_SERVEUR_1=${URL_AVIS_SERVEUR_1}
+      - URL_AVIS_SERVEUR_2=${URL_AVIS_SERVEUR_2}
+      - DEBUG=${DEBUG}
+      - TESTING=${TESTING}
+      - DB_LOCAL_HOST=${DB_LOCAL_HOST}
+      - DB_LOCAL_NAME=${DB_LOCAL_NAME}
+      - DB_LOCAL_LOGIN=${DB_LOCAL_LOGIN}
+      - DB_LOCAL_PASSWORD=${DB_LOCAL_PASSWORD}
+      - DB_LOCAL_PORT=${DB_LOCAL_PORT}
+      - SALT=${SALT}
     volumes:
       - ../backend/src/modules/articles_python:/usr/src/app
     # ports:
@@ -137,10 +233,31 @@ services:
     build:
       context: ../backend/src/modules/avis_python
     restart: always
+    env_file:
+      - .env
+    depends_on:
+      - mongodb_container
+      - mariadb_container
     environment:
       - PYTHONPATH=/usr/src/app:/usr/src/app/src
-    env_file:
-      - ../backend/src/modules/avis_python/.env
+      - MONGO_URI_AVIS=${MONGO_URI_AVIS}
+      - CORS_ORIGINS=${CORS_ORIGINS}
+      - URL_AVIS_DOCKER_1=${URL_AVIS_DOCKER_1}
+      - URL_AVIS_DOCKER_2=${URL_AVIS_DOCKER_2}
+      - URL_AVIS_SERVEUR_1=${URL_AVIS_SERVEUR_1}
+      - URL_AVIS_SERVEUR_2=${URL_AVIS_SERVEUR_2}
+      - URL_USER_DOCKER_1=${URL_USER_DOCKER_1}
+      - URL_USER_DOCKER_2=${URL_USER_DOCKER_2}
+      - URL_USER_SERVEUR_1=${URL_USER_SERVEUR_1}
+      - URL_USER_SERVEUR_2=${URL_USER_SERVEUR_2}
+      - DEBUG=${DEBUG}
+      - TESTING=${TESTING}
+      - DB_LOCAL_HOST=${DB_LOCAL_HOST}
+      - DB_LOCAL_NAME=${DB_LOCAL_NAME}
+      - DB_LOCAL_LOGIN=${DB_LOCAL_LOGIN}
+      - DB_LOCAL_PASSWORD=${DB_LOCAL_PASSWORD}
+      - DB_LOCAL_PORT=${DB_LOCAL_PORT}
+      - SALT=${SALT}
     volumes:
       - ../backend/src/modules/avis_python:/usr/src/app
     # ports:
@@ -155,10 +272,26 @@ services:
     build:
       context: ../backend/src/modules/commandes_python
     restart: always
+    env_file:
+      - .env
+    depends_on:
+      - mongodb_container
     environment:
       - PYTHONPATH=/usr/src/app:/usr/src/app/src
-    env_file:
-      - ../backend/src/modules/commandes_python/.env
+      - MONGO_URI_COMMANDES=${MONGO_URI_COMMANDES}
+      - CORS_ORIGINS=${CORS_ORIGINS}
+      - URL_USER_DOCKER_1=${URL_USER_DOCKER_1}
+      - URL_USER_DOCKER_2=${URL_USER_DOCKER_2}
+      - URL_USER_SERVEUR_1=${URL_USER_SERVEUR_1}
+      - URL_USER_SERVEUR_2=${URL_USER_SERVEUR_2}
+      - DEBUG=${DEBUG}
+      - TESTING=${TESTING}
+      - DB_LOCAL_HOST=${DB_LOCAL_HOST}
+      - DB_LOCAL_NAME=${DB_LOCAL_NAME}
+      - DB_LOCAL_LOGIN=${DB_LOCAL_LOGIN}
+      - DB_LOCAL_PASSWORD=${DB_LOCAL_PASSWORD}
+      - DB_LOCAL_PORT=${DB_LOCAL_PORT}
+      - SALT=${SALT}
     volumes:
       - ../backend/src/modules/commandes_python:/usr/src/app
     # ports:
@@ -166,17 +299,34 @@ services:
     networks:
       - reseau_projet
     deploy:
-      replicas: 2
+    #   replicas: 2
 
   microservice_paniers:
     # container_name: microservice_paniers
     build:
       context: ../backend/src/modules/panier_python
     restart: always
+    env_file:
+      - .env
+    depends_on:
+      - mongodb_container
+      - mariadb_container
     environment:
       - PYTHONPATH=/usr/src/app:/usr/src/app/src
-    env_file:
-      - ../backend/src/modules/panier_python/.env
+      - MONGO_URI_PANIERS=${MONGO_URI_PANIERS}
+      - CORS_ORIGINS=${CORS_ORIGINS}
+      - URL_ARTICLE_DOCKER_1=${URL_ARTICLE_DOCKER_1}
+      - URL_ARTICLE_DOCKER_2=${URL_ARTICLE_DOCKER_2}
+      - URL_ARTICLE_SERVEUR_1=${URL_ARTICLE_SERVEUR_1}
+      - URL_ARTICLE_SERVEUR_2=${URL_ARTICLE_SERVEUR_2}
+      - DEBUG=${DEBUG}
+      - TESTING=${TESTING}
+      - DB_LOCAL_HOST=${DB_LOCAL_HOST}
+      - DB_LOCAL_NAME=${DB_LOCAL_NAME}
+      - DB_LOCAL_LOGIN=${DB_LOCAL_LOGIN}
+      - DB_LOCAL_PASSWORD=${DB_LOCAL_PASSWORD}
+      - DB_LOCAL_PORT=${DB_LOCAL_PORT}
+      - SALT=${SALT}
     volumes:
       - ../backend/src/modules/panier_python:/usr/src/app
     # ports:
@@ -191,12 +341,16 @@ services:
     build:
       context: ../backend/src/modules/magasin_cpp/magasin_cpp
     restart: always
+    env_file:
+      - .env
+    depends_on:
+      - mongodb_container
+    environment:
+      - MONGO_URI_MAGASINS=${MONGO_URI_MAGASINS}
     # ports:
     #   - "7001:7001"
     networks:
       - reseau_projet
-    env_file:
-      - ../backend/src/modules/magasin_cpp/magasin_cpp/.env
     deploy:
       replicas: 2
 
@@ -205,6 +359,13 @@ services:
     build:
       context: ../backend/src/modules/notifications_node
     restart: always
+    env_file:
+      - .env
+    depends_on:
+      - mongodb_container
+    environment:
+      MONGO_URI_NOTIFICATIONS: ${MONGO_URI_NOTIFICATIONS}
+      PORT: ${PORT_NOTIFICATIONS}
     volumes:
       - ../backend/src/modules/notifications_node:/usr/src/app
     # ports:
@@ -215,7 +376,8 @@ services:
     deploy:
       replicas: 2
     healthcheck:
-      test: ["CMD", "wget", "-qO-", "http://localhost:7002/notifications/health"]
+      test:
+        ["CMD", "wget", "-qO-", "http://localhost:7002/notifications/health"]
       interval: 10s
       timeout: 3s
       retries: 3
@@ -225,6 +387,13 @@ services:
     build:
       context: ../backend/src/modules/payment_mode_node
     restart: always
+    env_file:
+      - .env
+    depends_on:
+      - mongodb_container
+    environment:
+      MONGO_URI_PAYEMENTMODE: ${MONGO_URI_PAYEMENTMODE}
+      PORT: ${PORT_PAYEMENTMODE}
     volumes:
       - ../backend/src/modules/payment_mode_node:/usr/src/app
     # ports:
@@ -243,4 +412,8 @@ services:
 networks:
   reseau_projet:
     driver: bridge
-    external: true
+    # external: true
+
+volumes:
+  mongodb_data:
+  mariadb_data:

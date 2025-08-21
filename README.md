@@ -1,149 +1,154 @@
-# 📊 Projet Amazoff
+# 🚀 Amazoff – Plateforme e-commerce microservices
 
-// Faire un résumé
+Bienvenue sur **Amazoff**, une plateforme e-commerce pédagogique conçue pour démontrer la puissance de l’architecture microservices, la scalabilité et la maintenabilité d’un projet moderne.  
+Ce projet est le fruit d’un travail de 3ème année de Bachelor Informatique, intégrant les meilleures pratiques DevOps, CI/CD, et une stack technique multi-langages.
 
 ---
 
-## 🏗️ Architecture et fonctionnement
+## 🏗️ Architecture globale
 
-### Vue d’ensemble
+Amazoff repose sur une architecture orientée microservices, chaque composant étant isolé, indépendant et interconnecté via une API Gateway (Nginx).  
+Chaque microservice possède sa propre base de données (MongoDB ou MariaDB), ce qui garantit la résilience et la scalabilité du système.
 
-L’architecture repose sur une séparation claire des responsabilités :
+### Schéma d’architecture
 
-- **Frontend** (Angular) : Interface web moderne, accessible via navigateur ou packagée en application desktop via Electron.
-- **API Gateway** (Nginx) : Point d’entrée unique, redirige les requêtes vers les microservices.
-- **Microservices Backend** :
-  - **Authentification** (Node.js/TypeScript) → sa propre base MongoDB
-  - **Utilisateurs** (Node.js/TypeScript) → sa propre base MongoDB
-  - **Rôles** (Node.js/TypeScript) → sa propre base MongoDB
-
-### Schéma de l’architecture
-
-```
-                                                   +---------------------+  
-                                                   |       Frontend      |  
-                                                   |      (Angular)      |  
-                                                   +---------------------+ 
-                                                             |
-                                                             v
-                                                  +---------------------+
-                                                  |     API Gateway     |
-                                                  |       (Nginx)       |
-                                                  +---------------------+
-                                                             |
-      +---------------+-------------------------------+---------------+-----------------------------------------------+
-      |                     |                  |          
-      v                     v                  v            
-+----------------+ +----------------+ +----------------+  
-| Auth Service   | | User Service   | | Role Service   |  
-| (Node/TS)      | | (Node/TS)      | | (Node/TS)      |    
-+----------------+ +----------------+ +----------------+ 
-        |                  |                  |          
-        v                  v                  v           
-  +-----------+       +-----------+      +-----------+        
-  | MongoDB   |       | MongoDB   |      | MongoDB   |       
-  | (auth DB) |       | (user DB) |      | (role DB) |         
-  +-----------+       +-----------+      +-----------+        
+```mermaid
+graph TD
+    A[Frontend Angular] -->|HTTP| B(API Gateway Nginx)
+    B --> C1[Auth (Node.js/TS)]
+    B --> C2[Users (Node.js/TS)]
+    B --> C3[Roles (Node.js/TS)]
+    B --> C4[Articles (Python)]
+    B --> C5[Avis (Python)]
+    B --> C6[Commandes (Python)]
+    B --> C7[Paniers (Python)]
+    B --> C8[Magasin (C++ Crow)]
+    B --> C9[Notifications (Node.js)]
+    B --> C10[Payment Mode (Node.js)]
+    C1 --> D1[(MongoDB)]
+    C2 --> D2[(MongoDB)]
+    C3 --> D3[(MongoDB)]
+    C4 --> D4[(MongoDB)]
+    C4 --> E1[(MariaDB)]
+    C5 --> D5[(MongoDB)]
+    C5 --> E2[(MariaDB)]
+    C6 --> D6[(MongoDB)]
+    C7 --> D7[(MongoDB)]
+    C7 --> E3[(MariaDB)]
+    C8 --> D8[(MongoDB)]
+    C9 --> D9[(MongoDB)]
+    C10 --> D10[(MongoDB)]
 ```
 
 ---
 
-## 🎯 Choix des technologies
+## ⚙️ Technologies utilisées
 
-- **Angular** : Frontend web moderne et réactif.
-- **Node.js + TypeScript** : Microservices Auth, Users, Roles, OLTP.
-- **Python (Flask)** : Microservice 
-- **MongoDB** : Base NoSQL, chaque microservice Auth, Users, Roles a sa propre base MongoDB.
-- **Nginx** : API Gateway, centralise et sécurise les accès.
-- **Docker & Docker Compose** : Orchestration et portabilité.
+- **Frontend** : Angular (TypeScript)
+- **API Gateway** : Nginx
+- **Microservices** :
+  - Node.js + TypeScript (authentification, utilisateurs, rôles)
+  - Node.js (notifications, paiement)
+  - Python (Flask) (articles, avis, commandes, paniers)
+  - C++ (Crow) (magasin)
+- **Bases de données** : MongoDB (microservices), MariaDB (relationnel)
+- **Orchestration** : Docker & Docker Compose
+- **CI/CD** : Makefile, scripts d’automatisation
 
 ---
 
-## 🗂️ Organisation du code
+## 📁 Organisation du projet
 
 ```
 Projet_Amazoff/
 │
 ├── backend/
-│   ├── authentification/   # Microservice Authentification (Node.js/TypeScript, MongoDB)
-│   ├── roles/              # Microservice Rôles (Node.js/TypeScript, MongoDB)
-│   └── users/              # Microservice Utilisateurs (Node.js/TypeScript, MongoDB)
+│   └── src/modules/
+│       ├── articles_python/    # Microservice Articles (Python)
+│       ├── authentification/   # Microservice Auth (Node.js/TS)
+│       ├── avis_python/        # Microservice Avis (Python)
+│       ├── commandes_python/   # Microservice Commandes (Python)
+│       ├── magasin_cpp/        # Microservice Magasin (C++)
+│       ├── notifications_node/ # Microservice Notifications (Node.js)
+│       ├── panier_python/      # Microservice Paniers (Python)
+│       └── payment_mode_node/  # Microservice Paiement (Node.js)
+│       ├── roles/              # Microservice Rôles (Node.js/TS)
+│       ├── users/              # Microservice Utilisateurs (Node.js/TS)
 │
-├── frontend/               # Application Angular (interface web)
-│
+├── frontend/                   # Application Angular
 │
 └── environnements/
-    ├── docker-compose.yml  # Orchestration Docker
-    └── conf.d/             # Config Nginx
+    ├── docker-compose.yml      # Orchestration Docker
+    ├── .env                    # Variables d’environnement globales
+    ├── mariadb-init/           # Scripts d’initialisation MariaDB
+    ├── mongo-init/             # Scripts d’initialisation MongoDB
+    └── conf.d/                 # Config Nginx
 ```
 
 ---
 
-## 🚀 Démarrage rapide
+## 🚦 Démarrage rapide
 
-### Prérequis pour lancer le projet via Docker
+### Prérequis
 
 - [Docker](https://www.docker.com/)
 - [Docker Compose](https://docs.docker.com/compose/)
+- (Optionnel) [Make](https://www.gnu.org/software/make/) pour automatiser les commandes
 
-### Prérequis pour utiliser le Makefile
+### 1. Cloner le dépôt
 
-- **Linux / macOS** : `make` est généralement déjà installé.
-- **Windows** :
-  - Installe [Git Bash](https://gitforwindows.org/) ou [WSL](https://learn.microsoft.com/fr-fr/windows/wsl/install) (Windows Subsystem for Linux) pour avoir la commande `make`.
-  - Ou installe [GnuWin Make](http://gnuwin32.sourceforge.net/packages/make.htm) et ajoute-le à ton PATH.
-  - Puis lancer la commande suivante dans le terminal : sudo apt install make
+```bash
+git clone https://github.com/NoahBELLO/Projet_Amazoff.git
+cd Projet_Amazoff
+```
 
-> Si tu n’as pas `make`, tu peux toujours lancer les commandes Docker manuellement (voir plus haut).
+### 2. Configurer les variables d’environnement
 
-### Installation
+- Un seul fichier `.env` global se trouve dans [`environnements/.env`](environnements/.env).
+- Adapte les valeurs selon ton environnement (voir `.env.example` pour un modèle).
 
-1. **Cloner le dépôt :**
+**Important** : 
+Avant de modifier la configuration, copie le fichier `.env.example` en `.env` :
+```bash
+cp environnements/.env.example environnements/.env
+```
 
-   ```bash
-   git clone https://github.com/NoahBELLO/Projet_Amazoff.git
-   cd Projet_Amazoff
-   ```
+Pour la configuration Nginx, copie également `default_1.txt` en `default_1.conf` (et pareil pour `default_2`) :
+```bash
+cp environnements/conf.d/default_1.txt environnements/conf.d/default_1.conf
+cp environnements/conf.d/default_2.txt environnements/conf.d/default_2.conf
+```
 
-2. **Configurer les variables d’environnement :**
+### 3. Lancer l’infrastructure
 
-   - Copier les fichiers `.env.exemple` en `.env` dans les dossiers microservices et adapter les valeurs.
+Avec Makefile (recommandé) :
+```bash
+make up
+```
+Ou manuellement :
+```bash
+cd environnements
+docker-compose up --build
+```
 
-3. **Lancer l’infrastructure Docker :**
+### 4. Accéder à l’application
 
-   ```bash
-   make up
-   ```
-
-   ou
-
-   ```bash
-   cd ./environnement
-   docker-compose up --build
-   ```
-
-4. **Accéder à l’application :**
-   - **Frontend Angular** : [http://localhost:4200](http://localhost:4200)
-   - **API Gateway (Nginx)** : [http://localhost:3001](http://localhost:3001)
-
-## 🧪 Tests
-
-- **Frontend :**
-  - Tests unitaires :
-    ```bash
-    cd frontend
-    ng test
-    ```
-  - Tests end-to-end :
-    ```bash
-    ng e2e
-    ```
-- **Backend :**
-  - Les tests sont propres à chaque microservice (voir dossiers respectifs).
+- **Frontend Angular** : [http://localhost:4200](http://localhost:4200)
+- **API Gateway (Nginx)** : [http://localhost:3001](http://localhost:3001)
 
 ---
 
-## 🔧 Commandes utiles (Makefile)
+## 🧪 Tests & Qualité
+
+- **Frontend** :
+  - Tests unitaires : `cd frontend && ng test`
+  - Tests end-to-end : `ng e2e`
+- **Backend** :
+  - Chaque microservice possède ses propres tests (voir dossiers respectifs)
+
+---
+
+## 🛠️ Commandes utiles
 
 - `make up` : Démarrer tous les services Docker
 - `make down` : Arrêter tous les services
@@ -154,12 +159,30 @@ Projet_Amazoff/
 
 ---
 
-## 👥 Auteurs
+## 💡 Points forts & Innovations
 
-- Noah BELLO (Collaborateur)
-- Florian Potier-Clemente (Collaborateur)
-- Widad MASGHAR (Collaborateur)
+- **Architecture microservices** : chaque domaine métier est isolé, facilitant la maintenance et l’évolution.
+- **Stack multi-langages** : Node.js, Python, C++ pour illustrer l’interopérabilité.
+- **Orchestration avancée** : Docker Compose, un seul `.env` global pour la configuration.
+- **API Gateway** : centralisation de la sécurité et du routage.
+- **Scalabilité** : chaque microservice peut être répliqué ou mis à l’échelle indépendamment.
+- **Documentation claire** : ce README et des exemples de configuration pour chaque composant.
 
 ---
 
-Pour plus de détails, consulte les README spécifiques dans chaque
+## 👨‍💻 Auteurs
+
+- Noah BELLO
+- Florian Potier-Clemente
+- Widad MASGHAR
+
+---
+
+## 📚 Pour aller plus loin
+
+- Consulte les README spécifiques dans chaque dossier de microservice pour plus de détails techniques.
+- Pour toute question ou contribution, ouvre une issue ou contacte l’équipe projet.
+
+---
+
+> Ce projet a été réalisé dans le cadre du Bachelor 3 Informatique, démontrant la maîtrise des architectures distribuées, du DevOps et des technologies web modernes.

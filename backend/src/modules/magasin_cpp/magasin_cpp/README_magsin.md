@@ -41,16 +41,14 @@ Il est développé en C++ avec le framework Crow (similaire à Express.js) et ut
 <!-- Ce script va :
 - Compiler automatiquement le microservice C++
 - Lancer MongoDB localement (port 27017)
-- Démarrer le microservice (port 18080) -->
+- Démarrer le microservice (port 7001) -->
 
 2. Accéder à l’API :
 
-http://localhost:18080
+http://localhost:7001
 
 ---
 
 ## Configuration MongoDB
 
 Le microservice lit l’URI MongoDB depuis la variable d’environnement `MONGO_URI_MAGASINS`.
-Pour utiliser MongoDB Atlas, créer un fichier `.env`
-

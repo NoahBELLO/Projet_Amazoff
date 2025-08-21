@@ -14,5 +14,5 @@ export async function db() {
     await client.connect();
     const database: Db = client.db(process.env.BASE_DE_DONNEE);
 
-    TokenModel.collection = database.collection(process.env.COLLECTION_TOKEN as string);
+    TokenModel.collection = database.collection(process.env.COLLECTION as string);
 }
