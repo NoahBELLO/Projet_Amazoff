@@ -1,0 +1,30 @@
+# --- Node.js ---
+node_modules/
+.env
+package-lock.json
+.vscode/
+
+# --- C++ / Crow / Mongo Drivers ---
+**/build/
+**/bin/
+**/lib/
+**/obj/
+**/CMakeFiles/
+**/CMakeCache.txt
+**/*.o
+**/*.obj
+**/*.exe
+**/*.a
+**/*.so
+**/*.log
+**/*.user
+
+# --- Mongo C/C++ drivers ---
+**/mongo-c-driver-1.30.2/
+**/mongo-cxx-driver-r4.0.0/
+
+# --- Third-party dependencies ---
+**/third_party/
+
+# --- Git submodules accidentels ---
+**/.git/

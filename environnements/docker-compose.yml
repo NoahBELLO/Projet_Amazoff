@@ -95,12 +95,12 @@ services:
   microservice_authentification:
     # container_name: microservice_authentification
     build:
-      context: ../backend/src/modules/authentification
+      context: ../backend/authentification
     restart: always
     env_file:
       - .env
     volumes:
-      - ../backend/src/modules/authentification:/usr/src/app
+      - ../backend/authentification:/usr/src/app
     # ports:
     #   - 5001:5001
     depends_on:
@@ -133,12 +133,12 @@ services:
   microservice_role:
     # container_name: microservice_role
     build:
-      context: ../backend/src/modules/roles
+      context: ../backend/roles
     restart: always
     env_file:
       - .env
     volumes:
-      - ../backend/src/modules/roles:/usr/src/app
+      - ../backend/roles:/usr/src/app
     # ports:
     #   - 5002:5002
     depends_on:
@@ -161,12 +161,12 @@ services:
   microservice_user:
     # container_name: microservice_user
     build:
-      context: ../backend/src/modules/users
+      context: ../backend/users
     restart: always
     env_file:
       - .env
     volumes:
-      - ../backend/src/modules/users:/usr/src/app
+      - ../backend/users:/usr/src/app
     # ports:
     #   - 5003:5003
     depends_on:
@@ -196,7 +196,7 @@ services:
   microservice_articles:
     # container_name: microservice_articles
     build:
-      context: ../backend/src/modules/articles_python
+      context: ../backend/articles_python
     restart: always
     env_file:
       - .env
@@ -220,7 +220,7 @@ services:
       - DB_LOCAL_PORT=${DB_LOCAL_PORT}
       - SALT=${SALT}
     volumes:
-      - ../backend/src/modules/articles_python:/usr/src/app
+      - ../backend/articles_python:/usr/src/app
     # ports:
     #   - "6001:6001"
     networks:
@@ -231,7 +231,7 @@ services:
   microservice_avis:
     # container_name: microservice_avis
     build:
-      context: ../backend/src/modules/avis_python
+      context: ../backend/avis_python
     restart: always
     env_file:
       - .env
@@ -259,7 +259,7 @@ services:
       - DB_LOCAL_PORT=${DB_LOCAL_PORT}
       - SALT=${SALT}
     volumes:
-      - ../backend/src/modules/avis_python:/usr/src/app
+      - ../backend/avis_python:/usr/src/app
     # ports:
     #   - "6002:6002"
     networks:
@@ -270,7 +270,7 @@ services:
   microservice_commandes:
     # container_name: microservice_commandes
     build:
-      context: ../backend/src/modules/commandes_python
+      context: ../backend/commandes_python
     restart: always
     env_file:
       - .env
@@ -293,7 +293,7 @@ services:
       - DB_LOCAL_PORT=${DB_LOCAL_PORT}
       - SALT=${SALT}
     volumes:
-      - ../backend/src/modules/commandes_python:/usr/src/app
+      - ../backend/commandes_python:/usr/src/app
     # ports:
     #   - "6003:6003"
     networks:
@@ -304,7 +304,7 @@ services:
   microservice_paniers:
     # container_name: microservice_paniers
     build:
-      context: ../backend/src/modules/panier_python
+      context: ../backend/panier_python
     restart: always
     env_file:
       - .env
@@ -328,7 +328,7 @@ services:
       - DB_LOCAL_PORT=${DB_LOCAL_PORT}
       - SALT=${SALT}
     volumes:
-      - ../backend/src/modules/panier_python:/usr/src/app
+      - ../backend/panier_python:/usr/src/app
     # ports:
     #   - "6004:6004"
     networks:
@@ -339,7 +339,7 @@ services:
   microservice_magasin:
     # container_name: microservice_magasin
     build:
-      context: ../backend/src/modules/magasin_cpp/magasin_cpp
+      context: ../backend/magasin_cpp/magasin_cpp
     restart: always
     env_file:
       - .env
@@ -357,7 +357,7 @@ services:
   microservice_notifications:
     # container_name: microservice_notifications
     build:
-      context: ../backend/src/modules/notifications_node
+      context: ../backend/notifications_node
     restart: always
     env_file:
       - .env
@@ -367,7 +367,7 @@ services:
       MONGO_URI_NOTIFICATIONS: ${MONGO_URI_NOTIFICATIONS}
       PORT: ${PORT_NOTIFICATIONS}
     volumes:
-      - ../backend/src/modules/notifications_node:/usr/src/app
+      - ../backend/notifications_node:/usr/src/app
     # ports:
     #   - 7002:7002
     networks:
@@ -385,7 +385,7 @@ services:
   microservice_payment_mode:
     # container_name: microservice_payment_mode
     build:
-      context: ../backend/src/modules/payment_mode_node
+      context: ../backend/payment_mode_node
     restart: always
     env_file:
       - .env
@@ -395,7 +395,7 @@ services:
       MONGO_URI_PAYEMENTMODE: ${MONGO_URI_PAYEMENTMODE}
       PORT: ${PORT_PAYEMENTMODE}
     volumes:
-      - ../backend/src/modules/payment_mode_node:/usr/src/app
+      - ../backend/payment_mode_node:/usr/src/app
     # ports:
     #   - 7003:7003
     networks:

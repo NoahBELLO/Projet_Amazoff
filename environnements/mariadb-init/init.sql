@@ -106,15 +106,6 @@ VALUES
     5
   ),
   (
-    '67e6a96d7dbd409b4d1e96f0',
-    'Mj débutant',
-    10.00,
-    'lorenzo.jpg',
-    10,
-    '10% de réduction car il a déjà servi.',
-    1
-  ),
-  (
     '67e6a9737dbd409b4d1e96f1',
     'Costume',
     300.00,

@@ -1,0 +1,16 @@
+services:
+  magasin_cpp:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: magasin_cpp_service
+    ports:
+      - "7001:7001"
+    networks:
+      - magasin-network
+    env_file:
+      - .env 
+
+networks:
+  magasin-network:
+    driver: bridge
