@@ -2,7 +2,8 @@
 __pycache__
 *__pycache__
 **/__pycache__
-**/assets
+backend/magasin_cpp/magasin_cpp/Crow/docs/assets
+frontend/src/assets
 cache
 *cache
 **/cache
